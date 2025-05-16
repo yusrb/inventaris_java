@@ -5,11 +5,17 @@
  */
 package app;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -21,28 +27,37 @@ public class Settings extends javax.swing.JFrame {
      * Creates new form Dashboard
      */
     
+    // Variabel untuk menyimpan username dari halaman sebelumnya
     private final String usernameForPage;
-    
+
+    // Konstruktor Settings
     public Settings(String username) {
-        initComponents();
-        Connection();
-        getNameApplication();
-        
+        initComponents();          // Inisialisasi komponen UI
+        Connection();              // Panggil method untuk koneksi ke database
+        getNameApplication();      // Ambil dan tampilkan nama aplikasi dari database
+        getLogo();                 // Ambil dan tampilkan logo aplikasi dari database
+
+        // Set username yang akan ditampilkan di halaman
         usernameForPage = username;
         txtUsernameForPage.setText(usernameForPage);
-        
+
+        // Atur lokasi form di tengah dan buka dalam mode full screen
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
-    
+
+    // Deklarasi objek koneksi dan SQL
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
+
+    // Method untuk membuat koneksi ke database MySQL
+    public void Connection() {
         try {
+            // Load driver JDBC
             Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Buat koneksi ke database inventaris_java dengan user root tanpa password
             conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -50,23 +65,49 @@ public class Settings extends javax.swing.JFrame {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void getNameApplication()
-    {
+
+    // Method untuk mengambil nama aplikasi dari tabel settings
+    public void getNameApplication() {
         try {
+            // Query untuk ambil name_application
             pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
-            
             rslt = pst.executeQuery();
-            
-            if (rslt.next())
-            {
-                txtInputNameApplication.setText(rslt.getString("name_application"));
-                txtNameApplicationTop.setText(rslt.getString("name_application"));
-                txtNameApplicationBottom.setText(rslt.getString("name_application"));
+
+            // Jika data ditemukan, tampilkan di berbagai field
+            if (rslt.next()) {
+                String name = rslt.getString("name_application");
+                txtInputNameApplication.setText(name);
+                txtNameApplicationTop.setText(name);
+                txtNameApplicationBottom.setText(name);
+            } else {
+                // Jika tidak ada data, set kosong
+                txtInputNameApplication.setText("");
             }
-            else
-            {
-                txtInputNameApplication.setText(rslt.getString(""));
+        } catch (SQLException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    // Method untuk mengambil dan menampilkan logo dari tabel settings
+    private void getLogo() {
+        try {
+            // Query untuk ambil logo berdasarkan id = 1
+            pst = conn.prepareStatement("SELECT logo FROM settings WHERE id = 1");
+            rslt = pst.executeQuery();
+
+            if (rslt.next()) {
+                // Ambil data gambar dalam bentuk byte array
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    // Konversi byte menjadi ImageIcon
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+
+                    // Resize gambar agar sesuai tampilan label
+                    Image img = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+
+                    // Set gambar ke komponen labelLogo
+                    labelLogo.setIcon(new ImageIcon(img));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -104,6 +145,7 @@ public class Settings extends javax.swing.JFrame {
         btnUpdate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtInputNameApplication = new javax.swing.JTextArea();
+        labelLogo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Settings Page");
@@ -400,15 +442,19 @@ public class Settings extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(34, 34, 34)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3))
+                            .addContainerGap()))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                        .addGap(369, 369, 369)
+                        .addComponent(labelLogo)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -422,7 +468,9 @@ public class Settings extends javax.swing.JFrame {
                 .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(labelLogo)
+                .addGap(85, 85, 85))
         );
 
         pack();
@@ -442,6 +490,8 @@ public class Settings extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnLogoutActionPerformed
 
+    // Navigasi Dashboard Start
+    
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         // TODO add your handling code here:
         
@@ -506,30 +556,54 @@ public class Settings extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
 
+    // Navigasi Dashboard End
+    
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         try {
-            // TODO add your handling code here:
-            
+            // Ambil input nama aplikasi dari field teks
             String name_application = txtInputNameApplication.getText();
-            
-            pst = conn.prepareStatement("UPDATE settings SET name_application = ? WHERE id = 1");
+
+            // Inisialisasi file chooser untuk memilih file gambar
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Pilih Logo Aplikasi");
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); // Hanya izinkan file
+            fileChooser.setAcceptAllFileFilterUsed(false); // Nonaktifkan "All Files"
+
+            // Filter file agar hanya menampilkan file gambar dengan ekstensi tertentu
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Gambar", "jpg", "jpeg", "png", "gif");
+            fileChooser.addChoosableFileFilter(filter);
+
+            // Tampilkan dialog untuk memilih file
+            int hasil = fileChooser.showOpenDialog(this);
+            if (hasil != JFileChooser.APPROVE_OPTION) {
+                // Jika user tidak memilih file, tampilkan peringatan
+                JOptionPane.showMessageDialog(this, "Pilih gambar untuk logo!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Ambil file gambar yang dipilih
+            File fileGambar = fileChooser.getSelectedFile();
+            FileInputStream fis = new FileInputStream(fileGambar);
+
+            // Siapkan query untuk update nama aplikasi dan logo
+            pst = conn.prepareStatement("UPDATE settings SET name_application = ?, logo = ? WHERE id = 1");
             pst.setString(1, name_application);
-            
+            pst.setBinaryStream(2, fis, (int) fileGambar.length());
+
+            // Eksekusi query
             int k = pst.executeUpdate();
-            
-            if (k == 1)
-            {
-                JOptionPane.showMessageDialog(this, "Nama Aplikasi Berhasil DiUpdate!!!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
-                getNameApplication();
+
+            // Cek update berhasil tidak
+            if (k == 1) {
+                JOptionPane.showMessageDialog(this, "Nama Aplikasi dan Logo Berhasil DiUpdate!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
+                getNameApplication(); // Refresh nama aplikasi di UI
+                getLogo(); // Refresh logo di UI
+            } else {
+                JOptionPane.showMessageDialog(this, "Update Gagal!", "Update Failed", JOptionPane.WARNING_MESSAGE);
             }
-            else
-            {
-                JOptionPane.showMessageDialog(this, "Nama Aplikasi Gagal DiUpdate!!!", "Update Failed", JOptionPane.WARNING_MESSAGE);
-            }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecordActionPerformed
@@ -595,6 +669,7 @@ public class Settings extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelLogo;
     private javax.swing.JTextArea txtInputNameApplication;
     private javax.swing.JLabel txtNameApplicationBottom;
     private javax.swing.JLabel txtNameApplicationTop;

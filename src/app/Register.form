@@ -29,10 +29,6 @@
               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="btnLogin" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="207" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -42,13 +38,18 @@
                           <Component id="txtConfirmPassword" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="51" pref="51" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="btnClear" min="-2" pref="98" max="-2" attributes="0"/>
-                          <Component id="btnRegister" min="-2" pref="98" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="btnLogin" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="523" max="32767" attributes="0"/>
                   </Group>
               </Group>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btnClear" min="-2" pref="98" max="-2" attributes="0"/>
+                  <Component id="btnRegister" min="-2" pref="98" max="-2" attributes="0"/>
+                  <Component id="labelLogo" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -76,8 +77,11 @@
                   </Group>
                   <Component id="btnRegister" min="-2" pref="84" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="39" max="32767" attributes="0"/>
-              <Component id="btnLogin" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="92" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="btnLogin" min="-2" max="-2" attributes="0"/>
+                  <Component id="labelLogo" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -178,6 +182,11 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JPasswordField" name="txtConfirmPassword">
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelLogo">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="logo"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

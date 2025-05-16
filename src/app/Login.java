@@ -5,10 +5,12 @@
  */
 package app;
 
+import java.awt.Image;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,25 +23,62 @@ public class Login extends javax.swing.JFrame {
      * Creates new form Login
      */
     public Login() {
-        initComponents();
-        Connection();
+        initComponents();   // menampilkan seluruh design yang telah kita buat dan panggil ke method utama kita.
+        Connection();          // memanggil method Connection yang digunakan untuk menghubungkan dengan database MySQL.
+        getLogo();               // memanggil data logo dari settings
         
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null);    // Digunakan untuk membuat tampilan ketika pertama kali diRun maka berada tepat di tengah layar
     }
     
-    Connection conn;
-    PreparedStatement pst;
-    ResultSet rslt;
+    // Deklarasi untuk penggunaan JConnector
+    Connection conn;                    // variebel penghubung database
+    PreparedStatement pst;       //  objek yang berisi perintah SQL
+    ResultSet rslt;                      //  hasil dari query, digunakan khusus untuk query SELECT jika CRUD maka menggunakan int k.
     
+    // Method Connection, penghubung ke DB
     public void Connection()
     {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            // Set DB
             conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    // method memanggil logo dengan query dari pst JConnector
+    public void getLogo() {
+        try {
+            // Ambil kolom 'logo' dari tabel settings di baris dengan id = 1
+            pst = conn.prepareStatement("SELECT logo FROM settings WHERE id = 1");
+            rslt = pst.executeQuery();
+
+            if (rslt.next()) {
+                // Ambil data gambar sebagai array byte
+                byte[] gambarBytes = rslt.getBytes("logo");
+                
+                if (gambarBytes != null) {
+                    
+                    // Konversi byte menjadi icon, lalu sesuaikan ukurannya dengan komponen
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+                    
+                    // Hapus teks default label, lalu pasang gambarnya
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    // Paksa komponen untuk tampil ulang
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -61,6 +100,7 @@ public class Login extends javax.swing.JFrame {
         btnClear = new javax.swing.JButton();
         btnLogin = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
+        labelLogo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login Page");
@@ -118,6 +158,8 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        labelLogo.setText("logo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,16 +172,20 @@ public class Login extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
                             .addComponent(txtUsername))
                         .addGap(51, 51, 51))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRegister)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                     .addComponent(btnClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(40, 40, 40))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(labelLogo)
+                .addGap(72, 72, 72))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,11 +202,13 @@ public class Login extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                .addComponent(labelLogo)
+                .addGap(68, 68, 68))
         );
 
         pack();
@@ -169,8 +217,13 @@ public class Login extends javax.swing.JFrame {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         // TODO add your handling code here:
         
+        // setText, digunakan untuk memanipulasi value atau isi dari suatu input sesuai apa yang kita inginkan,
+        // karena disini digunakan untuk menghapus maka kita set menjadi "" atau kosong.
         txtUsername.setText("");
         txtPassword.setText("");
+        
+        // requestFocus, digunakan untuk otomatis kursor otomatis berkedip di inputan sehingga langsung bisa diinput.
+        // ini memudahkan pengguna agar tidak scroll ke input dulu untuk mengetik.
         txtUsername.requestFocus();
     }//GEN-LAST:event_btnClearActionPerformed
 
@@ -178,28 +231,34 @@ public class Login extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             
+            // Deklarasi berdasar Variabel Name dari inputan
             String username = txtUsername.getText();
             
             char[] passwordStr = txtPassword.getPassword();
             String password = new String(passwordStr);
             Arrays.fill(passwordStr, ' ');
             
-            // Validation If All Input Empty
+            // Validasi jika inputan kosong maka tampil alert
             if (username.isEmpty() || password.isEmpty())
             {
                 JOptionPane.showMessageDialog(this, "Seluruh Input Harus Diisi!!!", "Input Empty", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            
+            // Jika sudah tidak kosong maka jalankan query utama untuk login
             else
             {
                 pst = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
                 pst.setString(1, username);
                 pst.setString(2, password);
 
+                // Menggunakan rslt untuk query SELECT jika CRUD gunakan int k = pst.executeUpdate();
                 rslt = pst.executeQuery();
-
+                
                 if (rslt.next())
                 {
+                    // Jika Sesuai maka tampil alert lalu pindah ke Dashboard
+                    
                     JOptionPane.showMessageDialog(this, "Login Berhasil, Diarahkan ke Dashboard", "Login Success", JOptionPane.INFORMATION_MESSAGE);
                     Dashboard dashboard_page = new Dashboard(username);
                     dashboard_page.setVisible(true);
@@ -207,6 +266,7 @@ public class Login extends javax.swing.JFrame {
                 }
                 else
                 {
+                    // Alert Gagal Login
                     JOptionPane.showMessageDialog(this, "Data Tidak Ditemukan \nSilahkan cek kembali data anda!!!", "Login Failed", JOptionPane.WARNING_MESSAGE);
                 }
             }
@@ -266,6 +326,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel labelLogo;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables

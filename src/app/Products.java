@@ -70,6 +70,8 @@ public class Products extends javax.swing.JFrame {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
 
     public void Fetch()
     {
@@ -78,6 +80,7 @@ public class Products extends javax.swing.JFrame {
                 "SELECT " +
                 "p.id, " +
                 "p.nama, " +
+                "p.kode_barang, " +
                 "p.deskripsi, " +
                 "p.harga, " +
                 "p.stok, " +
@@ -98,6 +101,7 @@ public class Products extends javax.swing.JFrame {
             {
                 Vector v2 = new Vector();
                 v2.add(rslt.getInt("id"));
+                v2.add(rslt.getString("kode_barang"));
                 v2.add(rslt.getString("nama"));
                 v2.add(rslt.getString("deskripsi"));
                 v2.add(rslt.getDouble("harga"));
@@ -455,17 +459,17 @@ public class Products extends javax.swing.JFrame {
 
         tblTampilProducts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "id", "nama", "deskripsi", "harga", "stok", "kategori", "brand"
+                "id", "kode_barang", "nama", "deskripsi", "harga", "stok", "kategori", "brand"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -620,21 +624,57 @@ public class Products extends javax.swing.JFrame {
         }
         
         int id = (int) tblTampilProducts.getValueAt(pilihBaris, 0);
-        String nama =(String) tblTampilProducts.getValueAt(pilihBaris, 1);
-        String deskripsi = (String) tblTampilProducts.getValueAt(pilihBaris, 2);
-        Double harga = (Double) tblTampilProducts.getValueAt(pilihBaris, 3);
-        int stok = (int) tblTampilProducts.getValueAt(pilihBaris, 4);
-        String kategori = (String) tblTampilProducts.getValueAt(pilihBaris, 5);
-        String brand = (String) tblTampilProducts.getValueAt(pilihBaris, 6);
+        String kodeBarang = (String) tblTampilProducts.getValueAt(pilihBaris, 1);
+        String nama =(String) tblTampilProducts.getValueAt(pilihBaris, 2);
+        String deskripsi = (String) tblTampilProducts.getValueAt(pilihBaris, 3);
+        Double harga = (Double) tblTampilProducts.getValueAt(pilihBaris, 4);
+        int stok = (int) tblTampilProducts.getValueAt(pilihBaris, 5);
+        String kategori = (String) tblTampilProducts.getValueAt(pilihBaris, 6);
+        String brand = (String) tblTampilProducts.getValueAt(pilihBaris, 7);
         
-        ProductsForm products_form_page = new ProductsForm(usernameForPage, id, nama, deskripsi, harga, stok, kategori, brand);
+        ProductsForm products_form_page = new ProductsForm(usernameForPage, id, kodeBarang ,nama, deskripsi, harga, stok, kategori, brand);
         products_form_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            
+            int pilihBaris = tblTampilProducts.getSelectedRow();
+            
+            if (pilihBaris == -1)
+            {
+                JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Produk Dahulu", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
+            }
+            
+            String nama_produk = (String) tblTampilProducts.getValueAt(pilihBaris, 1);
+            
+            int konfirmasi = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus Produk " + nama_produk + "?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+            
+            if (konfirmasi == JOptionPane.YES_OPTION)
+            {
+                int productsId = (int) tblTampilProducts.getValueAt(pilihBaris, 0);
+            
+                pst = conn.prepareStatement("DELETE FROM products WHERE id = ?");
+                pst.setInt(1, productsId);
 
+                int k = pst.executeUpdate();
+
+                if (k == 1)
+                    {
+                        JOptionPane.showMessageDialog(this, "Product Berhasil Dihapus!!!", "Hapus Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
+                        Fetch();
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(this, "Product Gagal Dihapus!!!", "Hapus Produk Gagal", JOptionPane.WARNING_MESSAGE);
+                    }
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**

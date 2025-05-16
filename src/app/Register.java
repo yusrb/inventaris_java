@@ -5,10 +5,12 @@
  */
 package app;
 
+import java.awt.Image;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,16 +23,18 @@ public class Register extends javax.swing.JFrame {
      * Creates new form Login
      */
     public Register() {
-        initComponents();
-        Connection();
+        initComponents();   // menampilkan seluruh design yang telah kita buat dan panggil ke method utama kita.
+        Connection();          // memanggil method Connection yang digunakan untuk menghubungkan dengan database MySQL.
+        getLogo();               // memanggil data logo dari settings
         
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null);    // Digunakan untuk membuat tampilan ketika pertama kali diRun maka berada tepat di tengah layar
     }
     
-    Connection conn;
-    PreparedStatement pst;
-    ResultSet rslt;
-    
+    // Deklarasi untuk penggunaan JConnector
+    Connection conn;                    // variebel penghubung database
+    PreparedStatement pst;       //  objek yang berisi perintah SQL
+    ResultSet rslt;                      //  hasil dari query, digunakan khusus untuk query SELECT jika CRUD maka menggunakan int k.
+
     public void Connection()
     {
         try {
@@ -40,6 +44,29 @@ public class Register extends javax.swing.JFrame {
             Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void getLogo() {
+        try {
+            pst = conn.prepareStatement("SELECT logo FROM settings WHERE id = 1");
+            rslt = pst.executeQuery();
+
+            if (rslt.next()) {
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -63,6 +90,7 @@ public class Register extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         txtConfirmPassword = new javax.swing.JPasswordField();
+        labelLogo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Register Page");
@@ -120,6 +148,8 @@ public class Register extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Palatino Linotype", 0, 20)); // NOI18N
         jLabel4.setText("Confirm Password");
 
+        labelLogo.setText("logo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -129,9 +159,6 @@ public class Register extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnLogin)
-                        .addContainerGap(207, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
@@ -139,11 +166,15 @@ public class Register extends javax.swing.JFrame {
                             .addComponent(txtUsername)
                             .addComponent(jLabel4)
                             .addComponent(txtConfirmPassword))
-                        .addGap(51, 51, 51)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(28, 28, 28))))
+                        .addGap(51, 51, 51))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnLogin)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 523, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelLogo))
+                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,8 +197,10 @@ public class Register extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(btnLogin)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnLogin)
+                    .addComponent(labelLogo))
                 .addGap(35, 35, 35))
         );
 
@@ -197,18 +230,20 @@ public class Register extends javax.swing.JFrame {
             String confirmPassword = new String(confirmPasswordStr);
             Arrays.fill(confirmPasswordStr, ' ');
             
-            // Validation If All Input Empty
+            // Validasi jika seluruh input kosong
             if (username.isEmpty() || password.isEmpty())
             {
                 JOptionPane.showMessageDialog(this, "Seluruh Input Harus Diisi!!!", "Input Empty", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            // Validation to fits Password and Confirm Password       
+            // Validasi jika password tidak sama dengan confirmPassword
             else if (!password.equals(confirmPassword))
             {
                 JOptionPane.showMessageDialog(this, "Password dan Konfirmasi Password Harus Sesuai!!!", "Password not equals Confirm Password", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            
+            // Jika Validasi sudah terpenuhi maka jalankan query register dengan INSERT
             else
             {
                 pst = conn.prepareStatement("INSERT INTO users(username, password) VALUES (?, ?)");
@@ -287,6 +322,7 @@ public class Register extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel labelLogo;
     private javax.swing.JPasswordField txtConfirmPassword;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;

@@ -596,10 +596,8 @@ public class Users extends javax.swing.JFrame {
             return;
         }
         
-        // Ambil Id User dari Tabel
         int userID = (int) tblTampilUsers.getValueAt(pilihBaris, 0);
         
-        // Ambil Username User dari Tabel untuk usernameLama untuk constructors di userForm
         String userUsername = (String) tblTampilUsers.getValueAt(pilihBaris, 1);
         
         UsersForm updateUserForm = new UsersForm(usernameForPage, userID, userUsername);

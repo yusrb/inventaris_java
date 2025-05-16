@@ -32,13 +32,13 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtPassword" alignment="0" pref="212" max="32767" attributes="0"/>
+                          <Component id="txtPassword" alignment="0" pref="711" max="32767" attributes="0"/>
                           <Component id="txtUsername" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="51" pref="51" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="btnRegister" min="-2" pref="199" max="-2" attributes="0"/>
+                      <Component id="btnRegister" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -47,6 +47,11 @@
                   <Component id="btnClear" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="labelLogo" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -67,12 +72,14 @@
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txtPassword" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="btnRegister" min="-2" pref="26" max="-2" attributes="0"/>
                   </Group>
                   <Component id="btnLogin" min="-2" pref="72" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="70" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="btnRegister" min="-2" pref="26" max="-2" attributes="0"/>
+              <EmptySpace pref="126" max="32767" attributes="0"/>
+              <Component id="labelLogo" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -171,6 +178,11 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRegisterActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelLogo">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="logo"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
