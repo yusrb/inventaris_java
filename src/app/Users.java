@@ -5,10 +5,12 @@
  */
 package app;
 
+import java.awt.Image;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -23,13 +25,14 @@ public class Users extends javax.swing.JFrame {
      * Creates new form Dashboard
      */
     
+    // Variabel untuk menyimpan username yang sedang login
     private final String usernameForPage;
     
     public Users(String username) {
         initComponents();
         Connection();
         Fetch();
-        getNameApplication();
+        getSettings();
         
         usernameForPage = username;
         txtUsernameForPage.setText(usernameForPage);
@@ -54,10 +57,10 @@ public class Users extends javax.swing.JFrame {
         }
     }
     
-    public void getNameApplication()
+    public void getSettings()
     {
         try {
-            pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
+            pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
             
             rslt = pst.executeQuery();
             
@@ -65,6 +68,18 @@ public class Users extends javax.swing.JFrame {
             {
                 txtNamePageTop.setText(rslt.getString("name_application"));
                 txtNamePageBottom.setText(rslt.getString("name_application"));
+                
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -119,9 +134,10 @@ public class Users extends javax.swing.JFrame {
         btnSuppliers = new javax.swing.JButton();
         txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        txtNamePageTop = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        labelLogo = new javax.swing.JLabel();
+        txtNamePageTop = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnCreate = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
@@ -347,10 +363,6 @@ public class Users extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(123, 104, 238));
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 36)); // NOI18N
-        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
-        txtNamePageTop.setText("namePage");
-
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setForeground(new java.awt.Color(255, 51, 51));
         btnLogout.setText("Logout");
@@ -374,26 +386,36 @@ public class Users extends javax.swing.JFrame {
             }
         });
 
+        labelLogo.setText("logo");
+
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageTop.setText("namePage");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(33, 33, 33)
+                .addComponent(labelLogo)
+                .addGap(20, 20, 20)
                 .addComponent(txtNamePageTop)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1144, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(txtNamePageTop)
-                .addContainerGap(32, Short.MAX_VALUE))
-            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
             .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNamePageTop)
+                    .addComponent(labelLogo))
+                .addGap(18, 18, 18))
         );
 
         jLabel3.setFont(new java.awt.Font("Palatino Linotype", 1, 18)); // NOI18N
@@ -459,7 +481,7 @@ public class Users extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
+                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -469,7 +491,7 @@ public class Users extends javax.swing.JFrame {
                                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel3)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(38, Short.MAX_VALUE))))
+                        .addContainerGap(61, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -701,6 +723,7 @@ public class Users extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelLogo;
     private javax.swing.JTable tblTampilUsers;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;

@@ -157,7 +157,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
         txtHarga = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Users Form");
+        setTitle("Product Form Page");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Kode Barang");
@@ -329,14 +329,13 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtStokAlert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -400,7 +399,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
 
             if (mode.equals("create")) {
                 pst = conn.prepareStatement(
-                    "INSERT INTO products (kode_barang, nama, deskripsi, harga, stok, stok_alert, category_id, brand_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO products (kode_barang, nama, deskripsi, harga, stok, stok_alert, category_id, brand_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
                 );
                 pst.setString(1, kodeBarang);
                 pst.setString(2, nama);

@@ -27,37 +27,28 @@ public class Settings extends javax.swing.JFrame {
      * Creates new form Dashboard
      */
     
-    // Variabel untuk menyimpan username dari halaman sebelumnya
     private final String usernameForPage;
 
-    // Konstruktor Settings
     public Settings(String username) {
-        initComponents();          // Inisialisasi komponen UI
-        Connection();              // Panggil method untuk koneksi ke database
-        getNameApplication();      // Ambil dan tampilkan nama aplikasi dari database
-        getLogo();                 // Ambil dan tampilkan logo aplikasi dari database
+        initComponents();
+        Connection();
+        getSettings();
 
-        // Set username yang akan ditampilkan di halaman
         usernameForPage = username;
         txtUsernameForPage.setText(usernameForPage);
 
-        // Atur lokasi form di tengah dan buka dalam mode full screen
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
-
-    // Deklarasi objek koneksi dan SQL
+    
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
 
-    // Method untuk membuat koneksi ke database MySQL
     public void Connection() {
         try {
-            // Load driver JDBC
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Buat koneksi ke database inventaris_java dengan user root tanpa password
             conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -66,47 +57,29 @@ public class Settings extends javax.swing.JFrame {
         }
     }
 
-    // Method untuk mengambil nama aplikasi dari tabel settings
-    public void getNameApplication() {
+    public void getSettings()
+    {
         try {
-            // Query untuk ambil name_application
-            pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
+            pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
+            
             rslt = pst.executeQuery();
-
-            // Jika data ditemukan, tampilkan di berbagai field
-            if (rslt.next()) {
-                String name = rslt.getString("name_application");
-                txtInputNameApplication.setText(name);
-                txtNameApplicationTop.setText(name);
-                txtNameApplicationBottom.setText(name);
-            } else {
-                // Jika tidak ada data, set kosong
-                txtInputNameApplication.setText("");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    // Method untuk mengambil dan menampilkan logo dari tabel settings
-    private void getLogo() {
-        try {
-            // Query untuk ambil logo berdasarkan id = 1
-            pst = conn.prepareStatement("SELECT logo FROM settings WHERE id = 1");
-            rslt = pst.executeQuery();
-
-            if (rslt.next()) {
-                // Ambil data gambar dalam bentuk byte array
+            
+            if (rslt.next())
+            {
+                txtNamePageTop.setText(rslt.getString("name_application"));
+                txtNameApplicationBottom.setText(rslt.getString("name_application"));
+                txtInputNameApplication.setText(rslt.getString("name_application"));
+                
                 byte[] gambarBytes = rslt.getBytes("logo");
                 if (gambarBytes != null) {
-                    // Konversi byte menjadi ImageIcon
                     ImageIcon icon = new ImageIcon(gambarBytes);
-
-                    // Resize gambar agar sesuai tampilan label
-                    Image img = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-
-                    // Set gambar ke komponen labelLogo
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
                     labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
                 }
             }
         } catch (SQLException ex) {
@@ -138,14 +111,14 @@ public class Settings extends javax.swing.JFrame {
         btnSuppliers = new javax.swing.JButton();
         txtNameApplicationBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        txtNameApplicationTop = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        txtNamePageTop = new javax.swing.JLabel();
+        labelLogo = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnUpdate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtInputNameApplication = new javax.swing.JTextArea();
-        labelLogo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Settings Page");
@@ -317,10 +290,6 @@ public class Settings extends javax.swing.JFrame {
         txtNameApplicationBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
         txtNameApplicationBottom.setForeground(new java.awt.Color(255, 255, 255));
         txtNameApplicationBottom.setText("namePage");
-        txtNameApplicationBottom.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-            javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1),
-            javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -369,10 +338,6 @@ public class Settings extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(123, 104, 238));
 
-        txtNameApplicationTop.setFont(new java.awt.Font("Palatino Linotype", 1, 36)); // NOI18N
-        txtNameApplicationTop.setForeground(new java.awt.Color(255, 255, 255));
-        txtNameApplicationTop.setText("namePage");
-
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setForeground(new java.awt.Color(255, 51, 51));
         btnLogout.setText("Logout");
@@ -396,26 +361,36 @@ public class Settings extends javax.swing.JFrame {
             }
         });
 
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageTop.setText("namePage");
+
+        labelLogo.setText("logo");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(txtNameApplicationTop)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 469, Short.MAX_VALUE)
+                .addGap(33, 33, 33)
+                .addComponent(labelLogo)
+                .addGap(20, 20, 20)
+                .addComponent(txtNamePageTop)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(txtNameApplicationTop)
-                .addContainerGap(32, Short.MAX_VALUE))
-            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
             .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNamePageTop)
+                    .addComponent(labelLogo))
+                .addGap(18, 18, 18))
         );
 
         jLabel3.setFont(new java.awt.Font("Palatino Linotype", 1, 32)); // NOI18N
@@ -443,19 +418,14 @@ public class Settings extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(34, 34, 34)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3))
-                            .addContainerGap()))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(369, 369, 369)
-                        .addComponent(labelLogo)
-                        .addContainerGap())))
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addContainerGap(532, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -468,9 +438,7 @@ public class Settings extends javax.swing.JFrame {
                 .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(labelLogo)
-                .addGap(85, 85, 85))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -480,17 +448,17 @@ public class Settings extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         int pilihan = JOptionPane.showConfirmDialog(this, "Yakin Ingin Logout?", "Konfirmasi Logout", JOptionPane.YES_NO_OPTION);
-        
+
         if (pilihan == JOptionPane.YES_OPTION)
         {
-            JOptionPane.showMessageDialog(this, "Anda Berhasil Logout\nSilahkan Login Kembali", "Logout Berhasil",  JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Anda Berhasil Logout\nSilahkan Login Kembali", "Logout Berhasil", JOptionPane.INFORMATION_MESSAGE);
+
             Login login_page = new Login();
             login_page.setVisible(true);
+
             this.dispose();
         }
     }//GEN-LAST:event_btnLogoutActionPerformed
-
-    // Navigasi Dashboard Start
     
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         // TODO add your handling code here:
@@ -555,49 +523,44 @@ public class Settings extends javax.swing.JFrame {
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
-
-    // Navigasi Dashboard End
     
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         try {
-            // Ambil input nama aplikasi dari field teks
             String name_application = txtInputNameApplication.getText();
 
-            // Inisialisasi file chooser untuk memilih file gambar
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Pilih Logo Aplikasi");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); // Hanya izinkan file
-            fileChooser.setAcceptAllFileFilterUsed(false); // Nonaktifkan "All Files"
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.setAcceptAllFileFilterUsed(false);
 
-            // Filter file agar hanya menampilkan file gambar dengan ekstensi tertentu
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Gambar", "jpg", "jpeg", "png", "gif");
             fileChooser.addChoosableFileFilter(filter);
 
-            // Tampilkan dialog untuk memilih file
             int hasil = fileChooser.showOpenDialog(this);
             if (hasil != JFileChooser.APPROVE_OPTION) {
-                // Jika user tidak memilih file, tampilkan peringatan
                 JOptionPane.showMessageDialog(this, "Pilih gambar untuk logo!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            // Ambil file gambar yang dipilih
+            
             File fileGambar = fileChooser.getSelectedFile();
+            
+            long ukuranMaks = 16 * 1024 * 1024;
+            if (fileGambar.length() > ukuranMaks) {
+                JOptionPane.showMessageDialog(this, "Ukuran gambar terlalu besar! Maksimal 2MB.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
             FileInputStream fis = new FileInputStream(fileGambar);
 
-            // Siapkan query untuk update nama aplikasi dan logo
             pst = conn.prepareStatement("UPDATE settings SET name_application = ?, logo = ? WHERE id = 1");
             pst.setString(1, name_application);
             pst.setBinaryStream(2, fis, (int) fileGambar.length());
 
-            // Eksekusi query
             int k = pst.executeUpdate();
 
-            // Cek update berhasil tidak
             if (k == 1) {
                 JOptionPane.showMessageDialog(this, "Nama Aplikasi dan Logo Berhasil DiUpdate!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
-                getNameApplication(); // Refresh nama aplikasi di UI
-                getLogo(); // Refresh logo di UI
+                getSettings();
             } else {
                 JOptionPane.showMessageDialog(this, "Update Gagal!", "Update Failed", JOptionPane.WARNING_MESSAGE);
             }
@@ -672,7 +635,7 @@ public class Settings extends javax.swing.JFrame {
     private javax.swing.JLabel labelLogo;
     private javax.swing.JTextArea txtInputNameApplication;
     private javax.swing.JLabel txtNameApplicationBottom;
-    private javax.swing.JLabel txtNameApplicationTop;
+    private javax.swing.JLabel txtNamePageTop;
     private javax.swing.JLabel txtUsernameForPage;
     // End of variables declaration//GEN-END:variables
 }

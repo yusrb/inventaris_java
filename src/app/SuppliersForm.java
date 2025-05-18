@@ -99,7 +99,7 @@ public class SuppliersForm extends javax.swing.JFrame {
         txtKontak = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Users Form");
+        setTitle("Supplier Page");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Supplier");

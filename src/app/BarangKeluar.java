@@ -5,12 +5,15 @@
  */
 package app;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.print.PrinterException;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -31,9 +34,10 @@ public class BarangKeluar extends javax.swing.JFrame {
     public BarangKeluar(String username) {
         initComponents();
         Connection();
+        setAlertStock();
         Fetch();
         
-        getNameApplication();
+        getSettings();
         
         usernameForPage = username;
         txtUsernameForPage.setText(usernameForPage);
@@ -58,10 +62,10 @@ public class BarangKeluar extends javax.swing.JFrame {
         }
     }
     
-    public void getNameApplication()
+    public void getSettings()
     {
         try {
-            pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
+            pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
             
             rslt = pst.executeQuery();
             
@@ -69,6 +73,18 @@ public class BarangKeluar extends javax.swing.JFrame {
             {
                 txtNamePageTop.setText(rslt.getString("name_application"));
                 txtNamePageBottom.setText(rslt.getString("name_application"));
+                
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,6 +129,38 @@ public class BarangKeluar extends javax.swing.JFrame {
             Logger.getLogger(BarangKeluar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void setAlertStock() {
+        try {
+            pst = conn.prepareStatement("SELECT nama, stok, stok_alert FROM products WHERE stok < stok_alert");
+            rslt = pst.executeQuery();
+            StringBuilder alertMessage = new StringBuilder("<html>");
+
+            while (rslt.next()) {
+                String namaProduk = rslt.getString("nama");
+                int stok = rslt.getInt("stok");
+                int stokAlert = rslt.getInt("stok_alert");
+
+                alertMessage.append("PERINGATAN: Stok ")
+                    .append(namaProduk)
+                    .append(" rendah (")
+                    .append(stok).append("/").append(stokAlert).append(")<br>");
+            }
+
+            alertMessage.append("</html>");
+
+            if (alertMessage.length() > 6) {
+                lblStokAlert.setText(alertMessage.toString());
+                lblStokAlert.setForeground(Color.RED);
+            } else {
+                lblStokAlert.setText("");
+            }
+
+        } catch (SQLException ex) {
+            lblStokAlert.setText("❌ Gagal memeriksa stok");
+            lblStokAlert.setForeground(Color.GRAY);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -138,9 +186,10 @@ public class BarangKeluar extends javax.swing.JFrame {
         btnSuppliers = new javax.swing.JButton();
         txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        txtNamePageTop = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        txtNamePageTop = new javax.swing.JLabel();
+        labelLogo = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnCreate = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
@@ -148,9 +197,10 @@ public class BarangKeluar extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTampilBarangKeluar = new javax.swing.JTable();
         btnCetak = new javax.swing.JButton();
+        lblStokAlert = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Users Page");
+        setTitle("Barang Keluar Page");
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -367,10 +417,6 @@ public class BarangKeluar extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(123, 104, 238));
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 36)); // NOI18N
-        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
-        txtNamePageTop.setText("namePage");
-
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setForeground(new java.awt.Color(255, 51, 51));
         btnLogout.setText("Logout");
@@ -394,26 +440,36 @@ public class BarangKeluar extends javax.swing.JFrame {
             }
         });
 
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageTop.setText("namePage");
+
+        labelLogo.setText("logo");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(33, 33, 33)
+                .addComponent(labelLogo)
+                .addGap(20, 20, 20)
                 .addComponent(txtNamePageTop)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1144, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(txtNamePageTop)
-                .addContainerGap(32, Short.MAX_VALUE))
+            .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
             .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNamePageTop)
+                    .addComponent(labelLogo))
+                .addGap(18, 18, 18))
         );
 
         jLabel3.setFont(new java.awt.Font("Palatino Linotype", 1, 18)); // NOI18N
@@ -479,6 +535,10 @@ public class BarangKeluar extends javax.swing.JFrame {
             }
         });
 
+        lblStokAlert.setFont(new java.awt.Font("Tahoma", 3, 20)); // NOI18N
+        lblStokAlert.setForeground(new java.awt.Color(255, 51, 51));
+        lblStokAlert.setText("Warning");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -500,7 +560,8 @@ public class BarangKeluar extends javax.swing.JFrame {
                                 .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel3)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblStokAlert))
                         .addContainerGap(38, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -508,7 +569,9 @@ public class BarangKeluar extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
+                .addGap(18, 18, 18)
+                .addComponent(lblStokAlert)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -764,6 +827,8 @@ public class BarangKeluar extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelLogo;
+    private javax.swing.JLabel lblStokAlert;
     private javax.swing.JTable tblTampilBarangKeluar;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;

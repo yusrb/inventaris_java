@@ -88,7 +88,7 @@ public class CategoryForm extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Brands Form");
+        setTitle("Category Page");
 
         btnAction.setForeground(new java.awt.Color(255, 255, 255));
         btnAction.setText("Action");

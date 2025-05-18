@@ -5,10 +5,12 @@
  */
 package app;
 
+import java.awt.Image;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -29,7 +31,7 @@ public class Suppliers extends javax.swing.JFrame {
         initComponents();
         Connection();
         Fetch();
-        getNameApplication();
+        getSettings();
         
         usernameForPage = username;
         txtUsernameForPage.setText(usernameForPage);
@@ -54,10 +56,10 @@ public class Suppliers extends javax.swing.JFrame {
         }
     }
     
-    public void getNameApplication()
+    public void getSettings()
     {
         try {
-            pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
+            pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
             
             rslt = pst.executeQuery();
             
@@ -65,6 +67,18 @@ public class Suppliers extends javax.swing.JFrame {
             {
                 txtNamePageTop.setText(rslt.getString("name_application"));
                 txtNamePageBottom.setText(rslt.getString("name_application"));
+                
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -121,15 +135,19 @@ public class Suppliers extends javax.swing.JFrame {
         btnSuppliers = new javax.swing.JButton();
         txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        txtNamePageTop = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        labelLogo = new javax.swing.JLabel();
+        txtNamePageTop = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnCreate = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTampilSuppliers = new javax.swing.JTable();
+        btnDetail = new javax.swing.JButton();
+        btnSearch = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Suppliers Page");
@@ -350,10 +368,6 @@ public class Suppliers extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(123, 104, 238));
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 36)); // NOI18N
-        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
-        txtNamePageTop.setText("namePage");
-
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setForeground(new java.awt.Color(255, 51, 51));
         btnLogout.setText("Logout");
@@ -377,12 +391,20 @@ public class Suppliers extends javax.swing.JFrame {
             }
         });
 
+        labelLogo.setText("logo");
+
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageTop.setText("namePage");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(33, 33, 33)
+                .addComponent(labelLogo)
+                .addGap(20, 20, 20)
                 .addComponent(txtNamePageTop)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -391,12 +413,14 @@ public class Suppliers extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtNamePageTop)
-                .addGap(26, 26, 26))
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNamePageTop)
+                    .addComponent(labelLogo))
+                .addGap(18, 18, 18))
         );
 
         jLabel3.setFont(new java.awt.Font("Palatino Linotype", 1, 18)); // NOI18N
@@ -453,6 +477,26 @@ public class Suppliers extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblTampilSuppliers);
 
+        btnDetail.setBackground(new java.awt.Color(153, 153, 255));
+        btnDetail.setForeground(new java.awt.Color(255, 255, 255));
+        btnDetail.setText("Detail");
+        btnDetail.setBorderPainted(false);
+        btnDetail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailActionPerformed(evt);
+            }
+        });
+
+        btnSearch.setBackground(new java.awt.Color(123, 104, 238));
+        btnSearch.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        btnSearch.setForeground(new java.awt.Color(255, 255, 255));
+        btnSearch.setText(">");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -464,14 +508,21 @@ public class Suppliers extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel3)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnDetail)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 0, 0)
+                                    .addComponent(btnSearch))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(38, 38, 38))))
         );
         layout.setVerticalGroup(
@@ -482,10 +533,15 @@ public class Suppliers extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDetail))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.Alignment.TRAILING)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -647,6 +703,55 @@ public class Suppliers extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
+        // TODO add your handling code here:
+        
+        int pilihBaris = tblTampilSuppliers.getSelectedRow();
+        
+        if (pilihBaris == -1)
+        {
+            JOptionPane.showMessageDialog(this, "Supplier Tidak Ditemukan\nPilih Brand Dulu", "Supplier Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
+        }
+        
+        int supplierId = (int) tblTampilSuppliers.getValueAt(pilihBaris, 0);
+        
+        SupplierDetail supplier_detail_page = new SupplierDetail(usernameForPage, supplierId);
+        supplier_detail_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnDetailActionPerformed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+
+        String keyword = txtSearch.getText();
+
+        if (keyword.isEmpty()) {
+            Fetch();
+            return;
+        }
+
+        try {
+            String sql = "SELECT * FROM suppliers WHERE nama_supplier LIKE ?";
+
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "%" + keyword + "%");
+            rslt = pst.executeQuery();
+
+            DefaultTableModel df = (DefaultTableModel) tblTampilSuppliers.getModel();
+            df.setRowCount(0);
+
+            while (rslt.next()) {
+                Vector v2 = new Vector();
+                v2.add(rslt.getInt("id"));
+                v2.add(rslt.getString("nama_supplier"));
+                df.addRow(v2);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnSearchActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -689,9 +794,11 @@ public class Suppliers extends javax.swing.JFrame {
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDetail;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnProducts;
     private javax.swing.JButton btnRecord;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnSuppliers;
     private javax.swing.JButton btnTransactions;
@@ -704,9 +811,11 @@ public class Suppliers extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelLogo;
     private javax.swing.JTable tblTampilSuppliers;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;
+    private javax.swing.JTextField txtSearch;
     private javax.swing.JLabel txtUsernameForPage;
     // End of variables declaration//GEN-END:variables
 }

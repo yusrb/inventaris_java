@@ -5,9 +5,11 @@
  */
 package app;
 
+import java.awt.Image;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -26,7 +28,7 @@ public class Transactions extends javax.swing.JFrame {
     public Transactions(String username) {
         initComponents();
         Connection();
-        getNameApplication();
+        getSettings();
         getCountBarangMasuk();
         getCountBarangKeluar();
         getCountBarangDipinjam();
@@ -55,10 +57,10 @@ public class Transactions extends javax.swing.JFrame {
         }
     }
     
-    public void getNameApplication()
+    public void getSettings()
     {
         try {
-            pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
+            pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
             
             rslt = pst.executeQuery();
             
@@ -66,6 +68,18 @@ public class Transactions extends javax.swing.JFrame {
             {
                 txtNamePageTop.setText(rslt.getString("name_application"));
                 txtNamePageBottom.setText(rslt.getString("name_application"));
+                
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
@@ -156,9 +170,10 @@ public class Transactions extends javax.swing.JFrame {
         btnSuppliers = new javax.swing.JButton();
         txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        txtNamePageTop = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        labelLogo = new javax.swing.JLabel();
+        txtNamePageTop = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -391,10 +406,6 @@ public class Transactions extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(123, 104, 238));
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 36)); // NOI18N
-        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
-        txtNamePageTop.setText("namePage");
-
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setForeground(new java.awt.Color(255, 51, 51));
         btnLogout.setText("Logout");
@@ -418,12 +429,20 @@ public class Transactions extends javax.swing.JFrame {
             }
         });
 
+        labelLogo.setText("logo");
+
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageTop.setText("namePage");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(33, 33, 33)
+                .addComponent(labelLogo)
+                .addGap(20, 20, 20)
                 .addComponent(txtNamePageTop)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -432,12 +451,14 @@ public class Transactions extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(txtNamePageTop)
-                .addContainerGap(32, Short.MAX_VALUE))
-            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
             .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNamePageTop)
+                    .addComponent(labelLogo))
+                .addGap(18, 18, 18))
         );
 
         jPanel4.setBackground(new java.awt.Color(123, 104, 238));
@@ -500,18 +521,22 @@ public class Transactions extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
         jLabel5.setText("Total Barang Keluar");
 
+        txtCountBarangMasuk.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         txtCountBarangMasuk.setText("total_barang_masuk");
 
+        txtCountBarangKeluar.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         txtCountBarangKeluar.setText("total_barang_keluar");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
         jLabel8.setText("Total Barang Dipinjam");
 
+        txtCountBarangDipinjam.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         txtCountBarangDipinjam.setText("total_barang_dipinjam");
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
         jLabel9.setText("Total Barang Dikembalikan");
 
+        txtCountBarangDikembalikan.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         txtCountBarangDikembalikan.setText("total_barang_dikembalikan");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -546,14 +571,14 @@ public class Transactions extends javax.swing.JFrame {
                                                 .addGap(81, 81, 81)
                                                 .addComponent(txtCountBarangDikembalikan))))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(107, 107, 107)
-                                        .addComponent(txtCountBarangMasuk))
-                                    .addGroup(layout.createSequentialGroup()
                                         .addGap(109, 109, 109)
                                         .addComponent(txtCountBarangKeluar))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(111, 111, 111)
-                                        .addComponent(txtCountBarangDipinjam)))
+                                        .addComponent(txtCountBarangDipinjam))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(105, 105, 105)
+                                        .addComponent(txtCountBarangMasuk)))
                                 .addGap(29, 29, 29)))
                         .addGap(32, 32, 32))))
         );
@@ -758,6 +783,7 @@ public class Transactions extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JLabel labelLogo;
     private javax.swing.JLabel txtCountBarangDikembalikan;
     private javax.swing.JLabel txtCountBarangDipinjam;
     private javax.swing.JLabel txtCountBarangKeluar;

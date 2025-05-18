@@ -110,7 +110,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         
         cmbStatus.addItem("keluar");
         cmbStatus.addItem("dipinjam");
-        cmbStatus.addItem("selesai");
+        cmbStatus.addItem("selesai dipinjam");
     }
 
     /**
@@ -142,7 +142,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         txtJumlah = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Users Form");
+        setTitle("Barang Keluar Form Page");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Produk");
@@ -404,7 +404,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                     int idProdukLama = dataLama.getInt("produk_id");
                     String statusLama = dataLama.getString("status");
 
-                    if (statusLama.equals("dipinjam") && status.equals("selesai")) {
+                    if (statusLama.equals("dipinjam") && status.equals("selesai dipinjam")) {
                         pst = conn.prepareStatement(
                             "UPDATE stock_out SET produk_id = ?, penerima = ?, jumlah = ?, status = ?, tanggal_keluar = ?, deskripsi = ?, tanggal_dikembalikan = ? WHERE id = ?"
                         );

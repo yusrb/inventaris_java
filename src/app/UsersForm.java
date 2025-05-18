@@ -88,7 +88,7 @@ public class UsersForm extends javax.swing.JFrame {
         btnBackToUsersList = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Users Form");
+        setTitle("Users Form Page");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Username");

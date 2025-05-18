@@ -5,11 +5,29 @@
  */
 package app;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.sql.*;
+import java.util.Date;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -22,39 +40,64 @@ public class Record extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
-    
+
     public Record(String username) {
         initComponents();
         Connection();
-        getNameApplication();
-        
+        getSettings();
+
         usernameForPage = username;
         txtUsernameForPage.setText(usernameForPage);
-        
+
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+
+        cal.set(year, Calendar.JANUARY, 1, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date tanggalAwal = cal.getTime();
+
+        cal.set(year, Calendar.DECEMBER, 31, 23, 59, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        Date tanggalAkhir = cal.getTime();
+
+        dtanggal_awal.setDate(tanggalAwal);
+        dtanggal_akhir.setDate(tanggalAkhir);
+
+        tblTampilBarangMasuk.setModel(new DefaultTableModel(
+            new Object[][] {},
+            new String[] {"ID", "Nama Produk", "Jumlah", "Tanggal Masuk", "Supplier", "Deskripsi"}
+        ));
+
+        tblTampilBarangKeluar.setModel(new DefaultTableModel(
+            new Object[][] {},
+            new String[] {"ID", "Nama Produk", "Penerima", "Jumlah", "Tanggal Keluar", "Tgl Kembali", "Deskripsi", "Status"}
+        ));
+
+        btnTampil.addActionListener(e -> tampilkanData());
+
+        tampilkanData();
     }
-    
+
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
+
+    public void Connection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void getNameApplication()
+
+    public void getSettings()
     {
         try {
-            pst = conn.prepareStatement("SELECT name_application FROM settings LIMIT 1");
+            pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
             
             rslt = pst.executeQuery();
             
@@ -62,12 +105,86 @@ public class Record extends javax.swing.JFrame {
             {
                 txtNamePageTop.setText(rslt.getString("name_application"));
                 txtNamePageBottom.setText(rslt.getString("name_application"));
+                
+                byte[] gambarBytes = rslt.getBytes("logo");
+                if (gambarBytes != null) {
+                    ImageIcon icon = new ImageIcon(gambarBytes);
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    labelLogo.setText("");
+                    labelLogo.setIcon(new ImageIcon(img));
+                    
+                    labelLogo.revalidate();
+                    labelLogo.repaint();
+
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void tampilkanData() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String tAwal = sdf.format(dtanggal_awal.getDate());
+        String tAkhir = sdf.format(dtanggal_akhir.getDate());
+
+        DefaultTableModel modelMasuk = (DefaultTableModel) tblTampilBarangMasuk.getModel();
+        modelMasuk.setRowCount(0);
+
+        try {
+            pst = conn.prepareStatement(
+                "SELECT si.id, p.nama, si.jumlah, si.tanggal_masuk, s.nama_supplier, si.deskripsi " +
+                "FROM stock_in si " +
+                "JOIN products p ON si.produk_id = p.id " +
+                "JOIN suppliers s ON si.supplier_id = s.id " +
+                "WHERE si.tanggal_masuk BETWEEN ? AND ?"
+            );
+            pst.setString(1, tAwal + " 00:00:00");
+            pst.setString(2, tAkhir + " 23:59:59");
+            rslt = pst.executeQuery();
+            while (rslt.next()) {
+                modelMasuk.addRow(new Object[] {
+                    rslt.getInt("id"),
+                    rslt.getString("nama"),
+                    rslt.getInt("jumlah"),
+                    rslt.getTimestamp("tanggal_masuk"),
+                    rslt.getString("nama_supplier"),
+                    rslt.getString("deskripsi")
+                });
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error Barang Masuk: " + ex.getMessage());
+        }
+
+        DefaultTableModel modelKeluar = (DefaultTableModel) tblTampilBarangKeluar.getModel();
+        modelKeluar.setRowCount(0);
+
+        try {
+            pst = conn.prepareStatement(
+                "SELECT so.id, p.nama ,so.penerima, so.jumlah, so.tanggal_keluar, so.tanggal_dikembalikan, so.deskripsi, so.status " +
+                "FROM stock_out so " +
+                "JOIN products p ON so.produk_id = p.id " +
+                "WHERE so.tanggal_keluar BETWEEN ? AND ?"
+            );
+            pst.setString(1, tAwal + " 00:00:00");
+            pst.setString(2, tAkhir + " 23:59:59");
+            rslt = pst.executeQuery();
+            while (rslt.next()) {
+                modelKeluar.addRow(new Object[] {
+                    rslt.getInt("id"),
+                    rslt.getString("nama"),
+                    rslt.getString("penerima"),
+                    rslt.getInt("jumlah"),
+                    rslt.getTimestamp("tanggal_keluar"),
+                    rslt.getDate("tanggal_dikembalikan"),
+                    rslt.getString("deskripsi"),
+                    rslt.getString("status")
+                });
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error Barang Keluar: " + ex.getMessage());
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -93,9 +210,24 @@ public class Record extends javax.swing.JFrame {
         btnSuppliers = new javax.swing.JButton();
         txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        txtNamePageTop = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
+        txtNamePageTop = new javax.swing.JLabel();
+        labelLogo = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        dtanggal_awal = new com.toedter.calendar.JDateChooser();
+        jLabel4 = new javax.swing.JLabel();
+        dtanggal_akhir = new com.toedter.calendar.JDateChooser();
+        btnCetak = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblTampilBarangMasuk = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblTampilBarangKeluar = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        btnTampil = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Record Page");
@@ -308,16 +440,12 @@ public class Record extends javax.swing.JFrame {
                 .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(txtNamePageBottom)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnBrands, btnCategories, btnDashboard, btnProducts, btnRecord, btnSuppliers, btnTransactions, btnUsers});
 
         jPanel3.setBackground(new java.awt.Color(123, 104, 238));
-
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 36)); // NOI18N
-        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
-        txtNamePageTop.setText("namePage");
 
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setForeground(new java.awt.Color(255, 51, 51));
@@ -342,27 +470,120 @@ public class Record extends javax.swing.JFrame {
             }
         });
 
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageTop.setText("namePage");
+
+        labelLogo.setText("logo");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(33, 33, 33)
+                .addComponent(labelLogo)
+                .addGap(20, 20, 20)
                 .addComponent(txtNamePageTop)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 460, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(txtNamePageTop)
-                .addContainerGap(32, Short.MAX_VALUE))
-            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnSettings, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
             .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNamePageTop)
+                    .addComponent(labelLogo))
+                .addGap(18, 18, 18))
         );
+
+        jPanel4.setBackground(new java.awt.Color(123, 104, 238));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Record");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(jLabel3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(25, 25, 25))
+        );
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        jLabel4.setText("-");
+
+        btnCetak.setBackground(new java.awt.Color(0, 0, 0));
+        btnCetak.setForeground(new java.awt.Color(255, 255, 255));
+        btnCetak.setText("Cetak");
+        btnCetak.setBorderPainted(false);
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
+
+        tblTampilBarangMasuk.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "id", "produk", "jumlah", "tanggal masuk", "supplier", "deskripsi"
+            }
+        ));
+        jScrollPane1.setViewportView(tblTampilBarangMasuk);
+
+        tblTampilBarangKeluar.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "id", "produk", "penerima", "jumlah", "tanggal keluar", "tanggal kembali", "deskripsi", "status"
+            }
+        ));
+        jScrollPane2.setViewportView(tblTampilBarangKeluar);
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        jLabel5.setText("Barang Masuk");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        jLabel6.setText("Barang Keluar");
+
+        btnTampil.setBackground(new java.awt.Color(51, 255, 0));
+        btnTampil.setForeground(new java.awt.Color(255, 255, 255));
+        btnTampil.setText("Tampil");
+        btnTampil.setBorderPainted(false);
+
+        btnClear.setBackground(new java.awt.Color(102, 102, 102));
+        btnClear.setForeground(new java.awt.Color(255, 255, 255));
+        btnClear.setText("Reset");
+        btnClear.setBorderPainted(false);
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -370,15 +591,60 @@ public class Record extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(dtanggal_awal, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(dtanggal_akhir, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(15, 15, 15)
+                                .addComponent(btnTampil)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
+                                .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1)
+                            .addComponent(jScrollPane2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(32, 32, 32))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(41, 41, 41)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(dtanggal_awal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dtanggal_akhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnCetak)
+                        .addComponent(btnTampil)
+                        .addComponent(btnClear)))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel6)
+                .addGap(4, 4, 4)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -470,6 +736,125 @@ public class Record extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnRecordActionPerformed
 
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+        
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+
+        cal.set(year, Calendar.JANUARY, 1, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date tanggalAwal = cal.getTime();
+
+        cal.set(year, Calendar.DECEMBER, 31, 23, 59, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        Date tanggalAkhir = cal.getTime();
+
+        dtanggal_awal.setDate(tanggalAwal);
+        dtanggal_akhir.setDate(tanggalAkhir);
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+        // TODO add your handling code here:
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+        String tAwal = sdf.format(dtanggal_awal.getDate());
+        String tAkhir = sdf.format(dtanggal_akhir.getDate());
+
+        String headerText = "LAPORAN DATA BARANG MASUK & KELUAR Periode: " + tAwal + " s/d " + tAkhir;
+
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setJobName("Cetak Laporan Barang Masuk & Keluar");
+
+        job.setPrintable(new Printable() {
+            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                if (pageIndex > 0) return NO_SUCH_PAGE;
+
+                Graphics2D g2d = (Graphics2D) graphics;
+                double margin = 40;
+                g2d.translate(pageFormat.getImageableX() + margin, pageFormat.getImageableY() + margin);
+
+                int printableWidth = (int)(pageFormat.getImageableWidth() - 2 * margin);
+                int y = 0;
+
+                g2d.setFont(new Font("Serif", Font.BOLD, 14));
+                g2d.drawString(headerText, 0, y + 15);
+                y += 30;
+
+                JTable table1 = tblTampilBarangMasuk;
+                y += printTable(g2d, table1, y, printableWidth);
+
+                y += 40;
+
+                JTable table2 = tblTampilBarangKeluar;
+                y += printTable(g2d, table2, y, printableWidth);
+
+                return PAGE_EXISTS;
+            }
+
+            private int printTable(Graphics2D g2d, JTable table, int startY, int pageWidth) {
+                TableModel model = table.getModel();
+                Font font = new Font("Serif", Font.PLAIN, 9);
+                g2d.setFont(font);
+
+                int rowHeight = 18;
+                int headerHeight = 22;
+                int x = 0;
+                int y = startY;
+
+                TableColumnModel colModel = table.getColumnModel();
+                int[] colWidths = new int[colModel.getColumnCount()];
+                int totalWidth = 0;
+
+                for (int i = 0; i < colModel.getColumnCount(); i++) {
+                    colWidths[i] = colModel.getColumn(i).getWidth();
+                    totalWidth += colWidths[i];
+                }
+
+                double scale = (double) pageWidth / totalWidth;
+                for (int i = 0; i < colWidths.length; i++) {
+                    colWidths[i] = (int) (colWidths[i] * scale * 1.14);
+                }
+
+                g2d.setColor(Color.LIGHT_GRAY);
+                g2d.fillRect(x, y, pageWidth, headerHeight);
+                g2d.setColor(Color.BLACK);
+
+                int colX = x;
+                for (int i = 0; i < model.getColumnCount(); i++) {
+                    String colName = model.getColumnName(i);
+                    g2d.drawRect(colX, y, colWidths[i], headerHeight);
+                    g2d.drawString(colName, colX + 3, y + 16);
+                    colX += colWidths[i];
+                }
+
+                y += headerHeight;
+
+                for (int row = 0; row < model.getRowCount(); row++) {
+                    colX = x;
+                    for (int col = 0; col < model.getColumnCount(); col++) {
+                        Object value = model.getValueAt(row, col);
+                        String text = (value == null) ? "" : value.toString();
+                        g2d.drawRect(colX, y, colWidths[col], rowHeight);
+                        g2d.drawString(text, colX + 3, y + 14);
+                        colX += colWidths[col];
+                    }
+                    y += rowHeight;
+                }
+
+                return y - startY;
+            }
+        });
+
+        if (job.printDialog()) {
+            try {
+                job.print();
+            } catch (PrinterException e) {
+                JOptionPane.showMessageDialog(this, "Error saat mencetak: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnCetakActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -509,19 +894,34 @@ public class Record extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrands;
     private javax.swing.JButton btnCategories;
+    private javax.swing.JButton btnCetak;
+    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnProducts;
     private javax.swing.JButton btnRecord;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnSuppliers;
+    private javax.swing.JButton btnTampil;
     private javax.swing.JButton btnTransactions;
     private javax.swing.JButton btnUsers;
+    private com.toedter.calendar.JDateChooser dtanggal_akhir;
+    private com.toedter.calendar.JDateChooser dtanggal_awal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel labelLogo;
+    private javax.swing.JTable tblTampilBarangKeluar;
+    private javax.swing.JTable tblTampilBarangMasuk;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;
     private javax.swing.JLabel txtUsernameForPage;

@@ -29,12 +29,14 @@ public class BarangMasukForm extends javax.swing.JFrame {
     
     private java.util.Map<String, Integer> produkMap = new java.util.HashMap<>();
     private java.util.Map<String, Integer> supplierMap = new java.util.HashMap<>();
+    private java.util.Map<String, Integer> statusMap = new java.util.HashMap<>();
     
     public BarangMasukForm(String username) {
         initComponents();
         Connection();
         loadSuppliers();
         loadProducts();
+        loadStatus();
         
         this.usernameForPage = username;
         
@@ -75,6 +77,14 @@ public class BarangMasukForm extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(BarangMasukForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void loadStatus()
+    {
+        cmbStatus.removeAllItems();
+        
+        cmbStatus.addItem("masuk");
+        cmbStatus.addItem("dibatalkan");
     }
     
     public void loadSuppliers()
@@ -140,11 +150,13 @@ public class BarangMasukForm extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         cmbProduk = new javax.swing.JComboBox<>();
-        dtanggal_masuk = new com.toedter.calendar.JDateChooser();
         cmbSupplier = new javax.swing.JComboBox<>();
+        dtanggal_masuk = new com.toedter.calendar.JDateChooser();
+        jLabel8 = new javax.swing.JLabel();
+        cmbStatus = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Users Form");
+        setTitle("Barang Masuk Form Page");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Produk");
@@ -218,6 +230,11 @@ public class BarangMasukForm extends javax.swing.JFrame {
 
         cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        jLabel8.setText("Status");
+
+        cmbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -240,17 +257,19 @@ public class BarangMasukForm extends javax.swing.JFrame {
                                             .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                .addComponent(dtanggal_masuk, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING))
+                                            .addComponent(dtanggal_masuk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel7)
-                                            .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel8)
+                                            .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(106, 106, 106)))
                                 .addGap(41, 41, 41)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -287,16 +306,21 @@ public class BarangMasukForm extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(dtanggal_masuk, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(dtanggal_masuk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(6, 6, 6))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(27, 27, 27)
-                .addComponent(jLabel4)
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
 
         pack();
@@ -325,97 +349,113 @@ public class BarangMasukForm extends javax.swing.JFrame {
     private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
         // TODO add your handling code here:
 
+        try {
+            String produkDipilih = (String) cmbProduk.getSelectedItem();
+            int idProduk = produkMap.getOrDefault(produkDipilih, -1);
+
+            String supplierDipilih = (String) cmbSupplier.getSelectedItem();
+            int idSupplier = supplierMap.getOrDefault(supplierDipilih, -1);
+
+            String deskripsi = txtDeskripsi.getText();
+            String jumlahBarangTxt = txtJumlah.getText();
+            String status = (String) cmbStatus.getSelectedItem();
+            java.util.Date tgl = dtanggal_masuk.getDate();
+
+            System.out.println("Status yang dipilih: " + status);
+            
+            if (produkDipilih == null || produkDipilih.isEmpty() ||
+                supplierDipilih == null || supplierDipilih.isEmpty() ||
+                jumlahBarangTxt.isEmpty() || deskripsi.isEmpty() ||
+                (status.equalsIgnoreCase("masuk") && tgl == null) ||
+                status == null || idProduk == -1 || idSupplier == -1) {
+
+                JOptionPane.showMessageDialog(this, "Seluruh input harus diisi dengan benar!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int jumlahBarang;
             try {
-                String produkDipilih = (String) cmbProduk.getSelectedItem();
-                int idProduk = produkMap.getOrDefault(produkDipilih, -1);
-
-                String supplierDipilih = (String) cmbSupplier.getSelectedItem();
-                int idSupplier = supplierMap.getOrDefault(supplierDipilih, -1);
-
-                String deskripsi = txtDeskripsi.getText();
-                String jumlahBarangTxt = txtJumlah.getText();
-                java.util.Date tgl = dtanggal_masuk.getDate();
-
-                if (produkDipilih == null || produkDipilih.isEmpty() ||
-                    supplierDipilih == null || supplierDipilih.isEmpty() ||
-                    jumlahBarangTxt.isEmpty() ||
-                    deskripsi.isEmpty() ||
-                    tgl == null ||
-                    idProduk == -1 ||
-                    idSupplier == -1) {
-
-                    JOptionPane.showMessageDialog(this, "Seluruh input harus diisi dengan benar!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                jumlahBarang = Integer.parseInt(jumlahBarangTxt);
+                if (jumlahBarang <= 0) {
+                    JOptionPane.showMessageDialog(this, "Jumlah barang harus angka positif!", "Input Salah", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Jumlah barang harus berupa angka!", "Input Salah", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-                int jumlahBarang;
-                try {
-                    jumlahBarang = Integer.parseInt(jumlahBarangTxt);
-                    if (jumlahBarang <= 0) {
-                        JOptionPane.showMessageDialog(this, "Jumlah barang harus angka positif!", "Input Salah", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Jumlah barang harus berupa angka!", "Input Salah", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+            java.sql.Timestamp tanggalMasuk = new java.sql.Timestamp(tgl.getTime());
 
-                java.sql.Timestamp tanggalMasuk = new java.sql.Timestamp(tgl.getTime());
+            if (mode.equals("create")) {
+                pst = conn.prepareStatement(
+                    "INSERT INTO stock_in(produk_id, jumlah, tanggal_masuk, supplier_id, deskripsi, status) VALUES (?, ?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+                );
+                pst.setInt(1, idProduk);
+                pst.setInt(2, jumlahBarang);
+                pst.setTimestamp(3, tanggalMasuk);
+                pst.setInt(4, idSupplier);
+                pst.setString(5, deskripsi);
+                pst.setString(6, status);
 
-                if (mode.equals("create")) {
-                    pst = conn.prepareStatement(
-                        "INSERT INTO stock_in(produk_id, jumlah, tanggal_masuk, supplier_id, deskripsi) VALUES (?, ?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                    );
-                    pst.setInt(1, idProduk);
-                    pst.setInt(2, jumlahBarang);
-                    pst.setTimestamp(3, tanggalMasuk);
-                    pst.setInt(4, idSupplier);
-                    pst.setString(5, deskripsi);
+                int hasil = pst.executeUpdate();
 
-                    int hasil = pst.executeUpdate();
-
-                    if (hasil == 1) {
-                        ResultSet rs = pst.getGeneratedKeys();
-                        int idBaru = rs.next() ? rs.getInt(1) : -1;
-
+                if (hasil == 1) {
+                    if (status.equalsIgnoreCase("masuk")) {
                         PreparedStatement updateStok = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
                         updateStok.setInt(1, jumlahBarang);
                         updateStok.setInt(2, idProduk);
                         updateStok.executeUpdate();
-
-                        JOptionPane.showMessageDialog(this, "Barang Masuk Baru Berhasil Ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                        BarangMasuk halaman = new BarangMasuk(usernameForPage);
-                        halaman.setVisible(true);
-                        this.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Barang Masuk Gagal Ditambahkan!", "Gagal", JOptionPane.WARNING_MESSAGE);
                     }
 
-                } else if (mode.equals("update")) {
-                    PreparedStatement ambilData = conn.prepareStatement("SELECT jumlah, produk_id FROM stock_in WHERE id = ?");
-                    ambilData.setInt(1, stockInId);
-                    ResultSet dataLama = ambilData.executeQuery();
+                    JOptionPane.showMessageDialog(this, "Barang Masuk Baru Berhasil Ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    BarangMasuk halaman = new BarangMasuk(usernameForPage);
+                    halaman.setVisible(true);
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Barang Masuk Gagal Ditambahkan!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                }
 
-                    if (!dataLama.next()) {
-                        JOptionPane.showMessageDialog(this, "Data Barang Masuk Tidak Ditemukan!", "Gagal", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
+            } else if (mode.equals("update")) {
+                PreparedStatement ambilData = conn.prepareStatement("SELECT jumlah, produk_id, status FROM stock_in WHERE id = ?");
+                ambilData.setInt(1, stockInId);
+                ResultSet dataLama = ambilData.executeQuery();
 
-                    int jumlahLama = dataLama.getInt("jumlah");
-                    int idProdukLama = dataLama.getInt("produk_id");
+                if (!dataLama.next()) {
+                    JOptionPane.showMessageDialog(this, "Data Barang Masuk Tidak Ditemukan!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-                    pst = conn.prepareStatement("UPDATE stock_in SET produk_id = ?, jumlah = ?, tanggal_masuk = ?, supplier_id = ?, deskripsi = ? WHERE id = ?");
-                    pst.setInt(1, idProduk);
-                    pst.setInt(2, jumlahBarang);
-                    pst.setTimestamp(3, tanggalMasuk);
-                    pst.setInt(4, idSupplier);
-                    pst.setString(5, deskripsi);
-                    pst.setInt(6, stockInId);
+                int jumlahLama = dataLama.getInt("jumlah");
+                int idProdukLama = dataLama.getInt("produk_id");
+                String statusLama = dataLama.getString("status");
 
-                    int hasil = pst.executeUpdate();
+                pst = conn.prepareStatement("UPDATE stock_in SET produk_id = ?, jumlah = ?, tanggal_masuk = ?, supplier_id = ?, deskripsi = ?, status = ? WHERE id = ?");
+                pst.setInt(1, idProduk);
+                pst.setInt(2, jumlahBarang);
+                pst.setTimestamp(3, tanggalMasuk);
+                pst.setInt(4, idSupplier);
+                pst.setString(5, deskripsi);
+                pst.setString(6, status);
+                pst.setInt(7, stockInId);
 
-                    if (hasil == 1) {
+                int hasil = pst.executeUpdate();
+
+                if (hasil == 1) {
+                    if (!status.equalsIgnoreCase(statusLama)) {
+                        if (statusLama.equalsIgnoreCase("masuk") && status.equalsIgnoreCase("dibatalkan")) {
+                            PreparedStatement kembalikan = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
+                            kembalikan.setInt(1, jumlahLama);
+                            kembalikan.setInt(2, idProdukLama);
+                            kembalikan.executeUpdate();
+                        } else if (statusLama.equalsIgnoreCase("dibatalkan") && status.equalsIgnoreCase("masuk")) {
+                            PreparedStatement tambah = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
+                            tambah.setInt(1, jumlahBarang);
+                            tambah.setInt(2, idProduk);
+                            tambah.executeUpdate();
+                        }
+                    } else if (status.equalsIgnoreCase("masuk")) {
                         if (idProduk != idProdukLama) {
                             PreparedStatement kurangiStok = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
                             kurangiStok.setInt(1, jumlahLama);
@@ -433,20 +473,21 @@ public class BarangMasukForm extends javax.swing.JFrame {
                             koreksiStok.setInt(2, idProduk);
                             koreksiStok.executeUpdate();
                         }
-
-                        JOptionPane.showMessageDialog(this, "Barang Masuk Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                        BarangMasuk halaman = new BarangMasuk(usernameForPage);
-                        halaman.setVisible(true);
-                        this.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Barang Masuk Gagal Diupdate!", "Gagal", JOptionPane.WARNING_MESSAGE);
                     }
-                }
 
-            } catch (Exception e) {
-                Logger.getLogger(BarangMasukForm.class.getName()).log(Level.SEVERE, null, e);
-                JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Barang Masuk Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    BarangMasuk halaman = new BarangMasuk(usernameForPage);
+                    halaman.setVisible(true);
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Barang Masuk Gagal Diupdate!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                }
             }
+
+        } catch (Exception e) {
+            Logger.getLogger(BarangMasukForm.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnActionActionPerformed
 
     /**
@@ -496,6 +537,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
     private javax.swing.JButton btnBackToProducts;
     private javax.swing.JButton btnClear;
     private javax.swing.JComboBox<String> cmbProduk;
+    private javax.swing.JComboBox<String> cmbStatus;
     private javax.swing.JComboBox<String> cmbSupplier;
     private com.toedter.calendar.JDateChooser dtanggal_masuk;
     private javax.swing.JLabel jLabel1;
@@ -504,6 +546,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtDeskripsi;
