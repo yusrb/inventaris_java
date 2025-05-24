@@ -22,6 +22,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
     private String mode;
     
@@ -31,13 +32,14 @@ public class BarangKeluarForm extends javax.swing.JFrame {
     
     private java.util.Map<String, Integer> produkMap = new java.util.HashMap<>();
     
-    public BarangKeluarForm(String username) {
+    public BarangKeluarForm(String username, String level) {
         initComponents();
         Connection();
         loadProducts();
         loadStatus();
         
         this.usernameForPage = username;
+        this.levelForPage = level;
         
         this.mode = "create";
         btnAction.setText("Create");
@@ -46,8 +48,8 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public BarangKeluarForm(String username, int id, String produkLama, int jumlahLama, Timestamp tanggalKeluarTimestamp, String penerimaLama, String statusLama, String deskripsiLama) {
-        this(username);
+    public BarangKeluarForm(String username, String level, int id, String produkLama, int jumlahLama, Timestamp tanggalKeluarTimestamp, String penerimaLama, String statusLama, String deskripsiLama) {
+        this(username, level);
 
         this.stockInId = id;
         this.mode = "update";
@@ -322,7 +324,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
     private void btnBackToProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToProductsActionPerformed
         // TODO add your handling code here:
         
-        BarangKeluar barang_keluar_form = new BarangKeluar(usernameForPage);
+        BarangKeluar barang_keluar_form = new BarangKeluar(usernameForPage, levelForPage);
         barang_keluar_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToProductsActionPerformed
@@ -383,7 +385,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                         }
 
                         JOptionPane.showMessageDialog(this, "Barang Keluar Berhasil Ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                        BarangKeluar halaman = new BarangKeluar(usernameForPage);
+                        BarangKeluar halaman = new BarangKeluar(usernameForPage, levelForPage);
                         halaman.setVisible(true);
                         this.dispose();
                     } else {
@@ -426,7 +428,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                             kembalikan.executeUpdate();
 
                             JOptionPane.showMessageDialog(this, "Barang Keluar Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                            BarangKeluar halaman = new BarangKeluar(usernameForPage);
+                            BarangKeluar halaman = new BarangKeluar(usernameForPage, levelForPage);
                             halaman.setVisible(true);
                             this.dispose();
                         } else {
@@ -458,7 +460,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                             }
 
                             JOptionPane.showMessageDialog(this, "Barang Keluar Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                            BarangKeluar halaman = new BarangKeluar(usernameForPage);
+                            BarangKeluar halaman = new BarangKeluar(usernameForPage, levelForPage);
                             halaman.setVisible(true);
                             this.dispose();
                         } else {
@@ -516,7 +518,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BarangKeluarForm("").setVisible(true);
+                new BarangKeluarForm("", "").setVisible(true);
             }
         });
     }

@@ -28,14 +28,19 @@ public class Settings extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
+    
+    private File selectedFile = null;
 
-    public Settings(String username) {
+    public Settings(String username, String level) {
         initComponents();
         Connection();
         getSettings();
 
         usernameForPage = username;
+        levelForPage = level;
         txtUsernameForPage.setText(usernameForPage);
+        txtLevelForPage.setText(levelForPage);
 
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -76,6 +81,8 @@ public class Settings extends javax.swing.JFrame {
                     Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
                     labelLogo.setText("");
                     labelLogo.setIcon(new ImageIcon(img));
+                    logoPreview.setText("");
+                    logoPreview.setIcon(new ImageIcon(img));
                     
                     labelLogo.revalidate();
                     labelLogo.repaint();
@@ -100,7 +107,7 @@ public class Settings extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtUsernameForPage = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        txtLevelForPage = new javax.swing.JLabel();
         btnDashboard = new javax.swing.JButton();
         btnProducts = new javax.swing.JButton();
         btnCategories = new javax.swing.JButton();
@@ -119,6 +126,10 @@ public class Settings extends javax.swing.JFrame {
         btnUpdate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtInputNameApplication = new javax.swing.JTextArea();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        logoPreview = new javax.swing.JLabel();
+        btnChooseImage = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Settings Page");
@@ -135,9 +146,9 @@ public class Settings extends javax.swing.JFrame {
         txtUsernameForPage.setForeground(new java.awt.Color(255, 255, 255));
         txtUsernameForPage.setText("Username");
 
-        jLabel2.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Adminstrator");
+        txtLevelForPage.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
+        txtLevelForPage.setForeground(new java.awt.Color(255, 255, 255));
+        txtLevelForPage.setText("Adminstrator");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -150,7 +161,7 @@ public class Settings extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtUsernameForPage))
-                    .addComponent(jLabel2))
+                    .addComponent(txtLevelForPage))
                 .addContainerGap(152, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -161,7 +172,7 @@ public class Settings extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtUsernameForPage))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
+                .addComponent(txtLevelForPage)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
@@ -244,7 +255,7 @@ public class Settings extends javax.swing.JFrame {
 
         btnTransactions.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
-        btnTransactions.setText("Transactions");
+        btnTransactions.setText("Stock Transactions");
         btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
             javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1),
             javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -361,7 +372,7 @@ public class Settings extends javax.swing.JFrame {
             }
         });
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 40)); // NOI18N
         txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
         txtNamePageTop.setText("namePage");
 
@@ -376,7 +387,7 @@ public class Settings extends javax.swing.JFrame {
                 .addComponent(labelLogo)
                 .addGap(20, 20, 20)
                 .addComponent(txtNamePageTop)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 403, Short.MAX_VALUE)
                 .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -411,6 +422,21 @@ public class Settings extends javax.swing.JFrame {
         txtInputNameApplication.setRows(5);
         jScrollPane1.setViewportView(txtInputNameApplication);
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setText("Nama Aplikasi");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel5.setText("Logo Aplikasi");
+
+        logoPreview.setText("jLabel6");
+
+        btnChooseImage.setText("Pilih Gambar");
+        btnChooseImage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChooseImageActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -422,10 +448,16 @@ public class Settings extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnChooseImage)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addContainerGap(532, Short.MAX_VALUE))))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(logoPreview)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -436,8 +468,16 @@ public class Settings extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(logoPreview)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnChooseImage, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -463,7 +503,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         // TODO add your handling code here:
         
-        Settings settings_page = new Settings(usernameForPage);
+        Settings settings_page = new Settings(usernameForPage, levelForPage);
         settings_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSettingsActionPerformed
@@ -471,7 +511,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
         // TODO add your handling code here:
         
-        Dashboard dashboard_page = new Dashboard(usernameForPage);
+        Dashboard dashboard_page = new Dashboard(usernameForPage, levelForPage);
         dashboard_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnDashboardActionPerformed
@@ -479,7 +519,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
         // TODO add your handling code here:
         
-        Products products_page = new Products(usernameForPage);
+        Products products_page = new Products(usernameForPage, levelForPage);
         products_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnProductsActionPerformed
@@ -487,7 +527,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriesActionPerformed
         // TODO add your handling code here:
         
-        Categories categories_page = new Categories(usernameForPage);
+        Categories categories_page = new Categories(usernameForPage, levelForPage);
         categories_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCategoriesActionPerformed
@@ -495,7 +535,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
         // TODO add your handling code here:
         
-        Brands brands_page = new Brands(usernameForPage);
+        Brands brands_page = new Brands(usernameForPage, levelForPage);
         brands_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBrandsActionPerformed
@@ -503,7 +543,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
         // TODO add your handling code here:
         
-        Transactions transactions_page = new Transactions(usernameForPage);
+        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
         transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactionsActionPerformed
@@ -511,7 +551,7 @@ public class Settings extends javax.swing.JFrame {
     private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
         // TODO add your handling code here:
         
-        Users users_page = new Users(usernameForPage);
+        Users users_page = new Users(usernameForPage, levelForPage);
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
@@ -519,63 +559,80 @@ public class Settings extends javax.swing.JFrame {
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
         // TODO add your handling code here:
         
-        Suppliers suppliers_page = new Suppliers(usernameForPage);
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
     
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         try {
-            String name_application = txtInputNameApplication.getText();
+                String name_application = txtInputNameApplication.getText().trim();
 
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Pilih Logo Aplikasi");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setAcceptAllFileFilterUsed(false);
+                if (name_application.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Nama aplikasi tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Gambar", "jpg", "jpeg", "png", "gif");
-            fileChooser.addChoosableFileFilter(filter);
+                if (selectedFile != null) {
+                    FileInputStream fis = new FileInputStream(selectedFile);
+                    pst = conn.prepareStatement("UPDATE settings SET name_application = ?, logo = ? WHERE id = 1");
+                    pst.setString(1, name_application);
+                    pst.setBinaryStream(2, fis, (int) selectedFile.length());
+                } else {
+                    pst = conn.prepareStatement("UPDATE settings SET name_application = ? WHERE id = 1");
+                    pst.setString(1, name_application);
+                }
 
-            int hasil = fileChooser.showOpenDialog(this);
-            if (hasil != JFileChooser.APPROVE_OPTION) {
-                JOptionPane.showMessageDialog(this, "Pilih gambar untuk logo!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-                return;
+                int k = pst.executeUpdate();
+
+                if (k == 1) {
+                    JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    getSettings();
+                    selectedFile = null;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal memperbarui data!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat update.");
             }
-            
-            File fileGambar = fileChooser.getSelectedFile();
-            
-            long ukuranMaks = 16 * 1024 * 1024;
-            if (fileGambar.length() > ukuranMaks) {
-                JOptionPane.showMessageDialog(this, "Ukuran gambar terlalu besar! Maksimal 2MB.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            FileInputStream fis = new FileInputStream(fileGambar);
-
-            pst = conn.prepareStatement("UPDATE settings SET name_application = ?, logo = ? WHERE id = 1");
-            pst.setString(1, name_application);
-            pst.setBinaryStream(2, fis, (int) fileGambar.length());
-
-            int k = pst.executeUpdate();
-
-            if (k == 1) {
-                JOptionPane.showMessageDialog(this, "Nama Aplikasi dan Logo Berhasil DiUpdate!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
-                getSettings();
-            } else {
-                JOptionPane.showMessageDialog(this, "Update Gagal!", "Update Failed", JOptionPane.WARNING_MESSAGE);
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecordActionPerformed
         // TODO add your handling code here:
         
-        Record record_page = new Record(usernameForPage);
+        Record record_page = new Record(usernameForPage, levelForPage);
         record_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRecordActionPerformed
+
+    private void btnChooseImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImageActionPerformed
+        // TODO add your handling code here:
+        
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Gambar", "jpg", "jpeg", "png", "gif"));
+
+            int result = fileChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                selectedFile = fileChooser.getSelectedFile();
+
+                if (selectedFile.length() > 2 * 1024 * 1024) {
+                    JOptionPane.showMessageDialog(this, "Ukuran gambar maksimal 2MB.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    selectedFile = null;
+                    return;
+                }
+
+                try {
+                    ImageIcon icon = new ImageIcon(selectedFile.getAbsolutePath());
+                    Image img = icon.getImage().getScaledInstance(88, 88, Image.SCALE_SMOOTH);
+                    logoPreview.setText("");
+                    logoPreview.setIcon(new ImageIcon(img));
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, "Gagal memuat gambar.");
+                    selectedFile = null;
+                }
+            }
+    }//GEN-LAST:event_btnChooseImageActionPerformed
 
     /**
      * @param args the command line arguments
@@ -608,7 +665,7 @@ public class Settings extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Settings("Username").setVisible(true);
+                new Settings("Username", "").setVisible(true);
             }
         });
     }
@@ -616,6 +673,7 @@ public class Settings extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrands;
     private javax.swing.JButton btnCategories;
+    private javax.swing.JButton btnChooseImage;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnProducts;
@@ -626,14 +684,17 @@ public class Settings extends javax.swing.JFrame {
     private javax.swing.JButton btnUpdate;
     private javax.swing.JButton btnUsers;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelLogo;
+    private javax.swing.JLabel logoPreview;
     private javax.swing.JTextArea txtInputNameApplication;
+    private javax.swing.JLabel txtLevelForPage;
     private javax.swing.JLabel txtNameApplicationBottom;
     private javax.swing.JLabel txtNamePageTop;
     private javax.swing.JLabel txtUsernameForPage;

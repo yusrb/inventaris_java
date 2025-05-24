@@ -22,6 +22,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
     private String mode;
     
@@ -31,7 +32,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
     private java.util.Map<String, Integer> supplierMap = new java.util.HashMap<>();
     private java.util.Map<String, Integer> statusMap = new java.util.HashMap<>();
     
-    public BarangMasukForm(String username) {
+    public BarangMasukForm(String username, String level) {
         initComponents();
         Connection();
         loadSuppliers();
@@ -39,6 +40,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
         loadStatus();
         
         this.usernameForPage = username;
+        this.levelForPage = level;
         
         this.mode = "create";
         btnAction.setText("Create");
@@ -47,8 +49,8 @@ public class BarangMasukForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public BarangMasukForm(String username, int barangMasukId, String namaProduk, int jumlah, String deskripsi, String supplier, Timestamp tanggalMasuk) {
-        this(username);
+    public BarangMasukForm(String username, String level, int barangMasukId, String namaProduk, int jumlah, String deskripsi, String supplier, Timestamp tanggalMasuk) {
+        this(username, level);
 
         this.mode = "update";
         this.stockInId = barangMasukId;
@@ -329,7 +331,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
     private void btnBackToProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToProductsActionPerformed
         // TODO add your handling code here:
         
-        BarangMasuk barang_masuk_form = new BarangMasuk(usernameForPage);
+        BarangMasuk barang_masuk_form = new BarangMasuk(usernameForPage, levelForPage);
         barang_masuk_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToProductsActionPerformed
@@ -410,7 +412,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
                     }
 
                     JOptionPane.showMessageDialog(this, "Barang Masuk Baru Berhasil Ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    BarangMasuk halaman = new BarangMasuk(usernameForPage);
+                    BarangMasuk halaman = new BarangMasuk(usernameForPage, levelForPage);
                     halaman.setVisible(true);
                     this.dispose();
                 } else {
@@ -476,7 +478,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
                     }
 
                     JOptionPane.showMessageDialog(this, "Barang Masuk Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    BarangMasuk halaman = new BarangMasuk(usernameForPage);
+                    BarangMasuk halaman = new BarangMasuk(usernameForPage, levelForPage);
                     halaman.setVisible(true);
                     this.dispose();
                 } else {
@@ -527,7 +529,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BarangMasukForm("").setVisible(true);
+                new BarangMasukForm("", "").setVisible(true);
             }
         });
     }

@@ -22,12 +22,13 @@ public class SuppliersForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
     private String mode;
     
     private int suppliersId;
     
-    public SuppliersForm(String username) {
+    public SuppliersForm(String username, String level) {
         initComponents();
         Connection();
         
@@ -36,13 +37,14 @@ public class SuppliersForm extends javax.swing.JFrame {
         btnAction.setBackground(Color.GREEN);
         
         usernameForPage = username;
+        levelForPage = level;
         
         setLocationRelativeTo(null);
     }
     
-    public SuppliersForm(String username, int suppliersId, String namaSupplierLama, String kontakLama, String emailLama, String alamatLama)
+    public SuppliersForm(String username, String level, int suppliersId, String namaSupplierLama, String kontakLama, String emailLama, String alamatLama)
     {
-        this(username);
+        this(username, level);
         
         this.mode = "update";
         btnAction.setText("Update");
@@ -237,7 +239,7 @@ public class SuppliersForm extends javax.swing.JFrame {
     private void btnBackToSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToSuppliersActionPerformed
         // TODO add your handling code here:
         
-        Suppliers suppliers_page = new Suppliers(usernameForPage);
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToSuppliersActionPerformed
@@ -284,7 +286,7 @@ public class SuppliersForm extends javax.swing.JFrame {
                         if (k == 1)
                         {
                             JOptionPane.showMessageDialog(this, "Supplier Baru Berhasil Ditambah", "Tambah Supplier Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                            Suppliers suppliers_page = new Suppliers(usernameForPage);
+                            Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
                             suppliers_page.setVisible(true);
                             this.dispose();
                         }
@@ -307,7 +309,7 @@ public class SuppliersForm extends javax.swing.JFrame {
                    if (k == 1)
                    {
                        JOptionPane.showMessageDialog(this, "Supplier Berhasil DiUpdate", "Update Supplier Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                       Suppliers suppliers_page = new Suppliers(usernameForPage);
+                       Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
                        suppliers_page.setVisible(true);
                        this.dispose();
                    }
@@ -353,7 +355,7 @@ public class SuppliersForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SuppliersForm("").setVisible(true);
+                new SuppliersForm("", "").setVisible(true);
             }
         });
     }

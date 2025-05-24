@@ -23,12 +23,13 @@ public class CategoryForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
     private String mode;
     private int categoryId;
     private String namaCategoryLama;
     
-    public CategoryForm(String username) {
+    public CategoryForm(String username, String level) {
         initComponents();
         Connection();
         
@@ -37,13 +38,14 @@ public class CategoryForm extends javax.swing.JFrame {
         btnAction.setBackground(Color.GREEN);
         
         this.usernameForPage = username;
+        this.levelForPage = level;
         
         setLocationRelativeTo(null);
     }
     
-    public CategoryForm(String username, int CategoryID, String NamaCategoryLama)
+    public CategoryForm(String username, String level , int CategoryID, String NamaCategoryLama)
     {
-        this(username);
+        this(username, level);
         
         this.mode = "update";
         this.categoryId = CategoryID;
@@ -211,7 +213,7 @@ public class CategoryForm extends javax.swing.JFrame {
                         if (k == 1)
                         {
                             JOptionPane.showMessageDialog(this, "Kategori Baru Berhasil Ditambah!!!", "Tambah Kategori Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                            Categories categories_page = new Categories(usernameForPage);
+                            Categories categories_page = new Categories(usernameForPage, levelForPage);
                             categories_page.setVisible(true);
                             this.dispose();
                         }
@@ -231,7 +233,7 @@ public class CategoryForm extends javax.swing.JFrame {
                     if (k == 1)
                         {
                             JOptionPane.showMessageDialog(this, "Kategori Berhasil DiUpdate!!!", "Update Kategori Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                            Categories categories_page = new Categories(usernameForPage);
+                            Categories categories_page = new Categories(usernameForPage, levelForPage);
                             categories_page.setVisible(true);
                             this.dispose();
                         }
@@ -257,7 +259,7 @@ public class CategoryForm extends javax.swing.JFrame {
     private void btnBackToBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToBrandsActionPerformed
         // TODO add your handling code here:
 
-        Categories categories_page = new Categories(usernameForPage);
+        Categories categories_page = new Categories(usernameForPage, levelForPage);
         categories_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToBrandsActionPerformed
@@ -293,7 +295,7 @@ public class CategoryForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CategoryForm("").setVisible(true);
+                new CategoryForm("", "").setVisible(true);
             }
         });
     }

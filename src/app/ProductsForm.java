@@ -22,12 +22,13 @@ public class ProductsForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
     private String mode;
     
     private int productsId;
     
-    public ProductsForm(String username) {
+    public ProductsForm(String username, String level) {
         initComponents();
         Connection();
         loadCategories();
@@ -38,11 +39,12 @@ public class ProductsForm extends javax.swing.JFrame {
         btnAction.setBackground(Color.GREEN);
         
         this.usernameForPage = username;
+        this.levelForPage = level;
         setLocationRelativeTo(null);
     }
     
-public ProductsForm(String username, int productsId , String kodeBarangLama ,String namaLama, String deskripsiLama, Double hargaLama, int stokLama, String kategoriLama, String brandLama) {
-    this(username);
+public ProductsForm(String username, String level ,int productsId , String kodeBarangLama ,String namaLama, String deskripsiLama, Double hargaLama, int stokLama, String kategoriLama, String brandLama) {
+    this(username, level);
 
     this.mode = "update";
     btnAction.setText("Update");
@@ -63,7 +65,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
     if (category_id == -1 || brand_id == -1)
     {
         JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Dulu Produk", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-        Products products_page = new Products(usernameForPage);
+        Products products_page = new Products(usernameForPage, levelForPage);
         products_page.setVisible(true);
         this.dispose();
     }
@@ -352,7 +354,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
     private void btnBackToProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToProductsActionPerformed
         // TODO add your handling code here:
         
-        Products products_page = new Products(usernameForPage);
+        Products products_page = new Products(usernameForPage, levelForPage);
         products_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToProductsActionPerformed
@@ -392,7 +394,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
             if (category_id == -1 || brand_id == -1)
             {
                 JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Dulu Produk", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-                Products products_page = new Products(usernameForPage);
+                Products products_page = new Products(usernameForPage, levelForPage);
                 products_page.setVisible(true);
                 this.dispose();
             }
@@ -414,7 +416,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
                 
                 if (k > 0) { 
                     JOptionPane.showMessageDialog(this, "Produk Baru Berhasil Ditambahkan!!!", "Tambah Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    Products products_page = new Products(usernameForPage);
+                    Products products_page = new Products(usernameForPage, levelForPage);
                     products_page.setVisible(true);
                     this.dispose();
                 } else {
@@ -438,7 +440,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
                 int rowsUpdated = pst.executeUpdate();
                 if (rowsUpdated > 0) {
                     JOptionPane.showMessageDialog(this, "Product Berhasil DiUpdate!!!", "Update Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    Products products_page = new Products(usernameForPage);
+                    Products products_page = new Products(usernameForPage, levelForPage);
                     products_page.setVisible(true);
                     this.dispose();
                 } else {
@@ -484,7 +486,7 @@ public ProductsForm(String username, int productsId , String kodeBarangLama ,Str
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProductsForm("").setVisible(true);
+                new ProductsForm("", "").setVisible(true);
             }
         });
     }

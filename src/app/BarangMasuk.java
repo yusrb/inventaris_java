@@ -32,16 +32,31 @@ public class BarangMasuk extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
-    public BarangMasuk(String username) {
+    public BarangMasuk(String username, String level) {
         initComponents();
+        
+        javax.swing.table.JTableHeader header = tblTampilBarangMasuk.getTableHeader();
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                comp.setBackground(new java.awt.Color(123, 104, 238));
+                comp.setForeground(java.awt.Color.WHITE);
+                comp.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+                return comp;
+            }
+        });
+
         Connection();
-        setAlertStock();
         Fetch();
+        setAlertStock();
         
         getSettings();
         
         usernameForPage = username;
+        levelForPage = level;
         txtUsernameForPage.setText(usernameForPage);
         
         setLocationRelativeTo(null);
@@ -128,38 +143,24 @@ public class BarangMasuk extends javax.swing.JFrame {
         }
     }
     
-    public void setAlertStock() {
+    public void setAlertStock()
+    {
         try {
-            pst = conn.prepareStatement("SELECT nama, stok, stok_alert FROM products WHERE stok < stok_alert");
+            pst = conn.prepareStatement("SELECT stok, stok_alert FROM products WHERE stok < stok_alert");
+            
             rslt = pst.executeQuery();
-            StringBuilder alertMessage = new StringBuilder("<html>");
-
-            while (rslt.next()) {
-                String namaProduk = rslt.getString("nama");
-                int stok = rslt.getInt("stok");
-                int stokAlert = rslt.getInt("stok_alert");
-
-                alertMessage.append("PERINGATAN: Stok ")
-                    .append(namaProduk)
-                    .append(" rendah (")
-                    .append(stok).append("/").append(stokAlert).append(")<br>");
+            
+            while (rslt.next())
+            {
+                btnNotifikasi.setText("Stok Barang < Stok Alert");
+                btnNotifikasi.setBackground(Color.RED);
+                btnNotifikasi.setForeground(Color.WHITE);
             }
-
-            alertMessage.append("</html>");
-
-            if (alertMessage.length() > 6) {
-                lblStokAlert.setText(alertMessage.toString());
-                lblStokAlert.setForeground(Color.RED);
-            } else {
-                lblStokAlert.setText("");
-            }
-
         } catch (SQLException ex) {
-            lblStokAlert.setText("❌ Gagal memeriksa stok");
-            lblStokAlert.setForeground(Color.GRAY);
+            Logger.getLogger(BarangMasuk.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -195,7 +196,7 @@ public class BarangMasuk extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTampilBarangMasuk = new javax.swing.JTable();
         btnCetak = new javax.swing.JButton();
-        lblStokAlert = new javax.swing.JLabel();
+        btnNotifikasi = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Barang Masuk Page");
@@ -321,7 +322,7 @@ public class BarangMasuk extends javax.swing.JFrame {
 
         btnTransactions.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
-        btnTransactions.setText("Transactions");
+        btnTransactions.setText("Stock Transactions");
         btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
             javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2),
             javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -438,7 +439,7 @@ public class BarangMasuk extends javax.swing.JFrame {
             }
         });
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 43)); // NOI18N
         txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
         txtNamePageTop.setText("namePage");
 
@@ -533,9 +534,12 @@ public class BarangMasuk extends javax.swing.JFrame {
             }
         });
 
-        lblStokAlert.setFont(new java.awt.Font("Tahoma", 3, 20)); // NOI18N
-        lblStokAlert.setForeground(new java.awt.Color(255, 51, 51));
-        lblStokAlert.setText("Warning");
+        btnNotifikasi.setText("Notifkasi 0");
+        btnNotifikasi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNotifikasiActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -547,20 +551,20 @@ public class BarangMasuk extends javax.swing.JFrame {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblStokAlert)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnNotifikasi))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(38, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -568,10 +572,10 @@ public class BarangMasuk extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lblStokAlert)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3)
+                    .addComponent(btnNotifikasi, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -603,7 +607,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         // TODO add your handling code here:
         
-        Settings settings_page = new Settings(usernameForPage);
+        Settings settings_page = new Settings(usernameForPage, levelForPage);
         settings_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSettingsActionPerformed
@@ -611,7 +615,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
         // TODO add your handling code here:
         
-        Dashboard dashboard_page = new Dashboard(usernameForPage);
+        Dashboard dashboard_page = new Dashboard(usernameForPage, levelForPage);
         dashboard_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnDashboardActionPerformed
@@ -619,7 +623,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
         // TODO add your handling code here:
         
-        Products products_page = new Products(usernameForPage);
+        Products products_page = new Products(usernameForPage, levelForPage);
         products_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnProductsActionPerformed
@@ -627,7 +631,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriesActionPerformed
         // TODO add your handling code here:
         
-        Categories categories_page = new Categories(usernameForPage);
+        Categories categories_page = new Categories(usernameForPage, levelForPage);
         categories_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCategoriesActionPerformed
@@ -635,7 +639,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
         // TODO add your handling code here:
         
-        Brands brands_page = new Brands(usernameForPage);
+        Brands brands_page = new Brands(usernameForPage, levelForPage);
         brands_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBrandsActionPerformed
@@ -643,7 +647,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
         // TODO add your handling code here:
         
-        Transactions transactions_page = new Transactions(usernameForPage);
+        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
         transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactionsActionPerformed
@@ -651,7 +655,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
         // TODO add your handling code here:
         
-        BarangMasuk users_page = new BarangMasuk(usernameForPage);
+        BarangMasuk users_page = new BarangMasuk(usernameForPage, levelForPage);
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
@@ -659,7 +663,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
         // TODO add your handling code here:
         
-        Suppliers suppliers_page = new Suppliers(usernameForPage);
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
@@ -667,7 +671,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecordActionPerformed
         // TODO add your handling code here:
         
-        Record record_page = new Record(usernameForPage);
+        Record record_page = new Record(usernameForPage, levelForPage);
         record_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRecordActionPerformed
@@ -675,7 +679,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // TODO add your handling code here:
         
-        BarangMasukForm barang_masuk_form = new BarangMasukForm(usernameForPage);
+        BarangMasukForm barang_masuk_form = new BarangMasukForm(usernameForPage, levelForPage);
         barang_masuk_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCreateActionPerformed
@@ -714,7 +718,7 @@ public class BarangMasuk extends javax.swing.JFrame {
             }
         }       
         
-        BarangMasukForm barang_masuk_form = new BarangMasukForm(usernameForPage, barangMasukId, namaProduk, jumlah, deskripsi, supplier, tanggal_masuk);
+        BarangMasukForm barang_masuk_form = new BarangMasukForm(usernameForPage, levelForPage ,barangMasukId, namaProduk, jumlah, deskripsi, supplier, tanggal_masuk);
         barang_masuk_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUpdateActionPerformed
@@ -784,6 +788,13 @@ public class BarangMasuk extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCetakActionPerformed
 
+    private void btnNotifikasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNotifikasiActionPerformed
+        // TODO add your handling code here:
+
+        Notications notifikasi_page = new Notications(usernameForPage);
+        notifikasi_page.setVisible(true);
+    }//GEN-LAST:event_btnNotifikasiActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -817,7 +828,7 @@ public class BarangMasuk extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BarangMasuk("Username").setVisible(true);
+                new BarangMasuk("Username", "").setVisible(true);
             }
         });
     }
@@ -830,6 +841,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnNotifikasi;
     private javax.swing.JButton btnProducts;
     private javax.swing.JButton btnRecord;
     private javax.swing.JButton btnSettings;
@@ -845,7 +857,6 @@ public class BarangMasuk extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelLogo;
-    private javax.swing.JLabel lblStokAlert;
     private javax.swing.JTable tblTampilBarangMasuk;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;

@@ -26,15 +26,30 @@ public class SupplierDetail extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
     private final int setSupplierIDFromSuppliers;
     
-    public SupplierDetail(String username, int supplierId) {
+    public SupplierDetail(String username, String level, int supplierId) {
         initComponents();
+        
+        javax.swing.table.JTableHeader header = tblTampilDetailSupplier.getTableHeader();
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                comp.setBackground(new java.awt.Color(123, 104, 238));
+                comp.setForeground(java.awt.Color.WHITE);
+                comp.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+                return comp;
+            }
+        });
+
         Connection();
         getSettings();
         
         usernameForPage = username;
+        levelForPage = level;
         setSupplierIDFromSuppliers = supplierId;
         
         Fetch();
@@ -289,7 +304,7 @@ public class SupplierDetail extends javax.swing.JFrame {
 
         btnTransactions.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
-        btnTransactions.setText("Transactions");
+        btnTransactions.setText("Stock Transactions");
         btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
             javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
             javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -406,7 +421,7 @@ public class SupplierDetail extends javax.swing.JFrame {
             }
         });
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 40)); // NOI18N
         txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
         txtNamePageTop.setText("namePage");
 
@@ -542,7 +557,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         // TODO add your handling code here:
         
-        Settings settings_page = new Settings(usernameForPage);
+        Settings settings_page = new Settings(usernameForPage, levelForPage);
         settings_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSettingsActionPerformed
@@ -550,7 +565,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
         // TODO add your handling code here:
         
-        Dashboard dashboard_page = new Dashboard(usernameForPage);
+        Dashboard dashboard_page = new Dashboard(usernameForPage, levelForPage);
         dashboard_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnDashboardActionPerformed
@@ -558,7 +573,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
         // TODO add your handling code here:
         
-        Products products_page = new Products(usernameForPage);
+        Products products_page = new Products(usernameForPage, levelForPage);
         products_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnProductsActionPerformed
@@ -566,7 +581,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriesActionPerformed
         // TODO add your handling code here:
         
-        Categories categories_page = new Categories(usernameForPage);
+        Categories categories_page = new Categories(usernameForPage, levelForPage);
         categories_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCategoriesActionPerformed
@@ -574,7 +589,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
         // TODO add your handling code here:
         
-        Brands brands_page = new Brands(usernameForPage);
+        Brands brands_page = new Brands(usernameForPage, levelForPage);
         brands_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBrandsActionPerformed
@@ -582,7 +597,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
         // TODO add your handling code here:
         
-        Transactions transactions_page = new Transactions(usernameForPage);
+        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
         transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactionsActionPerformed
@@ -590,7 +605,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
         // TODO add your handling code here:
         
-        Users users_page = new Users(usernameForPage);
+        Users users_page = new Users(usernameForPage, levelForPage);
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
@@ -598,7 +613,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
         // TODO add your handling code here:
         
-        Suppliers suppliers_page = new Suppliers(usernameForPage);
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
@@ -606,7 +621,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void btnRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecordActionPerformed
         // TODO add your handling code here:
         
-        Record record_page = new Record(usernameForPage);
+        Record record_page = new Record(usernameForPage, levelForPage);
         record_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRecordActionPerformed
@@ -614,7 +629,7 @@ public class SupplierDetail extends javax.swing.JFrame {
     private void txtBackToSuppliersListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBackToSuppliersListActionPerformed
         // TODO add your handling code here:
         
-        Suppliers suppliers_page = new Suppliers(usernameForPage);
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_txtBackToSuppliersListActionPerformed
@@ -719,7 +734,7 @@ public class SupplierDetail extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SupplierDetail("Username", 0).setVisible(true);
+                new SupplierDetail("Username", "", 0).setVisible(true);
             }
         });
     }

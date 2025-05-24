@@ -23,16 +23,18 @@ public class BrandsForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     private String mode;
     
     private int brandId;
     private String namaBrandLama;
     
-    public BrandsForm(String username) {
+    public BrandsForm(String username, String level) {
         initComponents();
         Connection();
         
         usernameForPage = username;
+        levelForPage = level;
         
         this.mode = "create";
         btnAction.setText("Create");
@@ -41,9 +43,9 @@ public class BrandsForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public BrandsForm(String username, int brandId, String namaBrandLama)
+    public BrandsForm(String username, String level ,int brandId, String namaBrandLama)
     {
-        this(username);
+        this(username, level);
         this.brandId = brandId;
         
         txtNamaBrand.setText(namaBrandLama);
@@ -211,7 +213,7 @@ public class BrandsForm extends javax.swing.JFrame {
                     if (k == 1)
                     {
                         JOptionPane.showMessageDialog(this, "Brand Baru Berhasil Ditambahkan!!!", "Tambah Brand Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                        Brands brands_page = new Brands(usernameForPage);
+                        Brands brands_page = new Brands(usernameForPage, levelForPage);
                         brands_page.setVisible(true);
                         this.dispose();
                     }
@@ -231,7 +233,7 @@ public class BrandsForm extends javax.swing.JFrame {
                      if (k == 1)
                     {
                         JOptionPane.showMessageDialog(this, "Brand Baru Berhasil DiUpdate!!!", "Update Brand Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                        Brands brands_page = new Brands(usernameForPage);
+                        Brands brands_page = new Brands(usernameForPage, levelForPage);
                         brands_page.setVisible(true);
                         this.dispose();
                     }
@@ -257,7 +259,7 @@ public class BrandsForm extends javax.swing.JFrame {
     private void btnBackToBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToBrandsActionPerformed
         // TODO add your handling code here:
 
-        Brands brands_form = new Brands(usernameForPage);
+        Brands brands_form = new Brands(usernameForPage, levelForPage);
         brands_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToBrandsActionPerformed
@@ -292,7 +294,7 @@ public class BrandsForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BrandsForm("").setVisible(true);
+                new BrandsForm("", "").setVisible(true);
             }
         });
     }

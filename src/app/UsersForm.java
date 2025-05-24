@@ -23,14 +23,19 @@ public class UsersForm extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
+    
     private String mode;
     private int userId;
+    private java.util.Map<String, String> levelMap = new java.util.HashMap<>();
     
-    public UsersForm(String username) {
+    public UsersForm(String username, String level) {
         initComponents();
         getConnection();
+        loadLevel();
         
         usernameForPage = username;
+        levelForPage = level;
         this.mode = "create";
         
         btnAction.setText("Create");
@@ -39,9 +44,10 @@ public class UsersForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public UsersForm(String username, int userId, String usernameLama)
+    public UsersForm(String username, String level, int userId, String usernameLama)
     {
-        this(username);
+        this(username, level);
+        
         this.mode = "update";
         this.userId = userId;
         txtUsername.setText(usernameLama);
@@ -65,6 +71,29 @@ public class UsersForm extends javax.swing.JFrame {
             Logger.getLogger(UsersForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void loadLevel() {
+        try {
+            pst = conn.prepareStatement("SHOW COLUMNS FROM users LIKE 'level'");
+            rslt = pst.executeQuery();
+
+            if (rslt.next()) {
+                String type = rslt.getString("Type");
+                type = type.replace("enum(", "").replace(")", "").replace("'", "");
+                String[] levels = type.split(",");
+
+                cmbLevel.removeAllItems();
+                levelMap.clear();
+
+                for (String level : levels) {
+                    cmbLevel.addItem(level);
+                    levelMap.put(level, level);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -86,6 +115,8 @@ public class UsersForm extends javax.swing.JFrame {
         btnAction = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
         btnBackToUsersList = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        cmbLevel = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Users Form Page");
@@ -148,6 +179,11 @@ public class UsersForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        jLabel5.setText("Level");
+
+        cmbLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -162,23 +198,32 @@ public class UsersForm extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(0, 6, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel4)
+                                                    .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addComponent(txtPassword))
+                                        .addGap(371, 371, 371))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 275, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(txtPassword)
-                                        .addGap(54, 54, 54)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18))
-                            .addComponent(jLabel1)
-                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(33, 33, 33)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel1)
+                                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(55, 55, 55)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel5)
+                                            .addComponent(cmbLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(33, 33, 33))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnClear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
                             .addComponent(btnBackToUsersList, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(btnAction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -189,24 +234,29 @@ public class UsersForm extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel5))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cmbLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(36, 36, 36)
+                        .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAction, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBackToUsersList, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(161, Short.MAX_VALUE))
+                .addGap(36, 36, 36)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         pack();
@@ -215,7 +265,7 @@ public class UsersForm extends javax.swing.JFrame {
     private void btnBackToUsersListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToUsersListActionPerformed
         // TODO add your handling code here:
         
-        Users users_form = new Users(usernameForPage);
+        Users users_form = new Users(usernameForPage, levelForPage);
         users_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToUsersListActionPerformed
@@ -243,6 +293,9 @@ public class UsersForm extends javax.swing.JFrame {
         String confirmPassword = new String(confirmPasswordStr);
         Arrays.fill(confirmPasswordStr, ' ');
         
+        String levelTerpilih = (String) cmbLevel.getSelectedItem();
+         String level = levelMap.getOrDefault(levelTerpilih, "");
+        
         // Validasi Jika Input Kosong
         if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty())
         {
@@ -264,15 +317,15 @@ public class UsersForm extends javax.swing.JFrame {
             
             txtPassword.requestFocus();
         }
-        // Jika Validasi sudah sesuai jalankan operasi create atau updatenya
         else
         {
            try {
                 if (mode.equals("create"))
                 {
-                     pst = conn.prepareStatement("INSERT INTO users(username, password) VALUES (?, ?)");
+                     pst = conn.prepareStatement("INSERT INTO users(username, password, level) VALUES (?, ?, ?)");
                      pst.setString(1, username);
                      pst.setString(2, password);
+                     pst.setString(3, level);
                         
                      int k = pst.executeUpdate();
                         
@@ -287,10 +340,10 @@ public class UsersForm extends javax.swing.JFrame {
                 }
                 else if (mode.equals("update"))
                 {
-                     pst = conn.prepareStatement("UPDATE users SET username = ?, password = ? WHERE id = ?");
+                     pst = conn.prepareStatement("UPDATE users SET username = ?, password = ?, level = ? WHERE id = ?");
                      pst.setString(1, username);
                      pst.setString(2, password);
-                     pst.setInt(3, userId);
+                     pst.setString(3, level);
                      
                      int k = pst.executeUpdate();
                      
@@ -304,7 +357,7 @@ public class UsersForm extends javax.swing.JFrame {
                      }
                 }
                 
-                Users users_page = new Users(usernameForPage);
+                Users users_page = new Users(usernameForPage, levelForPage);
                 users_page.setVisible(true);
                 this.dispose();
            }
@@ -344,7 +397,7 @@ public class UsersForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new UsersForm("").setVisible(true);
+                new UsersForm("", "").setVisible(true);
             }
         });
     }
@@ -353,10 +406,12 @@ public class UsersForm extends javax.swing.JFrame {
     private javax.swing.JButton btnAction;
     private javax.swing.JButton btnBackToUsersList;
     private javax.swing.JButton btnClear;
+    private javax.swing.JComboBox<String> cmbLevel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField txtConfirmPassword;
     private javax.swing.JPasswordField txtPassword;

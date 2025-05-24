@@ -24,8 +24,9 @@ public class Transactions extends javax.swing.JFrame {
      */
     
     private final String usernameForPage;
+    private final String levelForPage;
     
-    public Transactions(String username) {
+    public Transactions(String username, String level) {
         initComponents();
         Connection();
         getSettings();
@@ -35,7 +36,9 @@ public class Transactions extends javax.swing.JFrame {
         getCountBarangDikembalikan();
         
         usernameForPage = username;
+        levelForPage = level;
         txtUsernameForPage.setText(usernameForPage);
+        txtLevelForPage.setText(levelForPage);
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -159,7 +162,7 @@ public class Transactions extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtUsernameForPage = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        txtLevelForPage = new javax.swing.JLabel();
         btnDashboard = new javax.swing.JButton();
         btnProducts = new javax.swing.JButton();
         btnCategories = new javax.swing.JButton();
@@ -203,9 +206,9 @@ public class Transactions extends javax.swing.JFrame {
         txtUsernameForPage.setForeground(new java.awt.Color(255, 255, 255));
         txtUsernameForPage.setText("Username");
 
-        jLabel2.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Adminstrator");
+        txtLevelForPage.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
+        txtLevelForPage.setForeground(new java.awt.Color(255, 255, 255));
+        txtLevelForPage.setText("Adminstrator");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -218,7 +221,7 @@ public class Transactions extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtUsernameForPage))
-                    .addComponent(jLabel2))
+                    .addComponent(txtLevelForPage))
                 .addContainerGap(152, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -229,7 +232,7 @@ public class Transactions extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtUsernameForPage))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
+                .addComponent(txtLevelForPage)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
@@ -312,7 +315,7 @@ public class Transactions extends javax.swing.JFrame {
 
         btnTransactions.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
-        btnTransactions.setText("Transactions");
+        btnTransactions.setText("Stock Transactions");
         btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
             javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2),
             javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -431,7 +434,7 @@ public class Transactions extends javax.swing.JFrame {
 
         labelLogo.setText("logo");
 
-        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 48)); // NOI18N
+        txtNamePageTop.setFont(new java.awt.Font("Palatino Linotype", 1, 40)); // NOI18N
         txtNamePageTop.setForeground(new java.awt.Color(255, 255, 255));
         txtNamePageTop.setText("namePage");
 
@@ -637,7 +640,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingsActionPerformed
         // TODO add your handling code here:
         
-        Settings settings_page = new Settings(usernameForPage);
+        Settings settings_page = new Settings(usernameForPage, levelForPage);
         settings_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSettingsActionPerformed
@@ -645,7 +648,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
         // TODO add your handling code here:
         
-        Dashboard dashboard_page = new Dashboard(usernameForPage);
+        Dashboard dashboard_page = new Dashboard(usernameForPage, levelForPage);
         dashboard_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnDashboardActionPerformed
@@ -653,7 +656,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
         // TODO add your handling code here:
         
-        Products products_page = new Products(usernameForPage);
+        Products products_page = new Products(usernameForPage, levelForPage);
         products_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnProductsActionPerformed
@@ -661,7 +664,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriesActionPerformed
         // TODO add your handling code here:
         
-        Categories categories_page = new Categories(usernameForPage);
+        Categories categories_page = new Categories(usernameForPage, levelForPage);
         categories_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCategoriesActionPerformed
@@ -669,7 +672,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
         // TODO add your handling code here:
         
-        Brands brands_page = new Brands(usernameForPage);
+        Brands brands_page = new Brands(usernameForPage, levelForPage);
         brands_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBrandsActionPerformed
@@ -677,7 +680,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
         // TODO add your handling code here:
         
-        Transactions transactions_page = new Transactions(usernameForPage);
+        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
         transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactionsActionPerformed
@@ -685,7 +688,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
         // TODO add your handling code here:
         
-        Users users_page = new Users(usernameForPage);
+        Users users_page = new Users(usernameForPage, levelForPage);
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
@@ -693,7 +696,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
         // TODO add your handling code here:
         
-        Suppliers suppliers_page = new Suppliers(usernameForPage);
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
@@ -701,7 +704,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecordActionPerformed
         // TODO add your handling code here:
         
-        Record record_page = new Record(usernameForPage);
+        Record record_page = new Record(usernameForPage, levelForPage);
         record_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRecordActionPerformed
@@ -709,7 +712,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnBarangMasukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBarangMasukActionPerformed
         // TODO add your handling code here:
         
-        BarangMasuk barang_masuk_page = new BarangMasuk(usernameForPage);
+        BarangMasuk barang_masuk_page = new BarangMasuk(usernameForPage, levelForPage);
         barang_masuk_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBarangMasukActionPerformed
@@ -717,7 +720,7 @@ public class Transactions extends javax.swing.JFrame {
     private void btnBarangKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBarangKeluarActionPerformed
         // TODO add your handling code here:
         
-        BarangKeluar barang_keluar_page = new BarangKeluar(usernameForPage);
+        BarangKeluar barang_keluar_page = new BarangKeluar(usernameForPage, levelForPage);
         barang_keluar_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBarangKeluarActionPerformed
@@ -753,7 +756,7 @@ public class Transactions extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Transactions("Username").setVisible(true);
+                new Transactions("Username", "").setVisible(true);
             }
         });
     }
@@ -772,7 +775,6 @@ public class Transactions extends javax.swing.JFrame {
     private javax.swing.JButton btnTransactions;
     private javax.swing.JButton btnUsers;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -788,6 +790,7 @@ public class Transactions extends javax.swing.JFrame {
     private javax.swing.JLabel txtCountBarangDipinjam;
     private javax.swing.JLabel txtCountBarangKeluar;
     private javax.swing.JLabel txtCountBarangMasuk;
+    private javax.swing.JLabel txtLevelForPage;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;
     private javax.swing.JLabel txtUsernameForPage;
