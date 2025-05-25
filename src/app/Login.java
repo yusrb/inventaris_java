@@ -33,28 +33,6 @@ public class Login extends javax.swing.JFrame {
         setUndecorated(true);
         initComponents();
 
-        btnLogin.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnLogin.setBackground(new Color(147,112,219));
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnLogin.setBackground(null);
-            }
-        });
-
-        btnClear.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnClear.setBackground(new Color(147,112,219));
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnClear.setBackground(null);
-            }
-        });
-        
         Connection();
         getSettings();
         
@@ -178,6 +156,14 @@ public class Login extends javax.swing.JFrame {
 
         btnClear.setText("Clear");
         btnClear.setBorder(null);
+        btnClear.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnClearMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnClearMouseExited(evt);
+            }
+        });
         btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClearActionPerformed(evt);
@@ -186,6 +172,14 @@ public class Login extends javax.swing.JFrame {
 
         btnLogin.setText("Login");
         btnLogin.setBorder(null);
+        btnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnLoginMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnLoginMouseExited(evt);
+            }
+        });
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -201,6 +195,14 @@ public class Login extends javax.swing.JFrame {
 
         btnRegister.setText("Doesn't Have a Account? Register");
         btnRegister.setBorder(null);
+        btnRegister.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnRegisterMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnRegisterMouseExited(evt);
+            }
+        });
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegisterActionPerformed(evt);
@@ -386,6 +388,48 @@ public class Login extends javax.swing.JFrame {
             }
         }, 0, 50);
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnLoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseEntered
+        // TODO add your handling code here:
+        
+        btnLogin.setBackground(new Color(147,112,219));
+        btnLogin.setForeground(Color.WHITE);
+    }//GEN-LAST:event_btnLoginMouseEntered
+
+    private void btnLoginMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseExited
+        // TODO add your handling code here:
+        
+        btnLogin.setBackground(new Color(240,240,240));
+        btnLogin.setForeground(Color.BLACK);
+    }//GEN-LAST:event_btnLoginMouseExited
+
+    private void btnClearMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseEntered
+        // TODO add your handling code here:
+        
+        btnClear.setBackground(new Color(147,112,219));
+        btnClear.setForeground(Color.WHITE);
+    }//GEN-LAST:event_btnClearMouseEntered
+
+    private void btnClearMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseExited
+        // TODO add your handling code here:
+        
+        btnClear.setBackground(new Color(240,240,240));
+        btnClear.setForeground(Color.BLACK);
+    }//GEN-LAST:event_btnClearMouseExited
+
+    private void btnRegisterMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegisterMouseEntered
+        // TODO add your handling code here:
+        
+        btnRegister.setBackground(new Color(147,112,219));
+        btnRegister.setForeground(Color.WHITE);
+    }//GEN-LAST:event_btnRegisterMouseEntered
+
+    private void btnRegisterMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegisterMouseExited
+        // TODO add your handling code here:
+        
+        btnRegister.setBackground(new Color(240,240,240));
+        btnRegister.setForeground(Color.BLACK);
+    }//GEN-LAST:event_btnRegisterMouseExited
 
     /**
      * @param args the command line arguments

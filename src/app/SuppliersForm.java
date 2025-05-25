@@ -23,12 +23,13 @@ public class SuppliersForm extends javax.swing.JFrame {
     
     private final String usernameForPage;
     private final String levelForPage;
+    private final Suppliers suppliers_page;
     
     private String mode;
     
     private int suppliersId;
     
-    public SuppliersForm(String username, String level) {
+    public SuppliersForm(Suppliers suppliers, String username, String level) {
         initComponents();
         Connection();
         
@@ -38,13 +39,14 @@ public class SuppliersForm extends javax.swing.JFrame {
         
         usernameForPage = username;
         levelForPage = level;
+        suppliers_page = suppliers;
         
         setLocationRelativeTo(null);
     }
     
-    public SuppliersForm(String username, String level, int suppliersId, String namaSupplierLama, String kontakLama, String emailLama, String alamatLama)
+    public SuppliersForm(Suppliers suppliers, String username, String level, int suppliersId, String namaSupplierLama, String kontakLama, String emailLama, String alamatLama)
     {
-        this(username, level);
+        this(suppliers, username, level);
         
         this.mode = "update";
         btnAction.setText("Update");
@@ -100,8 +102,9 @@ public class SuppliersForm extends javax.swing.JFrame {
         txtAlamat = new javax.swing.JTextArea();
         txtKontak = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Supplier Page");
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Supplier");
@@ -286,8 +289,10 @@ public class SuppliersForm extends javax.swing.JFrame {
                         if (k == 1)
                         {
                             JOptionPane.showMessageDialog(this, "Supplier Baru Berhasil Ditambah", "Tambah Supplier Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                            Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
-                            suppliers_page.setVisible(true);
+                            if (suppliers_page != null)
+                            {
+                                suppliers_page.Fetch();
+                            }
                             this.dispose();
                         }
                         else
@@ -309,8 +314,11 @@ public class SuppliersForm extends javax.swing.JFrame {
                    if (k == 1)
                    {
                        JOptionPane.showMessageDialog(this, "Supplier Berhasil DiUpdate", "Update Supplier Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                       Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
-                       suppliers_page.setVisible(true);
+                       
+                       if (suppliers_page != null)
+                       {
+                           suppliers_page.Fetch();
+                       }
                        this.dispose();
                    }
                    else
@@ -355,7 +363,7 @@ public class SuppliersForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SuppliersForm("", "").setVisible(true);
+                new SuppliersForm(null, "", "").setVisible(true);
             }
         });
     }

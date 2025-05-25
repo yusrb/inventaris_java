@@ -23,12 +23,13 @@ public class ProductsForm extends javax.swing.JFrame {
     
     private final String usernameForPage;
     private final String levelForPage;
+    private final Products products_page;
     
     private String mode;
     
     private int productsId;
     
-    public ProductsForm(String username, String level) {
+    public ProductsForm(Products products, String username, String level) {
         initComponents();
         Connection();
         loadCategories();
@@ -40,11 +41,12 @@ public class ProductsForm extends javax.swing.JFrame {
         
         this.usernameForPage = username;
         this.levelForPage = level;
+        this.products_page = products;
         setLocationRelativeTo(null);
     }
     
-public ProductsForm(String username, String level ,int productsId , String kodeBarangLama ,String namaLama, String deskripsiLama, Double hargaLama, int stokLama, String kategoriLama, String brandLama) {
-    this(username, level);
+public ProductsForm(Products products, String username, String level ,int productsId , String kodeBarangLama ,String namaLama, String deskripsiLama, Double hargaLama, int stokLama, String kategoriLama, String brandLama) {
+    this(products, username, level);
 
     this.mode = "update";
     btnAction.setText("Update");
@@ -158,8 +160,9 @@ public ProductsForm(String username, String level ,int productsId , String kodeB
         jLabel10 = new javax.swing.JLabel();
         txtHarga = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Product Form Page");
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Kode Barang");
@@ -394,8 +397,11 @@ public ProductsForm(String username, String level ,int productsId , String kodeB
             if (category_id == -1 || brand_id == -1)
             {
                 JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Dulu Produk", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-                Products products_page = new Products(usernameForPage, levelForPage);
-                products_page.setVisible(true);
+               
+                if (products_page != null)
+                {
+                    products_page.Fetch();
+                }
                 this.dispose();
             }
 
@@ -416,8 +422,10 @@ public ProductsForm(String username, String level ,int productsId , String kodeB
                 
                 if (k > 0) { 
                     JOptionPane.showMessageDialog(this, "Produk Baru Berhasil Ditambahkan!!!", "Tambah Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    Products products_page = new Products(usernameForPage, levelForPage);
-                    products_page.setVisible(true);
+                    if (products_page != null)
+                    {
+                        products_page.Fetch();
+                    }
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Product Baru Gagal Ditambahkan!!!", "Tambah Produk Gagal", JOptionPane.WARNING_MESSAGE);
@@ -440,8 +448,11 @@ public ProductsForm(String username, String level ,int productsId , String kodeB
                 int rowsUpdated = pst.executeUpdate();
                 if (rowsUpdated > 0) {
                     JOptionPane.showMessageDialog(this, "Product Berhasil DiUpdate!!!", "Update Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    Products products_page = new Products(usernameForPage, levelForPage);
-                    products_page.setVisible(true);
+                    
+                    if (products_page != null)
+                    {
+                        products_page.Fetch();
+                    }
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Product Gagal DiUpdate!!!", "Update Produk Gagal", JOptionPane.WARNING_MESSAGE);
@@ -486,7 +497,7 @@ public ProductsForm(String username, String level ,int productsId , String kodeB
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProductsForm("", "").setVisible(true);
+                new ProductsForm(null, "", "").setVisible(true);
             }
         });
     }

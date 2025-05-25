@@ -24,17 +24,20 @@ public class BrandsForm extends javax.swing.JFrame {
     
     private final String usernameForPage;
     private final String levelForPage;
+    private final Brands brands_page;
+    
     private String mode;
     
     private int brandId;
     private String namaBrandLama;
     
-    public BrandsForm(String username, String level) {
+    public BrandsForm(Brands brands, String username, String level) {
         initComponents();
         Connection();
         
         usernameForPage = username;
         levelForPage = level;
+        brands_page = brands;
         
         this.mode = "create";
         btnAction.setText("Create");
@@ -43,9 +46,9 @@ public class BrandsForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public BrandsForm(String username, String level ,int brandId, String namaBrandLama)
+    public BrandsForm(Brands brands, String username, String level ,int brandId, String namaBrandLama)
     {
-        this(username, level);
+        this(brands, username, level);
         this.brandId = brandId;
         
         txtNamaBrand.setText(namaBrandLama);
@@ -88,9 +91,9 @@ public class BrandsForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Brands Form");
-        setPreferredSize(new java.awt.Dimension(882, 441));
+        setResizable(false);
 
         btnAction.setForeground(new java.awt.Color(255, 255, 255));
         btnAction.setText("Action");
@@ -193,12 +196,10 @@ public class BrandsForm extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         String nama_brand = txtNamaBrand.getText();
-        
-        // Validasi Jika Input Kosong
+
         if (nama_brand.isEmpty())
         {
             JOptionPane.showMessageDialog(this, "Input Harus Diisi!!!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
-            return;
         }
         else
         {
@@ -213,8 +214,11 @@ public class BrandsForm extends javax.swing.JFrame {
                     if (k == 1)
                     {
                         JOptionPane.showMessageDialog(this, "Brand Baru Berhasil Ditambahkan!!!", "Tambah Brand Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                        Brands brands_page = new Brands(usernameForPage, levelForPage);
-                        brands_page.setVisible(true);
+                        
+                        if (brands_page != null)
+                        {
+                            brands_page.Fetch();
+                        }
                         this.dispose();
                     }
                     else
@@ -233,8 +237,11 @@ public class BrandsForm extends javax.swing.JFrame {
                      if (k == 1)
                     {
                         JOptionPane.showMessageDialog(this, "Brand Baru Berhasil DiUpdate!!!", "Update Brand Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                        Brands brands_page = new Brands(usernameForPage, levelForPage);
-                        brands_page.setVisible(true);
+                        
+                        if (brands_page != null)
+                        {
+                            brands_page.Fetch();
+                        }
                         this.dispose();
                     }
                     else
@@ -294,7 +301,7 @@ public class BrandsForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BrandsForm("", "").setVisible(true);
+                new BrandsForm(null, "", "").setVisible(true);
             }
         });
     }

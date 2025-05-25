@@ -24,12 +24,13 @@ public class CategoryForm extends javax.swing.JFrame {
     
     private final String usernameForPage;
     private final String levelForPage;
+    private final Categories categories_page;
     
     private String mode;
     private int categoryId;
     private String namaCategoryLama;
     
-    public CategoryForm(String username, String level) {
+    public CategoryForm(Categories categories, String username, String level) {
         initComponents();
         Connection();
         
@@ -39,13 +40,14 @@ public class CategoryForm extends javax.swing.JFrame {
         
         this.usernameForPage = username;
         this.levelForPage = level;
+        this.categories_page = categories;
         
         setLocationRelativeTo(null);
     }
     
-    public CategoryForm(String username, String level , int CategoryID, String NamaCategoryLama)
+    public CategoryForm(Categories categories, String username, String level , int CategoryID, String NamaCategoryLama)
     {
-        this(username, level);
+        this(categories, username, level);
         
         this.mode = "update";
         this.categoryId = CategoryID;
@@ -89,8 +91,9 @@ public class CategoryForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Category Page");
+        setResizable(false);
 
         btnAction.setForeground(new java.awt.Color(255, 255, 255));
         btnAction.setText("Action");
@@ -213,8 +216,10 @@ public class CategoryForm extends javax.swing.JFrame {
                         if (k == 1)
                         {
                             JOptionPane.showMessageDialog(this, "Kategori Baru Berhasil Ditambah!!!", "Tambah Kategori Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                            Categories categories_page = new Categories(usernameForPage, levelForPage);
-                            categories_page.setVisible(true);
+                            if (categories_page != null)
+                            {
+                                categories_page.Fetch();
+                            }
                             this.dispose();
                         }
                         else
@@ -233,8 +238,11 @@ public class CategoryForm extends javax.swing.JFrame {
                     if (k == 1)
                         {
                             JOptionPane.showMessageDialog(this, "Kategori Berhasil DiUpdate!!!", "Update Kategori Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                            Categories categories_page = new Categories(usernameForPage, levelForPage);
-                            categories_page.setVisible(true);
+                            
+                            if (categories_page != null)
+                            {
+                                categories_page.Fetch();
+                            }
                             this.dispose();
                         }
                         else
@@ -295,7 +303,7 @@ public class CategoryForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CategoryForm("", "").setVisible(true);
+                new CategoryForm(null, "", "").setVisible(true);
             }
         });
     }

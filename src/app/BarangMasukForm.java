@@ -23,6 +23,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
     
     private final String usernameForPage;
     private final String levelForPage;
+    private final BarangMasuk barang_masuk_page;
     
     private String mode;
     
@@ -32,7 +33,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
     private java.util.Map<String, Integer> supplierMap = new java.util.HashMap<>();
     private java.util.Map<String, Integer> statusMap = new java.util.HashMap<>();
     
-    public BarangMasukForm(String username, String level) {
+    public BarangMasukForm(BarangMasuk barangMasuk, String username, String level) {
         initComponents();
         Connection();
         loadSuppliers();
@@ -41,6 +42,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
         
         this.usernameForPage = username;
         this.levelForPage = level;
+        this.barang_masuk_page = barangMasuk;
         
         this.mode = "create";
         btnAction.setText("Create");
@@ -49,8 +51,8 @@ public class BarangMasukForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public BarangMasukForm(String username, String level, int barangMasukId, String namaProduk, int jumlah, String deskripsi, String supplier, Timestamp tanggalMasuk) {
-        this(username, level);
+    public BarangMasukForm(BarangMasuk barangMasuk, String username, String level, int barangMasukId, String namaProduk, int jumlah, String deskripsi, String supplier, Timestamp tanggalMasuk) {
+        this(barangMasuk, username, level);
 
         this.mode = "update";
         this.stockInId = barangMasukId;
@@ -157,8 +159,9 @@ public class BarangMasukForm extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         cmbStatus = new javax.swing.JComboBox<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Barang Masuk Form Page");
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Produk");
@@ -349,31 +352,42 @@ public class BarangMasukForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
-        // TODO add your handling code here:
-
         try {
             String produkDipilih = (String) cmbProduk.getSelectedItem();
-            int idProduk = produkMap.getOrDefault(produkDipilih, -1);
-
             String supplierDipilih = (String) cmbSupplier.getSelectedItem();
-            int idSupplier = supplierMap.getOrDefault(supplierDipilih, -1);
-
             String deskripsi = txtDeskripsi.getText();
             String jumlahBarangTxt = txtJumlah.getText();
             String status = (String) cmbStatus.getSelectedItem();
             java.util.Date tgl = dtanggal_masuk.getDate();
 
-            System.out.println("Status yang dipilih: " + status);
-            
-            if (produkDipilih == null || produkDipilih.isEmpty() ||
-                supplierDipilih == null || supplierDipilih.isEmpty() ||
-                jumlahBarangTxt.isEmpty() || deskripsi.isEmpty() ||
-                (status.equalsIgnoreCase("masuk") && tgl == null) ||
-                status == null || idProduk == -1 || idSupplier == -1) {
-
-                JOptionPane.showMessageDialog(this, "Seluruh input harus diisi dengan benar!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+            if (produkDipilih == null || produkDipilih.isEmpty() || !produkMap.containsKey(produkDipilih)) {
+                JOptionPane.showMessageDialog(this, "Produk tidak valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            if (supplierDipilih == null || supplierDipilih.isEmpty() || !supplierMap.containsKey(supplierDipilih)) {
+                JOptionPane.showMessageDialog(this, "Supplier tidak valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (status == null || (!status.equalsIgnoreCase("masuk") && !status.equalsIgnoreCase("dibatalkan"))) {
+                JOptionPane.showMessageDialog(this, "Status tidak valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (deskripsi.isEmpty() || deskripsi.length() > 255) {
+                JOptionPane.showMessageDialog(this, "Deskripsi harus diisi dan maksimal 255 karakter!", "Input Salah", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (jumlahBarangTxt.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Jumlah barang harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (status.equalsIgnoreCase("masuk") && tgl == null) 
+            {
+                JOptionPane.showMessageDialog(this, "Tanggal masuk harus diisi untuk status 'masuk'!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int idProduk = produkMap.get(produkDipilih);
+            int idSupplier = supplierMap.get(supplierDipilih);
 
             int jumlahBarang;
             try {
@@ -387,7 +401,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
                 return;
             }
 
-            java.sql.Timestamp tanggalMasuk = new java.sql.Timestamp(tgl.getTime());
+            java.sql.Timestamp tanggalMasuk = (tgl != null) ? new java.sql.Timestamp(tgl.getTime()) : null;
 
             if (mode.equals("create")) {
                 pst = conn.prepareStatement(
@@ -405,15 +419,19 @@ public class BarangMasukForm extends javax.swing.JFrame {
 
                 if (hasil == 1) {
                     if (status.equalsIgnoreCase("masuk")) {
-                        PreparedStatement updateStok = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                        updateStok.setInt(1, jumlahBarang);
-                        updateStok.setInt(2, idProduk);
-                        updateStok.executeUpdate();
+                        PreparedStatement cekStok = conn.prepareStatement("SELECT stok FROM products WHERE id = ?");
+                        cekStok.setInt(1, idProduk);
+                        ResultSet rs = cekStok.executeQuery();
+                        if (rs.next()) {
+                            int stokSekarang = rs.getInt("stok");
+                            PreparedStatement updateStok = conn.prepareStatement("UPDATE products SET stok = ? WHERE id = ?");
+                            updateStok.setInt(1, stokSekarang + jumlahBarang);
+                            updateStok.setInt(2, idProduk);
+                            updateStok.executeUpdate();
+                        }
                     }
-
                     JOptionPane.showMessageDialog(this, "Barang Masuk Baru Berhasil Ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    BarangMasuk halaman = new BarangMasuk(usernameForPage, levelForPage);
-                    halaman.setVisible(true);
+                    if (barang_masuk_page != null) barang_masuk_page.Fetch();
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Barang Masuk Gagal Ditambahkan!", "Gagal", JOptionPane.WARNING_MESSAGE);
@@ -433,6 +451,19 @@ public class BarangMasukForm extends javax.swing.JFrame {
                 int idProdukLama = dataLama.getInt("produk_id");
                 String statusLama = dataLama.getString("status");
 
+                if (statusLama.equalsIgnoreCase("masuk") && status.equalsIgnoreCase("dibatalkan")) {
+                    PreparedStatement cekStok = conn.prepareStatement("SELECT stok FROM products WHERE id = ?");
+                    cekStok.setInt(1, idProdukLama);
+                    ResultSet rs = cekStok.executeQuery();
+                    if (rs.next()) {
+                        int stokSekarang = rs.getInt("stok");
+                        if (stokSekarang - jumlahLama < 0) {
+                            JOptionPane.showMessageDialog(this, "Stok produk tidak mencukupi untuk pembatalan!", "Stok Tidak Cukup", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+                    }
+                }
+
                 pst = conn.prepareStatement("UPDATE stock_in SET produk_id = ?, jumlah = ?, tanggal_masuk = ?, supplier_id = ?, deskripsi = ?, status = ? WHERE id = ?");
                 pst.setInt(1, idProduk);
                 pst.setInt(2, jumlahBarang);
@@ -447,45 +478,44 @@ public class BarangMasukForm extends javax.swing.JFrame {
                 if (hasil == 1) {
                     if (!status.equalsIgnoreCase(statusLama)) {
                         if (statusLama.equalsIgnoreCase("masuk") && status.equalsIgnoreCase("dibatalkan")) {
-                            PreparedStatement kembalikan = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
-                            kembalikan.setInt(1, jumlahLama);
-                            kembalikan.setInt(2, idProdukLama);
-                            kembalikan.executeUpdate();
-                        } else if (statusLama.equalsIgnoreCase("dibatalkan") && status.equalsIgnoreCase("masuk")) {
-                            PreparedStatement tambah = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                            tambah.setInt(1, jumlahBarang);
-                            tambah.setInt(2, idProduk);
-                            tambah.executeUpdate();
-                        }
-                    } else if (status.equalsIgnoreCase("masuk")) {
-                        if (idProduk != idProdukLama) {
                             PreparedStatement kurangiStok = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
                             kurangiStok.setInt(1, jumlahLama);
                             kurangiStok.setInt(2, idProdukLama);
                             kurangiStok.executeUpdate();
-
+                        } else if (statusLama.equalsIgnoreCase("dibatalkan") && status.equalsIgnoreCase("masuk")) {
                             PreparedStatement tambahStok = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
                             tambahStok.setInt(1, jumlahBarang);
                             tambahStok.setInt(2, idProduk);
                             tambahStok.executeUpdate();
+                        }
+                    } else if (status.equalsIgnoreCase("masuk")) {
+                        if (idProduk != idProdukLama) {
+                            PreparedStatement kurangStokLama = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
+                            kurangStokLama.setInt(1, jumlahLama);
+                            kurangStokLama.setInt(2, idProdukLama);
+                            kurangStokLama.executeUpdate();
+
+                            PreparedStatement tambahStokBaru = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
+                            tambahStokBaru.setInt(1, jumlahBarang);
+                            tambahStokBaru.setInt(2, idProduk);
+                            tambahStokBaru.executeUpdate();
                         } else {
                             int selisih = jumlahBarang - jumlahLama;
-                            PreparedStatement koreksiStok = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                            koreksiStok.setInt(1, selisih);
-                            koreksiStok.setInt(2, idProduk);
-                            koreksiStok.executeUpdate();
+                            if (selisih != 0) {
+                                PreparedStatement koreksiStok = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
+                                koreksiStok.setInt(1, selisih);
+                                koreksiStok.setInt(2, idProduk);
+                                koreksiStok.executeUpdate();
+                            }
                         }
                     }
-
                     JOptionPane.showMessageDialog(this, "Barang Masuk Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    BarangMasuk halaman = new BarangMasuk(usernameForPage, levelForPage);
-                    halaman.setVisible(true);
+                    if (barang_masuk_page != null) barang_masuk_page.Fetch();
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Barang Masuk Gagal Diupdate!", "Gagal", JOptionPane.WARNING_MESSAGE);
                 }
             }
-
         } catch (Exception e) {
             Logger.getLogger(BarangMasukForm.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -529,7 +559,7 @@ public class BarangMasukForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BarangMasukForm("", "").setVisible(true);
+                new BarangMasukForm(null, "", "").setVisible(true);
             }
         });
     }

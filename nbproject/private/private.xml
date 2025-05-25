@@ -5,36 +5,17 @@
             <url>src/app/Login.java</url>
             <bookmark id="1">
                 <name/>
-                <line>36</line>
+                <line>34</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Login.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/CategoryDetail.java</file>
             <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Products.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Dashboard.java</file>
             <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Users.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/BarangKeluarForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Settings.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Suppliers.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Notications.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/ProductsForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/BrandDetail.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/UsersForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/BarangKeluar.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Brands.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/CategoryForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/BarangMasukForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/BrandsForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Transactions.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Categories.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Record.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/BarangMasuk.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/SuppliersForm.java</file>
-            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/SupplierDetail.java</file>
+            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/Cashier.java</file>
+            <file>file:/C:/Users/yusrb/OneDrive/Dokumen/NetBeansProjects/inventaris_java/src/app/ProductList.java</file>
         </group>
     </open-files>
 </project-private>
