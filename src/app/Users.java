@@ -53,6 +53,8 @@ public class Users extends javax.swing.JFrame {
         
         usernameForPage = username;
         levelForPage = role;
+        
+        batasiAkses();
         txtUsernameForPage.setText(usernameForPage);
         txtRoleForUsername.setText(levelForPage);
         
@@ -147,7 +149,45 @@ public class Users extends javax.swing.JFrame {
             Logger.getLogger(Users.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void batasiAkses() {
+        switch (levelForPage.toLowerCase()) {
+            case "administrator":
+                break;
 
+            case "petugas kasir":
+                btnProducts.setEnabled(false);
+                btnCategories.setEnabled(false);
+                btnBrands.setEnabled(false);
+                btnUsers.setEnabled(false);
+                btnSuppliers.setEnabled(false);
+                btnReports.setEnabled(false);
+                btnTransactions.setEnabled(false);
+                btnSettings.setEnabled(false);
+                btnCreate.setEnabled(false);
+                btnUpdate.setEnabled(false);
+                btnDelete.setEnabled(false);
+                break;
+
+            case "manager":
+                btnProducts.setEnabled(false);
+                btnCategories.setEnabled(false);
+                btnBrands.setEnabled(false);
+                btnUsers.setEnabled(false);
+                btnSuppliers.setEnabled(false);
+                btnCreate.setEnabled(false);
+                btnUpdate.setEnabled(false);
+                btnDelete.setEnabled(false);
+                btnCashier.setEnabled(false);
+                break;
+
+            default:
+                JOptionPane.showMessageDialog(this, "Level tidak dikenali: " + levelForPage, "Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+                break;
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -162,16 +202,18 @@ public class Users extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtUsernameForPage = new javax.swing.JLabel();
         txtRoleForUsername = new javax.swing.JLabel();
-        btnTransactions = new javax.swing.JButton();
-        btnUsers = new javax.swing.JButton();
-        txtNamePageBottom = new javax.swing.JLabel();
-        btnSuppliers = new javax.swing.JButton();
         btnBrands = new javax.swing.JButton();
         btnDashboard = new javax.swing.JButton();
         btnProducts = new javax.swing.JButton();
         btnCategories = new javax.swing.JButton();
+        btnPengeluaran = new javax.swing.JButton();
         btnCashier = new javax.swing.JButton();
         btnSalesTransactions = new javax.swing.JButton();
+        btnTransactions = new javax.swing.JButton();
+        btnReports = new javax.swing.JButton();
+        txtNamePageBottom = new javax.swing.JLabel();
+        btnUsers = new javax.swing.JButton();
+        btnSuppliers = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
@@ -228,57 +270,6 @@ public class Users extends javax.swing.JFrame {
                 .addComponent(txtRoleForUsername)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
-
-        btnTransactions.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
-        btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
-        btnTransactions.setText("Stock Transactions");
-        btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-            javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
-            javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-        btnTransactions.setBorderPainted(false);
-        btnTransactions.setContentAreaFilled(false);
-        btnTransactions.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnTransactions.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTransactionsActionPerformed(evt);
-            }
-        });
-
-        btnUsers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
-        btnUsers.setForeground(new java.awt.Color(255, 255, 255));
-        btnUsers.setText("Users");
-        btnUsers.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-            javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
-            javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-        btnUsers.setContentAreaFilled(false);
-        btnUsers.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnUsers.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUsersActionPerformed(evt);
-            }
-        });
-
-        txtNamePageBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
-        txtNamePageBottom.setForeground(new java.awt.Color(255, 255, 255));
-        txtNamePageBottom.setText("namePage");
-
-        btnSuppliers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
-        btnSuppliers.setForeground(new java.awt.Color(255, 255, 255));
-        btnSuppliers.setText("Suppliers");
-        btnSuppliers.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-            javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
-            javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-        btnSuppliers.setBorderPainted(false);
-        btnSuppliers.setContentAreaFilled(false);
-        btnSuppliers.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnSuppliers.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSuppliersActionPerformed(evt);
-            }
-        });
 
         btnBrands.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnBrands.setForeground(new java.awt.Color(255, 255, 255));
@@ -347,11 +338,27 @@ public class Users extends javax.swing.JFrame {
         }
     });
 
+    btnPengeluaran.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnPengeluaran.setForeground(new java.awt.Color(255, 255, 255));
+    btnPengeluaran.setText("Operational Expenses");
+    btnPengeluaran.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnPengeluaran.setBorderPainted(false);
+    btnPengeluaran.setContentAreaFilled(false);
+    btnPengeluaran.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnPengeluaran.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnPengeluaranActionPerformed(evt);
+        }
+    });
+
     btnCashier.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
     btnCashier.setForeground(new java.awt.Color(255, 255, 255));
     btnCashier.setText("Cashier");
     btnCashier.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
         javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
     ));
     btnCashier.setBorderPainted(false);
@@ -367,7 +374,7 @@ public class Users extends javax.swing.JFrame {
     btnSalesTransactions.setForeground(new java.awt.Color(255, 255, 255));
     btnSalesTransactions.setText("Sales Transactions");
     btnSalesTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
         javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
     ));
     btnSalesTransactions.setBorderPainted(false);
@@ -379,47 +386,120 @@ public class Users extends javax.swing.JFrame {
         }
     });
 
+    btnTransactions.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
+    btnTransactions.setText("Stock Transactions");
+    btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnTransactions.setBorderPainted(false);
+    btnTransactions.setContentAreaFilled(false);
+    btnTransactions.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnTransactions.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnTransactionsActionPerformed(evt);
+        }
+    });
+
+    btnReports.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnReports.setForeground(new java.awt.Color(255, 255, 255));
+    btnReports.setText("Reports");
+    btnReports.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnReports.setBorderPainted(false);
+    btnReports.setContentAreaFilled(false);
+    btnReports.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnReports.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnReportsActionPerformed(evt);
+        }
+    });
+
+    txtNamePageBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
+    txtNamePageBottom.setForeground(new java.awt.Color(255, 255, 255));
+    txtNamePageBottom.setText("namePage");
+
+    btnUsers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnUsers.setForeground(new java.awt.Color(255, 255, 255));
+    btnUsers.setText("Users");
+    btnUsers.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnUsers.setContentAreaFilled(false);
+    btnUsers.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnUsers.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnUsersActionPerformed(evt);
+        }
+    });
+
+    btnSuppliers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnSuppliers.setForeground(new java.awt.Color(255, 255, 255));
+    btnSuppliers.setText("Suppliers");
+    btnSuppliers.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnSuppliers.setBorderPainted(false);
+    btnSuppliers.setContentAreaFilled(false);
+    btnSuppliers.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnSuppliers.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnSuppliersActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGap(47, 47, 47)
-            .addComponent(txtNamePageBottom))
         .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnCashier, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnSalesTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnCategories, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnBrands, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnReports, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGap(43, 43, 43)
+            .addComponent(txtNamePageBottom))
     );
     jPanel1Layout.setVerticalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel1Layout.createSequentialGroup()
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(1, 1, 1)
-            .addComponent(btnCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnBrands, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnBrands, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(16, 16, 16)
-            .addComponent(btnCashier, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnCashier, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnSalesTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnSalesTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(16, 16, 16)
-            .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnPengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnReports, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 0, 0)
+            .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(39, 39, 39)
             .addComponent(txtNamePageBottom)
             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
@@ -462,7 +542,7 @@ public class Users extends javax.swing.JFrame {
         .addGroup(jPanel3Layout.createSequentialGroup()
             .addGap(33, 33, 33)
             .addComponent(labelLogo)
-            .addGap(20, 20, 20)
+            .addGap(13, 13, 13)
             .addComponent(txtNamePageTop)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -663,30 +743,6 @@ public class Users extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
-        // TODO add your handling code here:
-
-        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
-        transactions_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnTransactionsActionPerformed
-
-    private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
-        // TODO add your handling code here:
-
-        Users users_page = new Users(usernameForPage, levelForPage);
-        users_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnUsersActionPerformed
-
-    private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
-        // TODO add your handling code here:
-
-        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
-        suppliers_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnSuppliersActionPerformed
-
     private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
         // TODO add your handling code here:
 
@@ -719,6 +775,14 @@ public class Users extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnCategoriesActionPerformed
 
+    private void btnPengeluaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPengeluaranActionPerformed
+        // TODO add your handling code here:
+        
+        Pengeluaran pengeluaran_page = new Pengeluaran(usernameForPage, levelForPage);
+        pengeluaran_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnPengeluaranActionPerformed
+
     private void btnCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCashierActionPerformed
         // TODO add your handling code here:
 
@@ -734,6 +798,38 @@ public class Users extends javax.swing.JFrame {
         sales_transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSalesTransactionsActionPerformed
+
+    private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
+        // TODO add your handling code here:
+
+        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
+        transactions_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnTransactionsActionPerformed
+
+    private void btnReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportsActionPerformed
+        // TODO add your handling code here:
+        
+        Laporan laporan_page = new Laporan(usernameForPage, levelForPage);
+        laporan_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnReportsActionPerformed
+
+    private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
+        // TODO add your handling code here:
+
+        Users users_page = new Users(usernameForPage, levelForPage);
+        users_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnUsersActionPerformed
+
+    private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
+        // TODO add your handling code here:
+
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
+        suppliers_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnSuppliersActionPerformed
 
     /**
      * @param args the command line arguments
@@ -779,7 +875,9 @@ public class Users extends javax.swing.JFrame {
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnPengeluaran;
     private javax.swing.JButton btnProducts;
+    private javax.swing.JButton btnReports;
     private javax.swing.JButton btnSalesTransactions;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnSuppliers;

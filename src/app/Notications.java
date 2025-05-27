@@ -106,6 +106,7 @@ public class Notications extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Notifikasi Page");
+        setAlwaysOnTop(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));

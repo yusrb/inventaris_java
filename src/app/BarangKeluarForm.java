@@ -39,7 +39,6 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         initComponents();
         Connection();
         loadProducts();
-        loadStatus();
         
         this.usernameForPage = username;
         this.levelForPage = level;
@@ -52,7 +51,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     
-    public BarangKeluarForm(BarangKeluar barangKeluar, String username, String level, int id, String produkLama, int jumlahLama, Timestamp tanggalKeluarTimestamp, String penerimaLama, String statusLama, String deskripsiLama) {
+    public BarangKeluarForm(BarangKeluar barangKeluar, String username, String level, int id, String produkLama, int jumlahLama, java.util.Date tanggalKeluarDate, String keteranganLama, String adminLama) {
         this(barangKeluar, username, level);
 
         this.stockInId = id;
@@ -63,16 +62,14 @@ public class BarangKeluarForm extends javax.swing.JFrame {
 
         cmbProduk.setSelectedItem(produkLama);
         txtJumlah.setText(String.valueOf(jumlahLama));
-        if (tanggalKeluarTimestamp != null) {
-            dtanggal_keluar.setDate(new Date(tanggalKeluarTimestamp.getTime()));
+        if (tanggalKeluarDate != null) {
+            dtanggal.setDate(new java.util.Date(tanggalKeluarDate.getTime()));
         } else {
-            dtanggal_keluar.setDate(null);
+            dtanggal.setDate(null);
         }
-        txtPenerima.setText(penerimaLama);
-        cmbStatus.setSelectedItem(statusLama);
-        txtDeskripsi.setText(deskripsiLama);
+        txtDeskripsi.setText(keteranganLama);
     }
-    
+
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
@@ -107,18 +104,10 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                 produkMap.put(nama, id);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(BarangMasukForm.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BarangKeluarForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void loadStatus() {
-        cmbStatus.removeAllItems();
-        
-        cmbStatus.addItem("keluar");
-        cmbStatus.addItem("dipinjam");
-        cmbStatus.addItem("selesai dipinjam");
-    }
-    
+   
     private boolean cekStokCukup(int produkId, int jumlahDiminta)
     {
         try {
@@ -151,15 +140,11 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         btnAction = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
         btnBackToProducts = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        txtPenerima = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDeskripsi = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         cmbProduk = new javax.swing.JComboBox<>();
-        dtanggal_keluar = new com.toedter.calendar.JDateChooser();
-        cmbStatus = new javax.swing.JComboBox<>();
+        dtanggal = new com.toedter.calendar.JDateChooser();
         jLabel8 = new javax.swing.JLabel();
         txtJumlah = new javax.swing.JTextField();
 
@@ -222,9 +207,6 @@ public class BarangKeluarForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel5.setText("Penerima");
-
         txtDeskripsi.setColumns(20);
         txtDeskripsi.setRows(5);
         jScrollPane1.setViewportView(txtDeskripsi);
@@ -232,12 +214,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel6.setText("Tanggal Keluar");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel7.setText("Status");
-
         cmbProduk.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cmbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel8.setText("Jumlah");
@@ -258,41 +235,29 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel1)
+                                        .addGap(230, 230, 230))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cmbProduk, 0, 303, Short.MAX_VALUE)
+                                        .addGap(50, 50, 50)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel6)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cmbProduk, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGap(48, 48, 48)))
+                                        .addComponent(dtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(txtPenerima, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                                                .addComponent(dtanggal_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGap(48, 48, 48)
-                                                .addComponent(jLabel6)
-                                                .addGap(0, 0, Short.MAX_VALUE))))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel8)
-                                            .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7)
-                                            .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(106, 106, 106)))
-                        .addGap(41, 41, 41)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnClear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                            .addComponent(btnBackToProducts, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel8)
+                                    .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnClear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                            .addComponent(btnBackToProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -305,37 +270,26 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAction, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBackToProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPenerima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbProduk, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmbProduk, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dtanggal_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBackToProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(127, Short.MAX_VALUE))
         );
 
@@ -354,43 +308,26 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         cmbProduk.setSelectedIndex(0);
-        txtPenerima.setText("");
-        dtanggal_keluar.setDate(null);
-        cmbStatus.setSelectedIndex(0);
+        txtJumlah.setText("");
+        dtanggal.setDate(null);
         txtDeskripsi.setText("");
-        
+
         cmbProduk.requestFocusInWindow();
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
         // TODO add your handling code here:
-
-            try {
+        
+        try {
                 String produkDipilih = (String) cmbProduk.getSelectedItem();
                 if (produkDipilih == null) {
-                    JOptionPane.showMessageDialog(this, "Pilih produk yang valid!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Pilih produk!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+
                 int idProduk = produkMap.getOrDefault(produkDipilih, -1);
                 if (idProduk == -1) {
-                    JOptionPane.showMessageDialog(this, "Pilih produk yang valid!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                String status = (String) cmbStatus.getSelectedItem();
-                if (status == null || status.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Status harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                List<String> validStatus = Arrays.asList("dipinjam", "keluar", "selesai dipinjam", "lainnya");
-                if (!validStatus.contains(status.toLowerCase())) {
-                    JOptionPane.showMessageDialog(this, "Status tidak valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                String penerima = txtPenerima.getText();
-                if (penerima == null || penerima.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Penerima harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Produk tidak valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -398,204 +335,59 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                 try {
                     jumlah = Integer.parseInt(txtJumlah.getText());
                     if (jumlah <= 0) {
-                        JOptionPane.showMessageDialog(this, "Jumlah harus lebih dari 0!", "Input Salah", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Jumlah harus lebih dari 0", "Input Salah", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Jumlah harus berupa angka valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Jumlah tidak valid!", "Input Salah", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                java.util.Date tgl = dtanggal_keluar.getDate();
+                java.util.Date tgl = dtanggal.getDate();
                 if (tgl == null) {
-                    JOptionPane.showMessageDialog(this, "Tanggal keluar harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Tanggal harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                java.sql.Timestamp tanggalKeluar = new java.sql.Timestamp(tgl.getTime());
+                Timestamp tanggal = new Timestamp(tgl.getTime());
 
-                if (tanggalKeluar.after(new java.sql.Timestamp(System.currentTimeMillis()))) {
-                    JOptionPane.showMessageDialog(this, "Tanggal keluar tidak boleh di masa depan!", "Input Salah", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                String deskripsi = txtDeskripsi.getText();
-                if (deskripsi == null || deskripsi.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Deskripsi harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                String keterangan = txtDeskripsi.getText().trim();
+                if (keterangan.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Keterangan harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                if (mode.equals("create")) {
-                    if (status.equalsIgnoreCase("dipinjam") || status.equalsIgnoreCase("keluar")) {
-                        if (!cekStokCukup(idProduk, jumlah)) {
-                            JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk produk ini!", "Stok Kurang", JOptionPane.WARNING_MESSAGE);
-                            return;
-                        }
-                    }
-
-                    pst = conn.prepareStatement(
-                        "INSERT INTO stock_out(produk_id, penerima, jumlah, status, tanggal_keluar, deskripsi) VALUES (?, ?, ?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                    );
-                    pst.setInt(1, idProduk);
-                    pst.setString(2, penerima);
-                    pst.setInt(3, jumlah);
-                    pst.setString(4, status);
-                    pst.setTimestamp(5, tanggalKeluar);
-                    pst.setString(6, deskripsi);
-
-                    int hasil = pst.executeUpdate();
-
-                    if (hasil == 1) {
-                        if (status.equalsIgnoreCase("dipinjam") || status.equalsIgnoreCase("keluar")) {
-                            PreparedStatement updateStok = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
-                            updateStok.setInt(1, jumlah);
-                            updateStok.setInt(2, idProduk);
-                            updateStok.executeUpdate();
-                        }
-
-                        JOptionPane.showMessageDialog(this, "Barang Keluar Berhasil Ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                        if (barang_keluar_page != null) {
-                            barang_keluar_page.Fetch();
-                        }
-                        this.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Barang Keluar Gagal Ditambahkan!", "Gagal", JOptionPane.WARNING_MESSAGE);
-                    }
-
-                } else if (mode.equals("update")) {
-                    PreparedStatement ambilData = conn.prepareStatement("SELECT jumlah, produk_id, status FROM stock_out WHERE id = ?");
-                    ambilData.setInt(1, stockInId);
-                    ResultSet dataLama = ambilData.executeQuery();
-
-                    if (!dataLama.next()) {
-                        JOptionPane.showMessageDialog(this, "Data Barang Keluar Tidak Ditemukan!", "Gagal", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    int jumlahLama = dataLama.getInt("jumlah");
-                    int idProdukLama = dataLama.getInt("produk_id");
-                    String statusLama = dataLama.getString("status");
-
-                    if (statusLama.equals("dipinjam") && status.equals("selesai dipinjam")) {
-                        pst = conn.prepareStatement(
-                            "UPDATE stock_out SET produk_id = ?, penerima = ?, jumlah = ?, status = ?, tanggal_keluar = ?, deskripsi = ?, tanggal_dikembalikan = ? WHERE id = ?"
-                        );
-                        pst.setInt(1, idProduk);
-                        pst.setString(2, penerima);
-                        pst.setInt(3, jumlah);
-                        pst.setString(4, status);
-                        pst.setTimestamp(5, tanggalKeluar);
-                        pst.setString(6, deskripsi);
-                        pst.setTimestamp(7, new java.sql.Timestamp(System.currentTimeMillis()));
-                        pst.setInt(8, stockInId);
-
-                        int hasil = pst.executeUpdate();
-
-                        if (hasil == 1) {
-                            PreparedStatement kembalikan = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                            kembalikan.setInt(1, jumlahLama);
-                            kembalikan.setInt(2, idProdukLama);
-                            kembalikan.executeUpdate();
-
-                            JOptionPane.showMessageDialog(this, "Barang Keluar Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                            BarangKeluar halaman = new BarangKeluar(usernameForPage, levelForPage);
-                            halaman.setVisible(true);
-                            this.dispose();
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Barang Keluar Gagal Diupdate!", "Gagal", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } else {
-                        if ((status.equalsIgnoreCase("dipinjam") || status.equalsIgnoreCase("keluar"))) {
-                            if (idProduk == idProdukLama) {
-                                int selisih = jumlah - jumlahLama;
-                                if (selisih > 0) {
-                                    if (!cekStokCukup(idProduk, selisih)) {
-                                        JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk penambahan jumlah produk!", "Stok Kurang", JOptionPane.WARNING_MESSAGE);
-                                        return;
-                                    }
-                                }
-                            } else {
-                                if (!cekStokCukup(idProduk, jumlah)) {
-                                    JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk produk baru!", "Stok Kurang", JOptionPane.WARNING_MESSAGE);
-                                    return;
-                                }
-                            }
-                        }
-
-                        pst = conn.prepareStatement("UPDATE stock_out SET produk_id = ?, penerima = ?, jumlah = ?, status = ?, tanggal_keluar = ?, deskripsi = ?, tanggal_dikembalikan = NULL WHERE id = ?");
-                        pst.setInt(1, idProduk);
-                        pst.setString(2, penerima);
-                        pst.setInt(3, jumlah);
-                        pst.setString(4, status);
-                        pst.setTimestamp(5, tanggalKeluar);
-                        pst.setString(6, deskripsi);
-                        pst.setInt(7, stockInId);
-
-                        int hasil = pst.executeUpdate();
-
-                        if (hasil == 1) {
-                            if (idProduk != idProdukLama) {
-                                PreparedStatement kembalikanLama = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                                kembalikanLama.setInt(1, jumlahLama);
-                                kembalikanLama.setInt(2, idProdukLama);
-                                kembalikanLama.executeUpdate();
-
-                                if (status.equalsIgnoreCase("dipinjam") || status.equalsIgnoreCase("keluar")) {
-                                    PreparedStatement kurangiBaru = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
-                                    kurangiBaru.setInt(1, jumlah);
-                                    kurangiBaru.setInt(2, idProduk);
-                                    kurangiBaru.executeUpdate();
-                                }
-                            } else {
-                                if (!statusLama.equals(status)) {
-                                    if (status.equalsIgnoreCase("dipinjam") || status.equalsIgnoreCase("keluar")) {
-                                        int selisih = jumlah - jumlahLama;
-                                        if (selisih > 0) {
-                                            PreparedStatement kurangi = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
-                                            kurangi.setInt(1, selisih);
-                                            kurangi.setInt(2, idProduk);
-                                            kurangi.executeUpdate();
-                                        } else if (selisih < 0) {
-                                            PreparedStatement kembalikan = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                                            kembalikan.setInt(1, -selisih);
-                                            kembalikan.setInt(2, idProduk);
-                                            kembalikan.executeUpdate();
-                                        }
-                                    } else {
-                                        if (statusLama.equalsIgnoreCase("dipinjam") || statusLama.equalsIgnoreCase("keluar")) {
-                                            PreparedStatement kembalikan = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                                            kembalikan.setInt(1, jumlahLama);
-                                            kembalikan.setInt(2, idProduk);
-                                            kembalikan.executeUpdate();
-                                        }
-                                    }
-                                } else {
-                                    if ((status.equalsIgnoreCase("dipinjam") || status.equalsIgnoreCase("keluar")) && jumlah != jumlahLama) {
-                                        int selisih = jumlah - jumlahLama;
-                                        if (selisih > 0) {
-                                            PreparedStatement kurangi = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
-                                            kurangi.setInt(1, selisih);
-                                            kurangi.setInt(2, idProduk);
-                                            kurangi.executeUpdate();
-                                        } else if (selisih < 0) {
-                                            PreparedStatement kembalikan = conn.prepareStatement("UPDATE products SET stok = stok + ? WHERE id = ?");
-                                            kembalikan.setInt(1, -selisih);
-                                            kembalikan.setInt(2, idProduk);
-                                            kembalikan.executeUpdate();
-                                        }
-                                    }
-                                }
-                            }
-
-                            JOptionPane.showMessageDialog(this, "Barang Keluar Berhasil Diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                            if (barang_keluar_page != null) {
-                                barang_keluar_page.Fetch();
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Barang Keluar Gagal Diupdate!", "Gagal", JOptionPane.WARNING_MESSAGE);
-                        }
-                    }
+                if (!cekStokCukup(idProduk, jumlah)) {
+                    JOptionPane.showMessageDialog(this, "Stok tidak cukup!", "Stok Kurang", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
+
+                pst = conn.prepareStatement(
+                    "INSERT INTO barang_keluar(tanggal, id_barang, jumlah, keterangan, admin) VALUES (?, ?, ?, ?, ?)"
+                );
+                pst.setTimestamp(1, tanggal);
+                pst.setInt(2, idProduk);
+                pst.setInt(3, jumlah);
+                pst.setString(4, keterangan);
+                pst.setString(5, usernameForPage);
+
+                int hasil = pst.executeUpdate();
+
+                if (hasil == 1) {
+                    // Kurangi stok
+                    PreparedStatement updateStok = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
+                    updateStok.setInt(1, jumlah);
+                    updateStok.setInt(2, idProduk);
+                    updateStok.executeUpdate();
+
+                    JOptionPane.showMessageDialog(this, "Barang keluar berhasil disimpan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    if (barang_keluar_page != null) {
+                        barang_keluar_page.Fetch();
+                    }
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal menyimpan barang keluar!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                }
+
             } catch (Exception e) {
                 Logger.getLogger(BarangKeluarForm.class.getName()).log(Level.SEVERE, null, e);
                 JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -657,19 +449,15 @@ public class BarangKeluarForm extends javax.swing.JFrame {
     private javax.swing.JButton btnBackToProducts;
     private javax.swing.JButton btnClear;
     private javax.swing.JComboBox<String> cmbProduk;
-    private javax.swing.JComboBox<String> cmbStatus;
-    private com.toedter.calendar.JDateChooser dtanggal_keluar;
+    private com.toedter.calendar.JDateChooser dtanggal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtDeskripsi;
     private javax.swing.JTextField txtJumlah;
-    private javax.swing.JTextField txtPenerima;
     // End of variables declaration//GEN-END:variables
 }

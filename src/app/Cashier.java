@@ -59,6 +59,8 @@ public class Cashier extends javax.swing.JFrame {
         
         usernameForPage = username;
         levelForPage = level;
+        
+        batasiAkses();
         txtUsernameForPage.setText(usernameForPage);
         txtLevelForPage.setText(levelForPage);
         
@@ -254,6 +256,39 @@ public class Cashier extends javax.swing.JFrame {
 
         return 0;
     }
+    
+    private void batasiAkses() {
+        switch (levelForPage.toLowerCase()) {
+            case "administrator":
+                break;
+
+            case "petugas kasir":
+                btnProducts.setVisible(false);
+                btnCategories.setVisible(false);
+                btnBrands.setVisible(false);
+                btnUsers.setVisible(false);
+                btnSuppliers.setVisible(false);
+                btnReports.setVisible(false);
+                btnTransactions.setVisible(false);
+                btnSettings.setVisible(false);
+                break;
+
+            case "manager":
+                btnProducts.setVisible(false);
+                btnCategories.setVisible(false);
+                btnBrands.setVisible(false);
+                btnUsers.setVisible(false);
+                btnSuppliers.setVisible(false);
+                btnCashier.setVisible(false);
+                break;
+
+            default:
+                JOptionPane.showMessageDialog(this, "Level tidak dikenali: " + levelForPage, "Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+                break;
+        }
+    }
+
 
     public void updateTotalHarga() {
         int total = 0;
@@ -368,16 +403,18 @@ public class Cashier extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtUsernameForPage = new javax.swing.JLabel();
         txtLevelForPage = new javax.swing.JLabel();
+        txtNamePageBottom = new javax.swing.JLabel();
         btnSuppliers = new javax.swing.JButton();
         btnBrands = new javax.swing.JButton();
         btnDashboard = new javax.swing.JButton();
         btnProducts = new javax.swing.JButton();
         btnCategories = new javax.swing.JButton();
+        btnPengeluaran = new javax.swing.JButton();
         btnCashier = new javax.swing.JButton();
         btnSalesTransactions = new javax.swing.JButton();
         btnTransactions = new javax.swing.JButton();
+        btnReports = new javax.swing.JButton();
         btnUsers = new javax.swing.JButton();
-        txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
@@ -401,10 +438,13 @@ public class Cashier extends javax.swing.JFrame {
         tblKeranjang = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
         txtAbjadTotal = new javax.swing.JLabel();
+        btnDelete = new javax.swing.JButton();
+        btnReset = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cashier Page");
         setBackground(new java.awt.Color(204, 204, 204));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -447,6 +487,10 @@ public class Cashier extends javax.swing.JFrame {
                 .addComponent(txtLevelForPage)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
+
+        txtNamePageBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
+        txtNamePageBottom.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageBottom.setText("namePage");
 
         btnSuppliers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnSuppliers.setForeground(new java.awt.Color(255, 255, 255));
@@ -531,6 +575,22 @@ public class Cashier extends javax.swing.JFrame {
         }
     });
 
+    btnPengeluaran.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnPengeluaran.setForeground(new java.awt.Color(255, 255, 255));
+    btnPengeluaran.setText("Operational Expenses");
+    btnPengeluaran.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnPengeluaran.setBorderPainted(false);
+    btnPengeluaran.setContentAreaFilled(false);
+    btnPengeluaran.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnPengeluaran.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnPengeluaranActionPerformed(evt);
+        }
+    });
+
     btnCashier.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
     btnCashier.setForeground(new java.awt.Color(255, 255, 255));
     btnCashier.setText("Cashier");
@@ -550,7 +610,7 @@ public class Cashier extends javax.swing.JFrame {
     btnSalesTransactions.setForeground(new java.awt.Color(255, 255, 255));
     btnSalesTransactions.setText("Sales Transactions");
     btnSalesTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
         javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
     ));
     btnSalesTransactions.setBorderPainted(false);
@@ -566,7 +626,7 @@ public class Cashier extends javax.swing.JFrame {
     btnTransactions.setForeground(new java.awt.Color(255, 255, 255));
     btnTransactions.setText("Stock Transactions");
     btnTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
         javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
     ));
     btnTransactions.setBorderPainted(false);
@@ -575,6 +635,22 @@ public class Cashier extends javax.swing.JFrame {
     btnTransactions.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             btnTransactionsActionPerformed(evt);
+        }
+    });
+
+    btnReports.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnReports.setForeground(new java.awt.Color(255, 255, 255));
+    btnReports.setText("Reports");
+    btnReports.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnReports.setBorderPainted(false);
+    btnReports.setContentAreaFilled(false);
+    btnReports.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnReports.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnReportsActionPerformed(evt);
         }
     });
 
@@ -594,53 +670,55 @@ public class Cashier extends javax.swing.JFrame {
         }
     });
 
-    txtNamePageBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
-    txtNamePageBottom.setForeground(new java.awt.Color(255, 255, 255));
-    txtNamePageBottom.setText("namePage");
-
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGap(47, 47, 47)
-            .addComponent(txtNamePageBottom))
         .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnCashier, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnSalesTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnCategories, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnBrands, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnReports, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGap(43, 43, 43)
+            .addComponent(txtNamePageBottom))
     );
     jPanel1Layout.setVerticalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel1Layout.createSequentialGroup()
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(1, 1, 1)
-            .addComponent(btnCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnBrands, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnBrands, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(16, 16, 16)
-            .addComponent(btnCashier, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnCashier, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnSalesTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnSalesTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(16, 16, 16)
-            .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnPengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnReports, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 0, 0)
+            .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(39, 39, 39)
             .addComponent(txtNamePageBottom)
-            .addContainerGap(74, Short.MAX_VALUE))
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     jPanel3.setBackground(new java.awt.Color(123, 104, 238));
@@ -681,9 +759,9 @@ public class Cashier extends javax.swing.JFrame {
         .addGroup(jPanel3Layout.createSequentialGroup()
             .addGap(33, 33, 33)
             .addComponent(labelLogo)
-            .addGap(20, 20, 20)
+            .addGap(13, 13, 13)
             .addComponent(txtNamePageTop)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1036, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1043, Short.MAX_VALUE)
             .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
             .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -731,9 +809,9 @@ public class Cashier extends javax.swing.JFrame {
     jPanel4Layout.setHorizontalGroup(
         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel4Layout.createSequentialGroup()
-            .addGap(26, 26, 26)
+            .addGap(30, 30, 30)
             .addComponent(jLabel2)
-            .addGap(74, 74, 74)
+            .addGap(70, 70, 70)
             .addComponent(txtScanCodeProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 656, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
             .addComponent(btnShowProductList, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -863,6 +941,29 @@ public class Cashier extends javax.swing.JFrame {
             .addContainerGap())
     );
 
+    btnDelete.setBackground(new java.awt.Color(255, 0, 0));
+    btnDelete.setForeground(new java.awt.Color(255, 255, 255));
+    btnDelete.setText("Delete");
+    btnDelete.setBorderPainted(false);
+    btnDelete.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnDeleteActionPerformed(evt);
+        }
+    });
+
+    btnReset.setBackground(new java.awt.Color(102, 102, 102));
+    btnReset.setForeground(new java.awt.Color(255, 255, 255));
+    btnReset.setText("Reset");
+    btnReset.setBorderPainted(false);
+    btnReset.setMaximumSize(new java.awt.Dimension(77, 29));
+    btnReset.setMinimumSize(new java.awt.Dimension(77, 29));
+    btnReset.setPreferredSize(new java.awt.Dimension(77, 29));
+    btnReset.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnResetActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -875,9 +976,6 @@ public class Cashier extends javax.swing.JFrame {
                     .addGap(24, 24, 24)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(scrollTblKeranjang, javax.swing.GroupLayout.PREFERRED_SIZE, 1048, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -886,7 +984,15 @@ public class Cashier extends javax.swing.JFrame {
                                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnBayar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGap(24, 24, 24))))))
+                            .addGap(24, 24, 24))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -895,7 +1001,11 @@ public class Cashier extends javax.swing.JFrame {
             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(34, 34, 34)
             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(38, 38, 38)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(btnDelete)
+                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -931,78 +1041,6 @@ public class Cashier extends javax.swing.JFrame {
         settings_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSettingsActionPerformed
-
-    private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
-        // TODO add your handling code here:
-
-        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
-        suppliers_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnSuppliersActionPerformed
-
-    private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
-        // TODO add your handling code here:
-        
-        Brands brands_page = new Brands(usernameForPage, levelForPage);
-        brands_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnBrandsActionPerformed
-
-    private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
-        // TODO add your handling code here:
-
-        Dashboard dashboard_page = new Dashboard(usernameForPage, levelForPage);
-        dashboard_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnDashboardActionPerformed
-
-    private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
-        // TODO add your handling code here:
-
-        Products products_page = new Products(usernameForPage, levelForPage);
-        products_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnProductsActionPerformed
-
-    private void btnCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriesActionPerformed
-        // TODO add your handling code here:
-
-        Categories categories_page = new Categories(usernameForPage, levelForPage);
-        categories_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnCategoriesActionPerformed
-
-    private void btnCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCashierActionPerformed
-        // TODO add your handling code here:
-
-        Cashier cashier_page = new Cashier(usernameForPage, levelForPage);
-        cashier_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnCashierActionPerformed
-
-    private void btnSalesTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalesTransactionsActionPerformed
-        // TODO add your handling code here:
-
-        SalesTransactions sales_transactions_page = new SalesTransactions(usernameForPage, levelForPage);
-        sales_transactions_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnSalesTransactionsActionPerformed
-
-    private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
-        // TODO add your handling code here:
-
-        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
-        transactions_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnTransactionsActionPerformed
-
-    private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
-        // TODO add your handling code here:
-
-        Users users_page = new Users(usernameForPage, levelForPage);
-        users_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnUsersActionPerformed
 
     private void btnShowProductListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowProductListActionPerformed
         // TODO add your handling code here:
@@ -1117,6 +1155,124 @@ public class Cashier extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnBayarActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        
+        int selectedRow = tblKeranjang.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih item yang ingin dihapus dari keranjang!", "Tidak Ada Item Dipilih", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tblKeranjang.getModel();
+        model.removeRow(selectedRow);
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(i + 1, i, 0);
+        }
+
+        updateTotalHarga();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        // TODO add your handling code here:
+        
+        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin mengosongkan keranjang?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if (konfirmasi == JOptionPane.YES_OPTION) {
+            DefaultTableModel model = (DefaultTableModel) tblKeranjang.getModel();
+            model.setRowCount(0);
+            updateTotalHarga();
+        }
+    }//GEN-LAST:event_btnResetActionPerformed
+
+    private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
+        // TODO add your handling code here:
+
+        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
+        suppliers_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnSuppliersActionPerformed
+
+    private void btnBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrandsActionPerformed
+        // TODO add your handling code here:
+
+        Brands brands_page = new Brands(usernameForPage, levelForPage);
+        brands_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnBrandsActionPerformed
+
+    private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
+        // TODO add your handling code here:
+
+        Dashboard dashboard_page = new Dashboard(usernameForPage, levelForPage);
+        dashboard_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnDashboardActionPerformed
+
+    private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
+        // TODO add your handling code here:
+
+        Products products_page = new Products(usernameForPage, levelForPage);
+        products_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnProductsActionPerformed
+
+    private void btnCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriesActionPerformed
+        // TODO add your handling code here:
+
+        Categories categories_page = new Categories(usernameForPage, levelForPage);
+        categories_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCategoriesActionPerformed
+
+    private void btnPengeluaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPengeluaranActionPerformed
+        // TODO add your handling code here:
+        
+        Pengeluaran pengeluaran_page = new Pengeluaran(usernameForPage, levelForPage);
+        pengeluaran_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnPengeluaranActionPerformed
+
+    private void btnCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCashierActionPerformed
+        // TODO add your handling code here:
+
+        Cashier cashier_page = new Cashier(usernameForPage, levelForPage);
+        cashier_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCashierActionPerformed
+
+    private void btnSalesTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalesTransactionsActionPerformed
+        // TODO add your handling code here:
+
+        SalesTransactions sales_transactions_page = new SalesTransactions(usernameForPage, levelForPage);
+        sales_transactions_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnSalesTransactionsActionPerformed
+
+    private void btnTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactionsActionPerformed
+        // TODO add your handling code here:
+
+        Transactions transactions_page = new Transactions(usernameForPage, levelForPage);
+        transactions_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnTransactionsActionPerformed
+
+    private void btnReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportsActionPerformed
+        // TODO add your handling code here:
+        
+        Laporan laporan_page = new Laporan(usernameForPage, levelForPage);
+        laporan_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnReportsActionPerformed
+
+    private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
+        // TODO add your handling code here:
+
+        Users users_page = new Users(usernameForPage, levelForPage);
+        users_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnUsersActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1161,8 +1317,12 @@ public class Cashier extends javax.swing.JFrame {
     private javax.swing.JButton btnCashier;
     private javax.swing.JButton btnCategories;
     private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnPengeluaran;
     private javax.swing.JButton btnProducts;
+    private javax.swing.JButton btnReports;
+    private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSalesTransactions;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnShowProductList;

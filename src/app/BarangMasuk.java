@@ -61,6 +61,8 @@ public class BarangMasuk extends javax.swing.JFrame {
         
         usernameForPage = username;
         levelForPage = level;
+        
+        batasiAkses();
         txtUsernameForPage.setText(usernameForPage);
         
         setLocationRelativeTo(null);
@@ -115,22 +117,22 @@ public class BarangMasuk extends javax.swing.JFrame {
     public void Fetch() {
         try {
             pst = conn.prepareStatement(
-                "SELECT bm.id, p.kode_barang, p.nama, bm.jumlah, bm.tanggal_masuk, s.nama_supplier, bm.deskripsi, bm.status " +
-                "FROM stock_in bm " +
-                "JOIN suppliers s ON bm.supplier_id = s.id " +
-                "JOIN products p ON bm.produk_id = p.id"
+                "SELECT p.id, p.tanggal, s.nama_supplier, p.total_item, p.total_harga, p.status " +
+                "FROM barang_masuk p " +
+                "JOIN suppliers s ON p.supplier_id = s.id"
             );
             rslt = pst.executeQuery();
 
-            String[] columnNames = { "ID", "Kode Barang", "Nama Produk", "Jumlah", "Deskripsi", "Status", "Supplier", "Tanggal Masuk" };
+            String[] columnNames = { "ID", "Tanggal", "Supplier", "Total Item", "Total Harga", "Status" };
 
             DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
                 @Override
                 public Class<?> getColumnClass(int columnIndex) {
                     switch (columnIndex) {
                         case 0: return Integer.class;
+                        case 1: return java.util.Date.class;
                         case 3: return Integer.class;
-                        case 7: return java.util.Date.class;
+                        case 4: return Integer.class;
                         default: return String.class;
                     }
                 }
@@ -144,13 +146,11 @@ public class BarangMasuk extends javax.swing.JFrame {
             while (rslt.next()) {
                 Vector<Object> row = new Vector<>();
                 row.add(rslt.getInt("id"));
-                row.add(rslt.getString("kode_barang"));
-                row.add(rslt.getString("nama"));
-                row.add(rslt.getInt("jumlah"));
-                row.add(rslt.getString("deskripsi"));
-                row.add(rslt.getString("status"));
+                row.add(rslt.getTimestamp("tanggal"));
                 row.add(rslt.getString("nama_supplier"));
-                row.add(rslt.getDate("tanggal_masuk"));
+                row.add(rslt.getInt("total_item"));
+                row.add(rslt.getInt("total_harga"));
+                row.add(rslt.getString("status"));
                 model.addRow(row);
             }
 
@@ -188,7 +188,39 @@ public class BarangMasuk extends javax.swing.JFrame {
             Logger.getLogger(BarangMasuk.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
+    
+    private void batasiAkses() {
+        switch (levelForPage.toLowerCase()) {
+            case "administrator":
+                break;
+
+            case "petugas kasir":
+                btnProducts.setVisible(false);
+                btnCategories.setVisible(false);
+                btnBrands.setVisible(false);
+                btnUsers.setVisible(false);
+                btnSuppliers.setVisible(false);
+                btnReports.setVisible(false);
+                btnTransactions.setVisible(false);
+                btnSettings.setVisible(false);
+                break;
+
+            case "manager":
+                btnProducts.setVisible(false);
+                btnCategories.setVisible(false);
+                btnBrands.setVisible(false);
+                btnUsers.setVisible(false);
+                btnSuppliers.setVisible(false);
+                btnCashier.setVisible(false);
+                break;
+
+            default:
+                JOptionPane.showMessageDialog(this, "Level tidak dikenali: " + levelForPage, "Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+                break;
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -203,16 +235,18 @@ public class BarangMasuk extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtUsernameForPage = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        txtNamePageBottom = new javax.swing.JLabel();
         btnSuppliers = new javax.swing.JButton();
         btnBrands = new javax.swing.JButton();
         btnDashboard = new javax.swing.JButton();
         btnProducts = new javax.swing.JButton();
         btnCategories = new javax.swing.JButton();
+        btnPengeluaran = new javax.swing.JButton();
         btnCashier = new javax.swing.JButton();
         btnSalesTransactions = new javax.swing.JButton();
         btnTransactions = new javax.swing.JButton();
+        btnReports = new javax.swing.JButton();
         btnUsers = new javax.swing.JButton();
-        txtNamePageBottom = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         btnLogout = new javax.swing.JButton();
         btnSettings = new javax.swing.JButton();
@@ -226,6 +260,7 @@ public class BarangMasuk extends javax.swing.JFrame {
         tblTampilBarangMasuk = new javax.swing.JTable();
         btnCetak = new javax.swing.JButton();
         btnNotifikasi = new javax.swing.JButton();
+        btnDetail = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Barang Masuk Page");
@@ -271,6 +306,10 @@ public class BarangMasuk extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
+
+        txtNamePageBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
+        txtNamePageBottom.setForeground(new java.awt.Color(255, 255, 255));
+        txtNamePageBottom.setText("namePage");
 
         btnSuppliers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
         btnSuppliers.setForeground(new java.awt.Color(255, 255, 255));
@@ -355,6 +394,22 @@ public class BarangMasuk extends javax.swing.JFrame {
         }
     });
 
+    btnPengeluaran.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnPengeluaran.setForeground(new java.awt.Color(255, 255, 255));
+    btnPengeluaran.setText("Operational Expenses");
+    btnPengeluaran.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnPengeluaran.setBorderPainted(false);
+    btnPengeluaran.setContentAreaFilled(false);
+    btnPengeluaran.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnPengeluaran.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnPengeluaranActionPerformed(evt);
+        }
+    });
+
     btnCashier.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
     btnCashier.setForeground(new java.awt.Color(255, 255, 255));
     btnCashier.setText("Cashier");
@@ -375,7 +430,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     btnSalesTransactions.setForeground(new java.awt.Color(255, 255, 255));
     btnSalesTransactions.setText("Sales Transactions");
     btnSalesTransactions.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), 
         javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
     ));
     btnSalesTransactions.setBorderPainted(false);
@@ -402,6 +457,22 @@ public class BarangMasuk extends javax.swing.JFrame {
         }
     });
 
+    btnReports.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
+    btnReports.setForeground(new java.awt.Color(255, 255, 255));
+    btnReports.setText("Reports");
+    btnReports.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), 
+        javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    ));
+    btnReports.setBorderPainted(false);
+    btnReports.setContentAreaFilled(false);
+    btnReports.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    btnReports.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnReportsActionPerformed(evt);
+        }
+    });
+
     btnUsers.setFont(new java.awt.Font("Tahoma", 0, 19)); // NOI18N
     btnUsers.setForeground(new java.awt.Color(255, 255, 255));
     btnUsers.setText("Users");
@@ -418,51 +489,53 @@ public class BarangMasuk extends javax.swing.JFrame {
         }
     });
 
-    txtNamePageBottom.setFont(new java.awt.Font("Palatino Linotype", 1, 30)); // NOI18N
-    txtNamePageBottom.setForeground(new java.awt.Color(255, 255, 255));
-    txtNamePageBottom.setText("namePage");
-
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGap(47, 47, 47)
-            .addComponent(txtNamePageBottom))
         .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnCashier, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnSalesTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnCategories, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(btnBrands, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnReports, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGap(43, 43, 43)
+            .addComponent(txtNamePageBottom))
     );
     jPanel1Layout.setVerticalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel1Layout.createSequentialGroup()
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(1, 1, 1)
-            .addComponent(btnCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnBrands, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnBrands, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(16, 16, 16)
-            .addComponent(btnCashier, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnCashier, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnSalesTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnSalesTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(16, 16, 16)
-            .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
-            .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnPengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnReports, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 0, 0)
+            .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(39, 39, 39)
             .addComponent(txtNamePageBottom)
             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
@@ -505,9 +578,9 @@ public class BarangMasuk extends javax.swing.JFrame {
         .addGroup(jPanel3Layout.createSequentialGroup()
             .addGap(33, 33, 33)
             .addComponent(labelLogo)
-            .addGap(20, 20, 20)
+            .addGap(13, 13, 13)
             .addComponent(txtNamePageTop)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1069, Short.MAX_VALUE)
             .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
             .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -529,7 +602,7 @@ public class BarangMasuk extends javax.swing.JFrame {
 
     btnCreate.setBackground(new java.awt.Color(0, 255, 0));
     btnCreate.setForeground(new java.awt.Color(255, 255, 255));
-    btnCreate.setText("Create");
+    btnCreate.setText("Transaksi Barang Masuk Baru");
     btnCreate.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             btnCreateActionPerformed(evt);
@@ -539,6 +612,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     btnUpdate.setBackground(new java.awt.Color(102, 102, 255));
     btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
     btnUpdate.setText("Update");
+    btnUpdate.setToolTipText("Update untuk mengubah status jadi dibatalkan");
     btnUpdate.setBorder(null);
     btnUpdate.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -559,17 +633,17 @@ public class BarangMasuk extends javax.swing.JFrame {
 
     tblTampilBarangMasuk.setModel(new javax.swing.table.DefaultTableModel(
         new Object [][] {
-            {null, null, null, null, null, null, null, null},
-            {null, null, null, null, null, null, null, null},
-            {null, null, null, null, null, null, null, null},
-            {null, null, null, null, null, null, null, null}
+            {null, null, null, null, null, null},
+            {null, null, null, null, null, null},
+            {null, null, null, null, null, null},
+            {null, null, null, null, null, null}
         },
         new String [] {
-            "id", "kode_barang", "nama", "jumlah", "deskripsi", "status", "supplier", "tanggal masuk"
+            "id", "tanggal", "nama_supplier", "total_item", "total_harga", "status"
         }
     ) {
         Class[] types = new Class [] {
-            java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
         };
 
         public Class getColumnClass(int columnIndex) {
@@ -594,6 +668,16 @@ public class BarangMasuk extends javax.swing.JFrame {
         }
     });
 
+    btnDetail.setBackground(new java.awt.Color(153, 153, 255));
+    btnDetail.setForeground(new java.awt.Color(255, 255, 255));
+    btnDetail.setText("Detail");
+    btnDetail.setBorderPainted(false);
+    btnDetail.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnDetailActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -611,11 +695,13 @@ public class BarangMasuk extends javax.swing.JFrame {
                             .addComponent(btnNotifikasi))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1486, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btnDetail)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addContainerGap(38, Short.MAX_VALUE))))
@@ -634,10 +720,11 @@ public class BarangMasuk extends javax.swing.JFrame {
                 .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnDetail))
             .addGap(18, 18, 18)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(0, 144, Short.MAX_VALUE))
+            .addGap(0, 0, Short.MAX_VALUE))
     );
 
     pack();
@@ -668,85 +755,104 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // TODO add your handling code here:
         
-        BarangMasukForm barang_masuk_form = new BarangMasukForm(this, usernameForPage, levelForPage);
-        barang_masuk_form.setVisible(true);
+        SupplierList suppliers_page = new SupplierList(this, this, usernameForPage, levelForPage, null);
+        suppliers_page.setVisible(true);
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
         
         int pilihBaris = tblTampilBarangMasuk.getSelectedRow();
-        
-        if (pilihBaris == -1)
-        {
-            JOptionPane.showMessageDialog(this, "Barang Masuk Tidak Ditemukan\nPilih Barang Masuk Dulu", "Barang Masuk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-        }
-        
-        int barangMasukId = (int) tblTampilBarangMasuk.getValueAt(pilihBaris, 0);
-        String kodeBarang = (String) tblTampilBarangMasuk.getValueAt(pilihBaris, 1);
-        String namaProduk = (String) tblTampilBarangMasuk.getValueAt(pilihBaris, 2);
-        int jumlah = (int) tblTampilBarangMasuk.getValueAt(pilihBaris, 3);
-        String deskripsi = (String) tblTampilBarangMasuk.getValueAt(pilihBaris, 4);
-        String status = (String) tblTampilBarangMasuk.getValueAt(pilihBaris, 5);
-        String supplier = (String) tblTampilBarangMasuk.getValueAt(pilihBaris, 6);
-        Object tanggalObj = tblTampilBarangMasuk.getValueAt(pilihBaris, 7);
-        Timestamp tanggal_masuk = null;
 
-        if (tanggalObj instanceof Timestamp) {
-            tanggal_masuk = (Timestamp) tanggalObj;
-        } else if (tanggalObj instanceof java.util.Date) {
-            tanggal_masuk = new Timestamp(((java.util.Date) tanggalObj).getTime());
-        } else if (tanggalObj instanceof String) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                java.util.Date parsed = sdf.parse((String) tanggalObj);
-                tanggal_masuk = new Timestamp(parsed.getTime());
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (pilihBaris == -1) {
+            JOptionPane.showMessageDialog(this, "Barang Masuk Tidak Ditemukan\nPilih Barang Masuk Dulu", "Barang Masuk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int barangMasukId = (int) tblTampilBarangMasuk.getValueAt(pilihBaris, 0);
+
+        int konfirmasi = JOptionPane.showConfirmDialog(this, "Yakin ingin membatalkan barang masuk ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if (konfirmasi != JOptionPane.YES_OPTION) return;
+
+        try {
+            conn.setAutoCommit(false);
+
+            pst = conn.prepareStatement("SELECT kode_barang, jumlah FROM detail_barang_masuk WHERE barang_masuk_id = ?");
+            pst.setInt(1, barangMasukId);
+            rslt = pst.executeQuery();
+
+            PreparedStatement pstUpdateStok = conn.prepareStatement(
+                "UPDATE products SET stok = stok - ? WHERE kode_barang = ?"
+            );
+
+            while (rslt.next()) {
+                String kodeBarang = rslt.getString("kode_barang");
+                int jumlah = rslt.getInt("jumlah");
+
+                pstUpdateStok.setInt(1, jumlah);
+                pstUpdateStok.setString(2, kodeBarang);
+                pstUpdateStok.addBatch();
             }
-        }       
-        
-        BarangMasukForm barang_masuk_form = new BarangMasukForm(this, usernameForPage, levelForPage ,barangMasukId, namaProduk, jumlah, deskripsi, supplier, tanggal_masuk);
-        barang_masuk_form.setVisible(true);
+
+            pstUpdateStok.executeBatch();
+
+            pst = conn.prepareStatement("UPDATE barang_masuk SET status = 'dibatalkan' WHERE id = ?");
+            pst.setInt(1, barangMasukId);
+            pst.executeUpdate();
+
+            conn.commit();
+
+            JOptionPane.showMessageDialog(this, "Barang masuk berhasil dibatalkan dan stok dikembalikan.");
+            Fetch();
+
+        } catch (SQLException e) {
+            try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal membatalkan barang masuk: " + e.getMessage());
+        } finally {
+            try { conn.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        try {
-            // TODO add your handling code here:
-            
-            int pilihUser = tblTampilBarangMasuk.getSelectedRow();
-            
-            if (pilihUser == -1)
-            {
-                JOptionPane.showMessageDialog(this, "Barang Masuk Tidak Ditemukan\nPilih Barang Dulu!!!", "Barang Masuk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            String userUsername = (String) tblTampilBarangMasuk.getValueAt(pilihUser, 1);
-            int userId = (int) tblTampilBarangMasuk.getValueAt(pilihUser, 0);
-            
-            int konfirmasiHapus = JOptionPane.showConfirmDialog(this, "Yakin Ingin Menghapus Barang Masuk?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
-            
-            if (konfirmasiHapus == JOptionPane.YES_OPTION)
-            {
-                pst = conn.prepareStatement("DELETE FROM stock_in WHERE id = ?");
-                pst.setInt(1, userId);
+            try {
+                int selectedRow = tblTampilBarangMasuk.getSelectedRow();
 
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "Pilih data barang masuk yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                int barangMasukId = (int) tblTampilBarangMasuk.getValueAt(selectedRow, 0);
+
+                int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data barang masuk ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+                if (confirm != JOptionPane.YES_OPTION) return;
+
+                conn.setAutoCommit(false);
+
+                pst = conn.prepareStatement("DELETE FROM detail_barang_masuk WHERE barang_masuk_id = ?");
+                pst.setInt(1, barangMasukId);
+                pst.executeUpdate();
+
+                pst = conn.prepareStatement("DELETE FROM barang_masuk WHERE id = ?");
+                pst.setInt(1, barangMasukId);
                 int k = pst.executeUpdate();
 
-                if (k == 1)
-                {
-                    JOptionPane.showMessageDialog(this, "Berhasil Menghapus Barang Masuk!!!", "Hapus Barang Masuk Berhasil", JOptionPane.INFORMATION_MESSAGE);
+                conn.commit();
+
+                if (k == 1) {
+                    JOptionPane.showMessageDialog(this, "Data barang masuk berhasil dihapus.");
                     Fetch();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal menghapus data barang masuk.");
                 }
-                else
-                {
-                    JOptionPane.showMessageDialog(this, "Gagal Menghapus Barang Masuk!!!", "Hapus Barang Masuk Gagal", JOptionPane.WARNING_MESSAGE);
-                }
+
+            } catch (SQLException ex) {
+                try { conn.rollback(); } catch (SQLException e2) { e2.printStackTrace(); }
+                JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                try { conn.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
             }
-         } catch (SQLException ex) {
-            Logger.getLogger(BarangMasuk.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
@@ -781,6 +887,23 @@ public class BarangMasuk extends javax.swing.JFrame {
         Notications notifikasi_page = new Notications(usernameForPage);
         notifikasi_page.setVisible(true);
     }//GEN-LAST:event_btnNotifikasiActionPerformed
+
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
+        // TODO add your handling code here:
+        
+        int selectedRow = tblTampilBarangMasuk.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Silakan pilih data Barang Masuk terlebih dahulu!", "Tidak ada data", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int barangMasukId = (int) tblTampilBarangMasuk.getValueAt(selectedRow, 0);
+
+        DetailBarangMasuk detailFrame = new DetailBarangMasuk(usernameForPage, levelForPage, barangMasukId);
+        detailFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnDetailActionPerformed
 
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
         // TODO add your handling code here:
@@ -822,6 +945,14 @@ public class BarangMasuk extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnCategoriesActionPerformed
 
+    private void btnPengeluaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPengeluaranActionPerformed
+        // TODO add your handling code here:
+        
+        Pengeluaran pengeluaran_page = new Pengeluaran(usernameForPage, levelForPage);
+        pengeluaran_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnPengeluaranActionPerformed
+
     private void btnCashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCashierActionPerformed
         // TODO add your handling code here:
 
@@ -833,8 +964,8 @@ public class BarangMasuk extends javax.swing.JFrame {
     private void btnSalesTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalesTransactionsActionPerformed
         // TODO add your handling code here:
 
-        RecordTransactions record_page = new RecordTransactions(usernameForPage, levelForPage);
-        record_page.setVisible(true);
+        SalesTransactions sales_transactions_page = new SalesTransactions(usernameForPage, levelForPage);
+        sales_transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSalesTransactionsActionPerformed
 
@@ -845,6 +976,14 @@ public class BarangMasuk extends javax.swing.JFrame {
         transactions_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactionsActionPerformed
+
+    private void btnReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportsActionPerformed
+        // TODO add your handling code here:
+        
+        Laporan laporan_page = new Laporan(usernameForPage, levelForPage);
+        laporan_page.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnReportsActionPerformed
 
     private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
         // TODO add your handling code here:
@@ -900,9 +1039,12 @@ public class BarangMasuk extends javax.swing.JFrame {
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDetail;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnNotifikasi;
+    private javax.swing.JButton btnPengeluaran;
     private javax.swing.JButton btnProducts;
+    private javax.swing.JButton btnReports;
     private javax.swing.JButton btnSalesTransactions;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnSuppliers;

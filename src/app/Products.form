@@ -105,21 +105,22 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jPanel25" alignment="0" max="32767" attributes="0"/>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
-                  <Component id="txtNamePageBottom" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
-              </Group>
+              <Component id="jPanel25" max="32767" attributes="0"/>
               <Component id="btnDashboard" alignment="0" max="32767" attributes="0"/>
               <Component id="btnProducts" alignment="0" max="32767" attributes="0"/>
               <Component id="btnCashier" alignment="0" max="32767" attributes="0"/>
               <Component id="btnSalesTransactions" alignment="0" max="32767" attributes="0"/>
               <Component id="btnTransactions" alignment="0" max="32767" attributes="0"/>
               <Component id="btnUsers" alignment="0" max="32767" attributes="0"/>
-              <Component id="btnSuppliers" alignment="0" max="32767" attributes="0"/>
               <Component id="btnCategories" alignment="0" max="32767" attributes="0"/>
               <Component id="btnBrands" alignment="0" max="32767" attributes="0"/>
+              <Component id="btnPengeluaran" alignment="0" max="32767" attributes="0"/>
+              <Component id="btnReports" alignment="0" max="32767" attributes="0"/>
+              <Component id="btnSuppliers" alignment="0" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+                  <Component id="txtNamePageBottom" min="-2" max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -127,26 +128,30 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="jPanel25" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="btnDashboard" min="-2" pref="65" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="btnProducts" min="-2" pref="57" max="-2" attributes="0"/>
+                  <Component id="btnDashboard" min="-2" pref="55" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                  <Component id="btnProducts" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                  <Component id="btnCategories" min="-2" pref="65" max="-2" attributes="0"/>
+                  <Component id="btnCategories" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="btnBrands" min="-2" pref="57" max="-2" attributes="0"/>
+                  <Component id="btnBrands" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                  <Component id="btnCashier" min="-2" pref="57" max="-2" attributes="0"/>
+                  <Component id="btnCashier" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="btnSalesTransactions" min="-2" pref="57" max="-2" attributes="0"/>
+                  <Component id="btnSalesTransactions" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="btnTransactions" min="-2" pref="57" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                  <Component id="btnUsers" min="-2" pref="57" max="-2" attributes="0"/>
+                  <Component id="btnTransactions" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="btnSuppliers" min="-2" pref="57" max="-2" attributes="0"/>
+                  <Component id="btnPengeluaran" min="-2" pref="55" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnReports" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="btnUsers" min="-2" pref="55" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="btnSuppliers" min="-2" pref="55" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                   <Component id="txtNamePageBottom" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="67" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -238,86 +243,6 @@
             <Property name="text" type="java.lang.String" value="namePage"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnCashier">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="19" style="0"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Cashier"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
-            </Property>
-            <Property name="borderPainted" type="boolean" value="false"/>
-            <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="horizontalAlignment" type="int" value="2"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCashierActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnSalesTransactions">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="19" style="0"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Sales Transactions"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
-            </Property>
-            <Property name="borderPainted" type="boolean" value="false"/>
-            <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="horizontalAlignment" type="int" value="2"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSalesTransactionsActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnTransactions">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="19" style="0"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Stock Transactions"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
-            </Property>
-            <Property name="borderPainted" type="boolean" value="false"/>
-            <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="horizontalAlignment" type="int" value="2"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTransactionsActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnUsers">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="19" style="0"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Users"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
-            </Property>
-            <Property name="borderPainted" type="boolean" value="false"/>
-            <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="horizontalAlignment" type="int" value="2"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUsersActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JButton" name="btnSuppliers">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -348,7 +273,7 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Brands"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -411,7 +336,7 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Categories"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
@@ -419,6 +344,126 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCategoriesActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnPengeluaran">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="19" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Operational Expenses"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPengeluaranActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnCashier">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="19" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Cashier"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCashierActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnSalesTransactions">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="19" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Sales Transactions"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSalesTransactionsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnTransactions">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="19" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Stock Transactions"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTransactionsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnReports">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="19" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Reports"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReportsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnUsers">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="19" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Users"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="javax.swing.BorderFactory.createCompoundBorder(&#xd;&#xa;    javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1), &#xd;&#xa;    javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)&#xd;&#xa;)" type="code"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUsersActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -436,7 +481,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   <Component id="labelLogo" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                   <Component id="txtNamePageTop" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="btnSettings" min="-2" pref="108" max="-2" attributes="0"/>

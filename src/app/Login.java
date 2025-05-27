@@ -139,7 +139,6 @@ public class Login extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         txtNamaAplikasi = new javax.swing.JLabel();
-        btnRegister = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         labelLogo = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
@@ -193,44 +192,21 @@ public class Login extends javax.swing.JFrame {
         txtNamaAplikasi.setForeground(new java.awt.Color(255, 255, 255));
         txtNamaAplikasi.setText("namaAplikasi");
 
-        btnRegister.setText("Doesn't Have a Account? Register");
-        btnRegister.setBorder(null);
-        btnRegister.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnRegisterMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnRegisterMouseExited(evt);
-            }
-        });
-        btnRegister.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRegisterActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(55, 55, 55)
-                        .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(txtNamaAplikasi)))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
+                .addComponent(txtNamaAplikasi)
+                .addContainerGap(261, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(txtNamaAplikasi)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addContainerGap(438, Short.MAX_VALUE))
         );
 
         jLabel4.setFont(new java.awt.Font("Reem Kufi", 1, 18)); // NOI18N
@@ -359,14 +335,6 @@ public class Login extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnLoginActionPerformed
 
-    private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        // TODO add your handling code here:
-        
-        Register register_page = new Register();
-        register_page.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnRegisterActionPerformed
-
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         // TODO add your handling code here:
         
@@ -417,20 +385,6 @@ public class Login extends javax.swing.JFrame {
         btnClear.setForeground(Color.BLACK);
     }//GEN-LAST:event_btnClearMouseExited
 
-    private void btnRegisterMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegisterMouseEntered
-        // TODO add your handling code here:
-        
-        btnRegister.setBackground(new Color(147,112,219));
-        btnRegister.setForeground(Color.WHITE);
-    }//GEN-LAST:event_btnRegisterMouseEntered
-
-    private void btnRegisterMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegisterMouseExited
-        // TODO add your handling code here:
-        
-        btnRegister.setBackground(new Color(240,240,240));
-        btnRegister.setForeground(Color.BLACK);
-    }//GEN-LAST:event_btnRegisterMouseExited
-
     /**
      * @param args the command line arguments
      */
@@ -470,7 +424,6 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnLogin;
-    private javax.swing.JButton btnRegister;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
