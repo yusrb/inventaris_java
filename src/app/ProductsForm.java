@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -26,12 +27,13 @@ public class ProductsForm extends javax.swing.JFrame {
     private final Products products_page;
     
     private String mode;
+    private boolean isComboBoxInitialized = false;
     
     private int productsId;
     
     public ProductsForm(Products products, String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         loadCategories();
         loadBrands();
         
@@ -39,57 +41,49 @@ public class ProductsForm extends javax.swing.JFrame {
         btnAction.setText("Create");
         btnAction.setBackground(Color.GREEN);
         
+        txtKodeBarang.requestFocus();
+        
         this.usernameForPage = username;
         this.levelForPage = level;
         this.products_page = products;
         setLocationRelativeTo(null);
     }
     
-public ProductsForm(Products products, String username, String level ,int productsId , String kodeBarangLama ,String namaLama, String deskripsiLama, Double hargaLama, int stokLama, String kategoriLama, String brandLama) {
-    this(products, username, level);
+    public ProductsForm(Products products, String username, String level ,int productsId , String kodeBarangLama ,String namaLama, String deskripsiLama, Double hargaLama, int stokLama, String kategoriLama, String brandLama) {
+        this(products, username, level);
 
-    this.mode = "update";
-    btnAction.setText("Update");
-    btnAction.setBackground(Color.BLUE);
+        this.mode = "update";
+        btnAction.setText("Update");
+        btnAction.setBackground(Color.BLUE);
 
-    txtKodeBarang.setText(kodeBarangLama);
-    txtNama.setText(namaLama);
-    txtDeskripsi.setText(deskripsiLama);
-    txtHarga.setText(String.valueOf(hargaLama));
-    txtStok.setText(String.valueOf(stokLama));
+        txtKodeBarang.setText(kodeBarangLama);
+        txtNama.setText(namaLama);
+        txtDeskripsi.setText(deskripsiLama);
+        txtHarga.setText(String.valueOf(hargaLama));
+        txtStok.setText(String.valueOf(stokLama));
 
-    cmbKategori.setSelectedItem(kategoriLama);
-    cmbBrand.setSelectedItem(brandLama);
+        txtKodeBarang.requestFocus();
 
-    int category_id = categoryMap.getOrDefault(kategoriLama, -1);
-    int brand_id = brandMap.getOrDefault(brandLama, -1);
-    
-    if (category_id == -1 || brand_id == -1)
-    {
-        JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Dulu Produk", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-        Products products_page = new Products(usernameForPage, levelForPage);
-        products_page.setVisible(true);
-        this.dispose();
+        cmbKategori.setSelectedItem(kategoriLama);
+        cmbBrand.setSelectedItem(brandLama);
+
+        int category_id = categoryMap.getOrDefault(kategoriLama, -1);
+        int brand_id = brandMap.getOrDefault(brandLama, -1);
+
+        if (category_id == -1 || brand_id == -1)
+        {
+            JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Dulu Produk", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
+            Products products_page = new Products(usernameForPage, levelForPage);
+            products_page.setVisible(true);
+            this.dispose();
+        }
+
+        this.productsId = productsId;
     }
-
-    this.productsId = productsId;
-}
 
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ProductsForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(ProductsForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     private java.util.Map<String, Integer> categoryMap = new java.util.HashMap<>();
     private java.util.Map<String, Integer> brandMap = new java.util.HashMap<>();
@@ -167,6 +161,12 @@ public ProductsForm(Products products, String username, String level ,int produc
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Kode Barang");
 
+        txtKodeBarang.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtKodeBarangKeyPressed(evt);
+            }
+        });
+
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
         jLabel2.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 42)); // NOI18N
@@ -222,12 +222,35 @@ public ProductsForm(Products products, String username, String level ,int produc
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel5.setText("Nama");
 
+        txtNama.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNamaKeyPressed(evt);
+            }
+        });
+
         txtDeskripsi.setColumns(20);
         txtDeskripsi.setRows(5);
+        txtDeskripsi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtDeskripsiKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtDeskripsi);
+
+        txtStok.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtStokKeyPressed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel6.setText("Stok");
+
+        txtStokAlert.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtStokAlertKeyPressed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel7.setText("Stok Min Alert");
@@ -236,14 +259,30 @@ public ProductsForm(Products products, String username, String level ,int produc
         jLabel8.setText("Kategori");
 
         cmbKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbKategori.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbKategoriActionPerformed(evt);
+            }
+        });
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel9.setText("Brand");
 
         cmbBrand.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbBrand.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbBrandActionPerformed(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel10.setText("Harga");
+
+        txtHarga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtHargaKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -357,8 +396,6 @@ public ProductsForm(Products products, String username, String level ,int produc
     private void btnBackToProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToProductsActionPerformed
         // TODO add your handling code here:
         
-        Products products_page = new Products(usernameForPage, levelForPage);
-        products_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToProductsActionPerformed
 
@@ -381,28 +418,41 @@ public ProductsForm(Products products, String username, String level ,int produc
         // TODO add your handling code here:
         
         try {
-            String kodeBarang = txtKodeBarang.getText();
-            String nama = txtNama.getText();
-            String deskripsi = txtDeskripsi.getText();
-            double harga = Double.parseDouble(txtHarga.getText());
-            int stok = Integer.parseInt(txtStok.getText());
-            int stok_alert = Integer.parseInt(txtStokAlert.getText());
-
+            String kodeBarang = txtKodeBarang.getText().trim();
+            String nama = txtNama.getText().trim();
+            String deskripsi = txtDeskripsi.getText().trim();
+            String hargaText = txtHarga.getText().trim();
+            String stokText = txtStok.getText().trim();
+            String stokAlertText = txtStokAlert.getText().trim();
             String kategoriTerpilih = (String) cmbKategori.getSelectedItem();
-            int category_id = categoryMap.getOrDefault(kategoriTerpilih, -1);
-
             String brandTerpilih = (String) cmbBrand.getSelectedItem();
+
+            if (kodeBarang.isEmpty() || nama.isEmpty() || deskripsi.isEmpty() ||
+                hargaText.isEmpty() || stokText.isEmpty() || stokAlertText.isEmpty() ||
+                kategoriTerpilih == null || brandTerpilih == null) {
+                JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int category_id = categoryMap.getOrDefault(kategoriTerpilih, -1);
             int brand_id = brandMap.getOrDefault(brandTerpilih, -1);
 
-            if (category_id == -1 || brand_id == -1)
-            {
-                JOptionPane.showMessageDialog(this, "Produk Tidak Ditemukan\nPilih Dulu Produk", "Produk Tidak Ditemukan", JOptionPane.WARNING_MESSAGE);
-               
-                if (products_page != null)
-                {
-                    products_page.Fetch();
-                }
-                this.dispose();
+            if (category_id == -1 || brand_id == -1) {
+                JOptionPane.showMessageDialog(this, "Kategori atau Brand tidak valid!", "Input Tidak Valid", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            double harga;
+            int stok;
+            int stok_alert;
+
+            try {
+                harga = Double.parseDouble(hargaText);
+                stok = Integer.parseInt(stokText);
+                stok_alert = Integer.parseInt(stokAlertText);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Harga harus angka desimal, stok dan stok alert harus angka bulat!", "Input Tidak Valid", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
             if (mode.equals("create")) {
@@ -418,23 +468,23 @@ public ProductsForm(Products products, String username, String level ,int produc
                 pst.setInt(7, category_id);
                 pst.setInt(8, brand_id);
 
-                int k = pst.executeUpdate();
-                
-                if (k > 0) { 
-                    JOptionPane.showMessageDialog(this, "Produk Baru Berhasil Ditambahkan!!!", "Tambah Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    if (products_page != null)
+                int hasil = pst.executeUpdate();
+
+                if (hasil > 0) {
+                    JOptionPane.showMessageDialog(this, "Produk baru berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    if (products_page != null) 
                     {
                         products_page.Fetch();
+                        products_page.setAlertStock();
+                        this.dispose();
                     }
-                    this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Product Baru Gagal Ditambahkan!!!", "Tambah Produk Gagal", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Gagal menambahkan produk baru!", "Gagal", JOptionPane.WARNING_MESSAGE);
                 }
             } else if (mode.equals("update")) {
                 pst = conn.prepareStatement(
                     "UPDATE products SET kode_barang = ?, nama = ?, deskripsi = ?, harga = ?, stok = ?, stok_alert = ?, category_id = ?, brand_id = ? WHERE id = ?"
                 );
-                
                 pst.setString(1, kodeBarang);
                 pst.setString(2, nama);
                 pst.setString(3, deskripsi);
@@ -445,24 +495,101 @@ public ProductsForm(Products products, String username, String level ,int produc
                 pst.setInt(8, brand_id);
                 pst.setInt(9, productsId);
 
-                int rowsUpdated = pst.executeUpdate();
-                if (rowsUpdated > 0) {
-                    JOptionPane.showMessageDialog(this, "Product Berhasil DiUpdate!!!", "Update Produk Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    if (products_page != null)
+                int hasil = pst.executeUpdate();
+
+                if (hasil > 0) {
+                    JOptionPane.showMessageDialog(this, "Produk berhasil diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    if (products_page != null) 
                     {
                         products_page.Fetch();
+                        products_page.setAlertStock();
+                        this.dispose();
                     }
-                    this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Product Gagal DiUpdate!!!", "Update Produk Gagal", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Gagal mengupdate produk!", "Gagal", JOptionPane.WARNING_MESSAGE);
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ProductsForm.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan database: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnActionActionPerformed
+
+    private void txtKodeBarangKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtKodeBarangKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtNama.requestFocus();
+        }
+    }//GEN-LAST:event_txtKodeBarangKeyPressed
+
+    private void txtNamaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNamaKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtHarga.requestFocus();
+        }
+    }//GEN-LAST:event_txtNamaKeyPressed
+
+    private void txtStokKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtStokKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtStokAlert.requestFocus();
+        }
+    }//GEN-LAST:event_txtStokKeyPressed
+
+    private void txtStokAlertKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtStokAlertKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtDeskripsi.requestFocus();
+        }
+    }//GEN-LAST:event_txtStokAlertKeyPressed
+
+    private void txtHargaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHargaKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtStok.requestFocus();
+        }
+    }//GEN-LAST:event_txtHargaKeyPressed
+
+    private void txtDeskripsiKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDeskripsiKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            cmbKategori.showPopup();
+        }
+    }//GEN-LAST:event_txtDeskripsiKeyPressed
+
+    private void cmbKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbKategoriActionPerformed
+        // TODO add your handling code here:
+        
+        cmbBrand.requestFocus();
+            SwingUtilities.invokeLater(() -> {
+                if (cmbBrand.isShowing()) {
+                    cmbBrand.showPopup();
+                }
+            });
+    }//GEN-LAST:event_cmbKategoriActionPerformed
+
+    private void cmbBrandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbBrandActionPerformed
+        // TODO add your handling code here:
+        
+        if (!isComboBoxInitialized) {
+                return;
+            }
+
+            if (cmbBrand.getSelectedItem() != null) {
+                btnAction.doClick();
+            }
+    }//GEN-LAST:event_cmbBrandActionPerformed
 
     /**
      * @param args the command line arguments

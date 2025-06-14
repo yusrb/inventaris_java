@@ -33,7 +33,7 @@ public class BrandsForm extends javax.swing.JFrame {
     
     public BrandsForm(Brands brands, String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         
         usernameForPage = username;
         levelForPage = level;
@@ -41,6 +41,7 @@ public class BrandsForm extends javax.swing.JFrame {
         
         this.mode = "create";
         btnAction.setText("Create");
+        txtNamaBrand.requestFocus();
         btnAction.setBackground(Color.GREEN);
         
         setLocationRelativeTo(null);
@@ -52,6 +53,7 @@ public class BrandsForm extends javax.swing.JFrame {
         this.brandId = brandId;
         
         txtNamaBrand.setText(namaBrandLama);
+        txtNamaBrand.requestFocus();
         
         this.mode = "update";
         btnAction.setText("Update");
@@ -62,18 +64,6 @@ public class BrandsForm extends javax.swing.JFrame {
     PreparedStatement pst;
     ResultSet rslt;
     
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(BrandsForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(BrandsForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -123,6 +113,12 @@ public class BrandsForm extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Brand");
+
+        txtNamaBrand.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNamaBrandKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -266,10 +262,17 @@ public class BrandsForm extends javax.swing.JFrame {
     private void btnBackToBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToBrandsActionPerformed
         // TODO add your handling code here:
 
-        Brands brands_form = new Brands(usernameForPage, levelForPage);
-        brands_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToBrandsActionPerformed
+
+    private void txtNamaBrandKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNamaBrandKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnAction.doClick();
+        }
+    }//GEN-LAST:event_txtNamaBrandKeyPressed
 
     /**
      * @param args the command line arguments

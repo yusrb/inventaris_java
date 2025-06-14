@@ -6,6 +6,7 @@
 package app;
 
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -46,7 +47,7 @@ public class Categories extends javax.swing.JFrame {
             }
         });
 
-        Connection();
+        conn = DBConnection.getConnection();
         Fetch();
         getSettings();
         
@@ -59,24 +60,14 @@ public class Categories extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setFocusable(true);
+        this.requestFocusInWindow(true);
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+
     public void getSettings()
     {
         try {
@@ -222,6 +213,11 @@ public class Categories extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Categories Page");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -619,6 +615,12 @@ public class Categories extends javax.swing.JFrame {
         }
     });
 
+    txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            txtSearchKeyPressed(evt);
+        }
+    });
+
     btnDetail.setBackground(new java.awt.Color(153, 153, 255));
     btnDetail.setForeground(new java.awt.Color(255, 255, 255));
     btnDetail.setText("Detail");
@@ -903,6 +905,22 @@ public class Categories extends javax.swing.JFrame {
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) {
+                txtSearch.requestFocus();
+         }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnSearch.doClick();
+        }
+    }//GEN-LAST:event_txtSearchKeyPressed
 
     /**
      * @param args the command line arguments

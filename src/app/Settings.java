@@ -34,7 +34,7 @@ public class Settings extends javax.swing.JFrame {
 
     public Settings(String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         getSettings();
 
         usernameForPage = username;
@@ -43,6 +43,8 @@ public class Settings extends javax.swing.JFrame {
         batasiAkses();
         txtUsernameForPage.setText(usernameForPage);
         txtLevelForPage.setText(levelForPage);
+        
+        txtInputNameApplication.requestFocus();
 
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -51,18 +53,6 @@ public class Settings extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-
-    public void Connection() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     public void getSettings()
     {

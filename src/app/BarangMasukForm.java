@@ -7,21 +7,15 @@ package app;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.sql.*;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.SwingConstants;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -33,7 +27,6 @@ public class BarangMasukForm extends javax.swing.JFrame {
      * Creates new form Dashboard
      */
     
-
     private final String usernameForPage;
     private final String levelForPage;
     
@@ -51,18 +44,33 @@ public class BarangMasukForm extends javax.swing.JFrame {
                            int supplierId, String namaSupplier, String kontak, String alamat) {
         
             initComponents();
-            Connection();
+            
+            javax.swing.table.JTableHeader header = tblKeranjang.getTableHeader();
+            header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+                @Override
+                public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    java.awt.Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    comp.setBackground(new java.awt.Color(123, 104, 238));
+                    comp.setForeground(java.awt.Color.WHITE);
+                    comp.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+                    return comp;
+                }
+            });
+            
+            conn = DBConnection.getConnection();
             setupModel();
             getSettings();
             setAlertStock();
-            batasiAkses();
 
             this.usernameForPage = username;
             this.levelForPage = level;
             this.supplierId = supplierId;
 
+            batasiAkses();
             txtUsernameForPage.setText(usernameForPage);
             txtLevelForPage.setText(levelForPage);
+            
+            txtAbjadTotal.setText("");
 
             txtNamaSupplier.setText("Supplier: " + namaSupplier);
             txtKontak.setText("Kontak: " + kontak);
@@ -70,15 +78,8 @@ public class BarangMasukForm extends javax.swing.JFrame {
 
             setLocationRelativeTo(null);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
-
-        public void Connection() {
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-            } catch (Exception e) {
-                Logger.getLogger(BarangMasukForm.class.getName()).log(Level.SEVERE, null, e);
-            }
+            this.setFocusable(true);
+            this.requestFocusInWindow();
         }
 
         public void getSettings() {
@@ -124,117 +125,115 @@ public class BarangMasukForm extends javax.swing.JFrame {
         }
     
         public void loadProductToCart(String kodeBarang) {
-           try {
-               for (int i = 0; i < model.getRowCount(); i++) {
-                   if (model.getValueAt(i, 2).toString().equals(kodeBarang)) {
+            try {
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    if (model.getValueAt(i, 1).toString().equals(kodeBarang)) {  // kolom 1 = Kode Barang
                         int jumlahLama = Integer.parseInt(model.getValueAt(i, 4).toString());
                         int harga = Integer.parseInt(model.getValueAt(i, 3).toString());
                         int jumlahBaru = jumlahLama + 1;
                         model.setValueAt(jumlahBaru, i, 4);
                         model.setValueAt(harga * jumlahBaru, i, 5);
-                        
-                       updateTotalHarga();
-                       return;
-                   }
-               }
 
-               String sql = "SELECT id, kode_barang, nama, harga FROM products WHERE kode_barang = ?";
-               pst = conn.prepareStatement(sql);
-               pst.setString(1, kodeBarang);
-               rslt = pst.executeQuery();
-               if (rslt.next()) {
-                   String id = rslt.getString("id");
-                   String kode = rslt.getString("kode_barang");
-                   String nama = rslt.getString("nama");
-                   int harga = rslt.getInt("harga");
-                   int jumlah = 1;
-                   int subtotal = harga * jumlah;
-                   String barangMasukId = "";
-                   Object[] row = {id, kode, nama, harga, jumlah, subtotal};
-                   model.addRow(row);
-                   updateTotalHarga();
-               } else {
-                   JOptionPane.showMessageDialog(this, "Produk dengan kode " + kodeBarang + " tidak ditemukan.");
-               }
-           } catch (SQLException e) {
-               JOptionPane.showMessageDialog(this, "Error load product: " + e.getMessage());
-           }
-       }
-
-    private void batasiAkses() {
-        switch (levelForPage.toLowerCase()) {
-            case "administrator":
-                break;
-
-            case "petugas kasir":
-                btnProducts.setVisible(false);
-                btnCategories.setVisible(false);
-                btnBrands.setVisible(false);
-                btnUsers.setVisible(false);
-                btnSuppliers.setVisible(false);
-                btnReports.setVisible(false);
-                btnTransactions.setVisible(false);
-                btnSettings.setVisible(false);
-                break;
-
-            case "manager":
-                btnProducts.setVisible(false);
-                btnCategories.setVisible(false);
-                btnBrands.setVisible(false);
-                btnUsers.setVisible(false);
-                btnSuppliers.setVisible(false);
-                btnCashier.setVisible(false);
-                break;
-
-            default:
-                JOptionPane.showMessageDialog(this, "Level tidak dikenali: " + levelForPage, "Error", JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
-                break;
-        }
-    }
-        
-        
-    private void setupModel() {
-            model = new DefaultTableModel(
-                new Object [][] {},
-                new String [] {"Id", "Kode Barang", "Nama", "Harga", "Jumlah", "Subtotal"}
-            ) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return column == 4;
-                }
-            };
-
-            tblKeranjang.setModel(model);
-
-            model.addTableModelListener(e -> {
-                if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
-                    int row = e.getFirstRow();
-                    int column = e.getColumn();
-
-                    if (column == 4) {
-                        try {
-                            int newJumlah = Integer.parseInt(model.getValueAt(row, column).toString());
-                            if (newJumlah <= 0) {
-                                JOptionPane.showMessageDialog(this, "Jumlah minimal 1.");
-                                newJumlah = 1;
-                                model.setValueAt(newJumlah, row, column);
-                            }
-                            int harga = Integer.parseInt(model.getValueAt(row, 3).toString());
-                            int subtotal = harga * newJumlah;
-                            model.setValueAt(subtotal, row, 5);
-                            updateTotalHarga();
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(this, "Jumlah harus berupa angka.");
-                            model.setValueAt(1, row, column);
-                            int harga = Integer.parseInt(model.getValueAt(row, 3).toString());
-                            model.setValueAt(harga, row, 5);
-                            updateTotalHarga();
-                        }
+                        updateTotalHarga();
+                        return;
                     }
                 }
-            });
+
+                String sql = "SELECT id, kode_barang, nama, harga FROM products WHERE kode_barang = ?";
+                pst = conn.prepareStatement(sql);
+                pst.setString(1, kodeBarang);
+                rslt = pst.executeQuery();
+                if (rslt.next()) {
+                    String id = rslt.getString("id");
+                    String kode = rslt.getString("kode_barang");
+                    String nama = rslt.getString("nama");
+                    int harga = rslt.getInt("harga");
+                    int jumlah = 1;
+                    int subtotal = harga * jumlah;
+                    Object[] row = {id, kode, nama, harga, jumlah, subtotal};
+                    model.addRow(row);
+                    updateTotalHarga();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Produk dengan kode " + kodeBarang + " tidak ditemukan.");
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error load product: " + e.getMessage());
+            }
         }
+  
+        private void batasiAkses() {
+            switch (levelForPage.toLowerCase()) {
+                case "administrator":
+                    break;
+
+                case "petugas kasir":
+                    btnProducts.setVisible(false);
+                    btnCategories.setVisible(false);
+                    btnBrands.setVisible(false);
+                    btnUsers.setVisible(false);
+                    btnSuppliers.setVisible(false);
+                    btnReports.setVisible(false);
+                    btnTransactions.setVisible(false);
+                    btnSettings.setVisible(false);
+                    break;
+
+                case "manager":
+                    btnProducts.setVisible(false);
+                    btnCategories.setVisible(false);
+                    btnBrands.setVisible(false);
+                    btnUsers.setVisible(false);
+                    btnSuppliers.setVisible(false);
+                    btnCashier.setVisible(false);
+                    break;
+
+                default:
+                    JOptionPane.showMessageDialog(this, "Level tidak dikenali: " + levelForPage, "Error", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                    break;
+            }
+        }
+
+        private void setupModel() {
+                model = new DefaultTableModel(
+                    new Object [][] {},
+                    new String [] {"Id", "Kode Barang", "Nama", "Harga", "Jumlah", "Subtotal"}
+                ) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return column == 4;
+                    }
+                };
+
+                tblKeranjang.setModel(model);
+
+                model.addTableModelListener(e -> {
+                    if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
+                        int row = e.getFirstRow();
+                        int column = e.getColumn();
+
+                        if (column == 4) {
+                            try {
+                                int newJumlah = Integer.parseInt(model.getValueAt(row, column).toString());
+                                if (newJumlah <= 0) {
+                                    JOptionPane.showMessageDialog(this, "Jumlah minimal 1.");
+                                    newJumlah = 1;
+                                    model.setValueAt(newJumlah, row, column);
+                                }
+                                int harga = Integer.parseInt(model.getValueAt(row, 3).toString());
+                                int subtotal = harga * newJumlah;
+                                model.setValueAt(subtotal, row, 5);
+                                updateTotalHarga();
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(this, "Jumlah harus berupa angka.");
+                                model.setValueAt(1, row, column);
+                                int harga = Integer.parseInt(model.getValueAt(row, 3).toString());
+                                model.setValueAt(harga, row, 5);
+                                updateTotalHarga();
+                            }
+                        }
+                    }
+                });
+            }
 
         public void updateTotalHarga() {
             int total = 0;
@@ -268,60 +267,60 @@ public class BarangMasukForm extends javax.swing.JFrame {
                 return String.valueOf(number);
         }
 
-        private void cetakNota() {
-            String namaSupplier = "Tidak Diketahui";
+    private void cetakNota() {
+        String namaSupplier = "Tidak Diketahui";
 
-            try {
-                PreparedStatement pstSupplier = conn.prepareStatement("SELECT nama_supplier FROM suppliers WHERE id = ?");
-                pstSupplier.setInt(1, supplierId);
-                ResultSet rsSupplier = pstSupplier.executeQuery();
-                if (rsSupplier.next()) {
-                    namaSupplier = rsSupplier.getString("nama_supplier");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try {
+            PreparedStatement pstSupplier = conn.prepareStatement("SELECT nama_supplier FROM suppliers WHERE id = ?");
+            pstSupplier.setInt(1, supplierId);
+            ResultSet rsSupplier = pstSupplier.executeQuery();
+            if (rsSupplier.next()) {
+                namaSupplier = rsSupplier.getString("nama_supplier");
             }
-
-            StringBuilder html = new StringBuilder();
-            html.append("<html><body style='font-family: monospace;'>");
-            html.append("<h2 style='text-align:center;'>").append(namaAplikasi).append("</h2>");
-            html.append("<h3 style='text-align:center;'>NOTA PEMBELIAN</h3>");
-            html.append("<p>Supplier: ").append(namaSupplier).append("</p>");
-            html.append("<p>Kasir: ").append(usernameForPage).append("</p>");
-            html.append("<hr>");
-            html.append("<table width='100%'><tr><th>Nama</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr>");
-
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String nama = model.getValueAt(i, 2).toString();
-                String qty = model.getValueAt(i, 4).toString();
-                String harga = model.getValueAt(i, 3).toString();
-                int subtotal = Integer.parseInt(harga) * Integer.parseInt(qty);
-
-                html.append("<tr>");
-                html.append("<td>").append(nama).append("</td>");
-                html.append("<td>").append(qty).append("</td>");
-                html.append("<td>").append(harga).append("</td>");
-                html.append("<td>").append(subtotal).append("</td>");
-                html.append("</tr>");
-            }
-
-            html.append("</table><hr>");
-            html.append("<p>Total: ").append(txtTotalHarga.getText()).append("</p>");
-            html.append("<p>Dibayar: ").append(txtTotalDibayar.getText()).append("</p>");
-            html.append("<p style='text-align:center;'>Terima kasih!</p>");
-            html.append("</body></html>");
-
-            JTextPane textPane = new JTextPane();
-            textPane.setContentType("text/html");
-            textPane.setText(html.toString());
-
-            try {
-                boolean printed = textPane.print();
-                if (printed) System.out.println("Nota berhasil dicetak");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        StringBuilder html = new StringBuilder();
+        html.append("<html><body style='font-family: monospace;'>");
+        html.append("<h2 style='text-align:center;'>").append(namaAplikasi).append("</h2>");
+        html.append("<h3 style='text-align:center;'>NOTA PEMBELIAN</h3>");
+        html.append("<p>Supplier: ").append(namaSupplier).append("</p>");
+        html.append("<p>Kasir: ").append(usernameForPage).append("</p>");
+        html.append("<hr>");
+        html.append("<table width='100%'><tr><th>Nama</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr>");
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String nama = model.getValueAt(i, 2).toString();
+            String qty = model.getValueAt(i, 4).toString();
+            String harga = model.getValueAt(i, 3).toString();
+            int subtotal = Integer.parseInt(harga) * Integer.parseInt(qty);
+
+            html.append("<tr>");
+            html.append("<td style='text-align:center'>").append(nama).append("</td>");
+            html.append("<td style='text-align:center'>").append(qty).append("</td>");
+            html.append("<td style='text-align:center'>Rp ").append(harga).append("</td>");
+            html.append("<td style='text-align:center'>Rp ").append(subtotal).append("</td>");
+            html.append("</tr>");
+        }
+
+        html.append("</table><hr>");
+        html.append("<p>Total: Rp ").append(txtTotalHarga.getText()).append("</p>");
+        html.append("<p>Dibayar: Rp ").append(txtTotalDibayar.getText()).append("</p>");
+        html.append("<p style='text-align:center;'>Terima kasih!</p>");
+        html.append("</body></html>");
+
+        JTextPane textPane = new JTextPane();
+        textPane.setContentType("text/html");
+        textPane.setText(html.toString());
+
+        try {
+            boolean printed = textPane.print();
+            if (printed) System.out.println("Nota berhasil dicetak");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -381,6 +380,11 @@ public class BarangMasukForm extends javax.swing.JFrame {
         setTitle("Cashier Page");
         setBackground(new java.awt.Color(204, 204, 204));
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -756,9 +760,9 @@ public class BarangMasukForm extends javax.swing.JFrame {
     jPanel4Layout.setVerticalGroup(
         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel4Layout.createSequentialGroup()
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addContainerGap(17, Short.MAX_VALUE)
             .addComponent(jLabel2)
-            .addGap(40, 40, 40))
+            .addGap(38, 38, 38))
         .addGroup(jPanel4Layout.createSequentialGroup()
             .addContainerGap()
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -777,9 +781,17 @@ public class BarangMasukForm extends javax.swing.JFrame {
     jLabel4.setForeground(new java.awt.Color(255, 255, 255));
     jLabel4.setText("Total Harga");
 
+    txtTotalHarga.setToolTipText("Total harga diisi otomatis dari seluruh total harga barang di keranjang");
+
     txtTotalDibayar.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            txtTotalDibayarKeyPressed(evt);
+        }
         public void keyReleased(java.awt.event.KeyEvent evt) {
             txtTotalDibayarKeyReleased(evt);
+        }
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            txtTotalDibayarKeyTyped(evt);
         }
     });
 
@@ -916,14 +928,14 @@ public class BarangMasukForm extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(txtKontak)
                                 .addComponent(txtAlamat))
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGap(461, 461, 461))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createSequentialGroup()
@@ -1229,6 +1241,33 @@ public class BarangMasukForm extends javax.swing.JFrame {
         cashier_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCashierActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) {
+                txtScanCodeProduct.requestFocus();
+         }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void txtTotalDibayarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTotalDibayarKeyTyped
+        // TODO add your handling code here:
+        
+        char c = evt.getKeyChar();
+        
+        if (!Character.isDigit(c)) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtTotalDibayarKeyTyped
+
+    private void txtTotalDibayarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTotalDibayarKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnBayar.doClick();
+        }
+    }//GEN-LAST:event_txtTotalDibayarKeyPressed
 
     /**
      * @param args the command line arguments

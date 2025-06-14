@@ -32,13 +32,15 @@ public class UsersForm extends javax.swing.JFrame {
     
     public UsersForm(Users users, String username, String level) {
         initComponents();
-        getConnection();
+        conn = DBConnection.getConnection();
         loadLevel();
         
         users_page = users;
         usernameForPage = username;
         levelForPage = level;
         this.mode = "create";
+        
+        txtUsername.requestFocus();
         
         btnAction.setText("Create");
         btnAction.setBackground(Color.GREEN);
@@ -54,6 +56,8 @@ public class UsersForm extends javax.swing.JFrame {
         this.userId = userId;
         txtUsername.setText(usernameLama);
         
+        txtUsername.requestFocus();
+        
         btnAction.setText("Update");
         btnAction.setBackground(Color.BLUE);
     }
@@ -61,19 +65,7 @@ public class UsersForm extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void getConnection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java",  "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsersForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(UsersForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+ 
     private void loadLevel() {
         try {
             pst = conn.prepareStatement("SHOW COLUMNS FROM users LIKE 'level'");
@@ -127,6 +119,12 @@ public class UsersForm extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Username");
 
+        txtUsername.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtUsernameKeyPressed(evt);
+            }
+        });
+
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
         jLabel2.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 42)); // NOI18N
@@ -153,8 +151,20 @@ public class UsersForm extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel3.setText("Password");
 
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPasswordKeyPressed(evt);
+            }
+        });
+
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel4.setText("Confirm Password");
+
+        txtConfirmPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtConfirmPasswordKeyPressed(evt);
+            }
+        });
 
         btnAction.setForeground(new java.awt.Color(255, 255, 255));
         btnAction.setText("Action");
@@ -186,6 +196,11 @@ public class UsersForm extends javax.swing.JFrame {
         jLabel5.setText("Level");
 
         cmbLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbLevel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbLevelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -261,8 +276,6 @@ public class UsersForm extends javax.swing.JFrame {
     private void btnBackToUsersListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToUsersListActionPerformed
         // TODO add your handling code here:
         
-        Users users_form = new Users(usernameForPage, levelForPage);
-        users_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToUsersListActionPerformed
 
@@ -364,6 +377,39 @@ public class UsersForm extends javax.swing.JFrame {
            }
         }
     }//GEN-LAST:event_btnActionActionPerformed
+
+    private void txtUsernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            cmbLevel.showPopup();
+        }
+    }//GEN-LAST:event_txtUsernameKeyPressed
+
+    private void txtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtConfirmPassword.requestFocus();
+        }
+    }//GEN-LAST:event_txtPasswordKeyPressed
+
+    private void txtConfirmPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConfirmPasswordKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnAction.doClick();
+        }
+    }//GEN-LAST:event_txtConfirmPasswordKeyPressed
+
+    private void cmbLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbLevelActionPerformed
+        // TODO add your handling code here:
+        
+        txtPassword.requestFocus();
+    }//GEN-LAST:event_cmbLevelActionPerformed
 
     /**
      * @param args the command line arguments

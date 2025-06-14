@@ -5,12 +5,11 @@
  */
 package app;
 
-import java.awt.Color;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -53,7 +52,7 @@ public class SupplierList extends javax.swing.JDialog {
             }
         });
         
-        Connection();
+        conn = DBConnection.getConnection();
 
         int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         int windowWidth = getWidth();
@@ -61,27 +60,21 @@ public class SupplierList extends javax.swing.JDialog {
 
         setupTableSorter();
         loadAllSuppliers();
+        
+        this.setFocusable(true);
+        this.requestFocusInWindow();
     }
     
     public SupplierList(java.awt.Frame parent, String usernameForPage, String levelForPage) {
         this(parent, null, usernameForPage, levelForPage, null);
+        
+        this.setFocusable(true);
+        this.requestFocusInWindow();
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public SupplierList() {
         this(null, null, "", "", null);
@@ -169,6 +162,12 @@ public class SupplierList extends javax.swing.JDialog {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        jPanel2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jPanel2KeyPressed(evt);
+            }
+        });
 
         btnPilihSupplier.setBackground(new java.awt.Color(102, 102, 255));
         btnPilihSupplier.setForeground(new java.awt.Color(255, 255, 255));
@@ -298,6 +297,15 @@ public class SupplierList extends javax.swing.JDialog {
             filterTable();
         }
     }//GEN-LAST:event_txtSearchKeyPressed
+
+    private void jPanel2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel2KeyPressed
+        // TODO add your handling code here:
+        
+         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) 
+        {
+                txtSearch.requestFocus();
+         }
+    }//GEN-LAST:event_jPanel2KeyPressed
 
     /**
      * @param args the command line arguments

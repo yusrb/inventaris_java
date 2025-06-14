@@ -5,18 +5,11 @@
  */
 package app;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
+import java.awt.event.KeyEvent;
 import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.sql.*;
 import java.util.Date;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -24,11 +17,8 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -70,7 +60,7 @@ public class RecordTransactions extends javax.swing.JFrame {
             }
         });
 
-        Connection();
+        conn = DBConnection.getConnection();
         getSettings();
 
         usernameForPage = username;
@@ -82,6 +72,8 @@ public class RecordTransactions extends javax.swing.JFrame {
 
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setFocusable(true);
+        this.requestFocusInWindow();
 
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
@@ -191,15 +183,6 @@ public class RecordTransactions extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-
-    public void Connection() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     public void getSettings()
     {
@@ -406,6 +389,11 @@ public class RecordTransactions extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Record Page");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -680,7 +668,7 @@ public class RecordTransactions extends javax.swing.JFrame {
             .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(39, 39, 39)
             .addComponent(txtNamePageBottom)
-            .addContainerGap(159, Short.MAX_VALUE))
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     jPanel3.setBackground(new java.awt.Color(123, 104, 238));
@@ -758,8 +746,8 @@ public class RecordTransactions extends javax.swing.JFrame {
     jPanel4Layout.setVerticalGroup(
         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-            .addContainerGap(31, Short.MAX_VALUE)
-            .addComponent(jLabel3)
+            .addGap(31, 31, 31)
+            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGap(25, 25, 25))
     );
 
@@ -867,7 +855,7 @@ public class RecordTransactions extends javax.swing.JFrame {
         .addGroup(layout.createSequentialGroup()
             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(41, 41, 41)
-            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGap(30, 30, 30)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -887,7 +875,7 @@ public class RecordTransactions extends javax.swing.JFrame {
             .addComponent(jLabel6)
             .addGap(4, 4, 4)
             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap())
+            .addGap(257, 257, 257))
     );
 
     pack();
@@ -1097,6 +1085,14 @@ public class RecordTransactions extends javax.swing.JFrame {
         laporan_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnReportsActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_P) {
+                btnCetak.doClick();
+            }
+    }//GEN-LAST:event_formKeyPressed
 
     /**
      * @param args the command line arguments

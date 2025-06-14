@@ -7,18 +7,15 @@ package app;
 
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.print.PrinterException;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import java.sql.Timestamp;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import javax.swing.ImageIcon;
-import javax.swing.JTable;
+import javax.swing.JEditorPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -53,7 +50,7 @@ public class BarangMasuk extends javax.swing.JFrame {
             }
         });
 
-        Connection();
+        conn = DBConnection.getConnection();
         Fetch();
         setAlertStock();
         
@@ -67,24 +64,14 @@ public class BarangMasuk extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setFocusable(true);
+        this.requestFocusInWindow(true);
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+     
     public void getSettings()
     {
         try {
@@ -264,6 +251,11 @@ public class BarangMasuk extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Barang Masuk Page");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -598,7 +590,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     );
 
     jLabel3.setFont(new java.awt.Font("Palatino Linotype", 1, 18)); // NOI18N
-    jLabel3.setText("Stock In List");
+    jLabel3.setText("Barang Masuk List");
 
     btnCreate.setBackground(new java.awt.Color(0, 255, 0));
     btnCreate.setForeground(new java.awt.Color(255, 255, 255));
@@ -652,7 +644,7 @@ public class BarangMasuk extends javax.swing.JFrame {
     });
     jScrollPane1.setViewportView(tblTampilBarangMasuk);
 
-    btnCetak.setBackground(new java.awt.Color(153, 153, 153));
+    btnCetak.setBackground(new java.awt.Color(102, 102, 102));
     btnCetak.setForeground(new java.awt.Color(255, 255, 255));
     btnCetak.setText("Cetak");
     btnCetak.addActionListener(new java.awt.event.ActionListener() {
@@ -715,7 +707,7 @@ public class BarangMasuk extends javax.swing.JFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                 .addComponent(jLabel3)
                 .addComponent(btnNotifikasi, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGap(14, 14, 14)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -857,28 +849,56 @@ public class BarangMasuk extends javax.swing.JFrame {
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         // TODO add your handling code here:
+        
+            try {
+                StringBuilder html = new StringBuilder();
+                html.append("<html><head>");
+                html.append("<style>")
+                    .append("body { font-family: sans-serif; margin: 30px; }")
+                    .append("table { width: 100%; border-collapse: collapse; }")
+                    .append("th, td { border: 1px solid #444; padding: 8px; text-align: left; }")
+                    .append("th { background-color: #f2f2f2; }")
+                    .append("h2 { text-align: center; }")
+                    .append(".footer { margin-top: 20px; font-size: 12px; }")
+                    .append("</style>");
+                html.append("</head><body>");
+                html.append("<h2>LAPORAN DATA BARANG MASUK</h2>");
+                html.append("<table>");
 
-        try {
-            MessageFormat header = new MessageFormat("LAPORAN DATA BARANG MASUK");
+                html.append("<tr>");
+                for (int i = 0; i < tblTampilBarangMasuk.getColumnCount(); i++) {
+                    html.append("<th>").append(tblTampilBarangMasuk.getColumnName(i)).append("</th>");
+                }
+                html.append("</tr>");
 
-            MessageFormat footer = new MessageFormat("Halaman {0}");
+                for (int row = 0; row < tblTampilBarangMasuk.getRowCount(); row++) {
+                    html.append("<tr>");
+                    for (int col = 0; col < tblTampilBarangMasuk.getColumnCount(); col++) {
+                        Object value = tblTampilBarangMasuk.getValueAt(row, col);
+                        html.append("<td>").append(value == null ? "" : value.toString()).append("</td>");
+                    }
+                    html.append("</tr>");
+                }
 
-            boolean complete = tblTampilBarangMasuk.print(
-                JTable.PrintMode.FIT_WIDTH,
-                header,
-                footer
-            );
+                String tanggalCetak = new java.text.SimpleDateFormat("dd MMMM yyyy, HH:mm").format(new java.util.Date());
+                html.append("</table>");
+                html.append("<div class='footer'>Dicetak pada: ").append(tanggalCetak).append("</div>");
+                html.append("</body></html>");
 
-            if (complete) {
-                JOptionPane.showMessageDialog(this, "Pencetakan berhasil dilakukan.", "Print Success", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Pencetakan dibatalkan oleh pengguna.", "Print Cancelled", JOptionPane.WARNING_MESSAGE);
+                JEditorPane editorPane = new JEditorPane("text/html", html.toString());
+                editorPane.setEditable(false);
+                boolean complete = editorPane.print();
+
+                if (complete) {
+                    JOptionPane.showMessageDialog(this, "Laporan berhasil dicetak.", "Print Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Pencetakan dibatalkan.", "Print Cancelled", JOptionPane.WARNING_MESSAGE);
+                }
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat mencetak:\n" + e.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
-
-        } catch (PrinterException e) {
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat mencetak:\n" + e.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void btnNotifikasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNotifikasiActionPerformed
@@ -992,6 +1012,15 @@ public class BarangMasuk extends javax.swing.JFrame {
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_P)
+        {
+            btnCetak.doClick();
+        }
+    }//GEN-LAST:event_formKeyPressed
 
     /**
      * @param args the command line arguments

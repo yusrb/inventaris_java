@@ -6,6 +6,7 @@
 package app;
 
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -47,7 +48,7 @@ public class Suppliers extends javax.swing.JFrame {
             }
         });
 
-        Connection();
+        conn = DBConnection.getConnection();
         Fetch();
         getSettings();
         
@@ -60,23 +61,14 @@ public class Suppliers extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        this.setFocusable(true);
+        this.requestFocusInWindow();
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public void getSettings()
     {
@@ -232,6 +224,11 @@ public class Suppliers extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Suppliers Page");
         setBackground(new java.awt.Color(255, 255, 255));
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -639,6 +636,12 @@ public class Suppliers extends javax.swing.JFrame {
         }
     });
 
+    txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            txtSearchKeyPressed(evt);
+        }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -807,10 +810,13 @@ public class Suppliers extends javax.swing.JFrame {
         }
 
         try {
-            String sql = "SELECT * FROM suppliers WHERE nama_supplier LIKE ?";
-
+            String sql = "SELECT * FROM suppliers WHERE nama_supplier LIKE ? OR email LIKE ? OR kontak LIKE ? OR alamat LIKE ?";
             pst = conn.prepareStatement(sql);
             pst.setString(1, "%" + keyword + "%");
+            pst.setString(2, "%" + keyword + "%");
+            pst.setString(3, "%" + keyword + "%");
+            pst.setString(4, "%" + keyword + "%");
+
             rslt = pst.executeQuery();
 
             DefaultTableModel df = (DefaultTableModel) tblTampilSuppliers.getModel();
@@ -820,6 +826,9 @@ public class Suppliers extends javax.swing.JFrame {
                 Vector v2 = new Vector();
                 v2.add(rslt.getInt("id"));
                 v2.add(rslt.getString("nama_supplier"));
+                v2.add(rslt.getString("email"));
+                v2.add(rslt.getString("kontak"));
+                v2.add(rslt.getString("alamat"));
                 df.addRow(v2);
             }
 
@@ -915,6 +924,24 @@ public class Suppliers extends javax.swing.JFrame {
         suppliers_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) 
+        {
+                txtSearch.requestFocus();
+         }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnSearch.doClick();
+        }
+    }//GEN-LAST:event_txtSearchKeyPressed
 
     /**
      * @param args the command line arguments

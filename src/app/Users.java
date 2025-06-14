@@ -5,6 +5,7 @@
  */
 package app;
 
+import com.sun.glass.events.KeyEvent;
 import java.awt.Image;
 import java.sql.*;
 import java.util.Vector;
@@ -47,7 +48,7 @@ public class Users extends javax.swing.JFrame {
             }
         });
 
-        Connection();
+        conn = DBConnection.getConnection();
         Fetch();
         getSettings();
         
@@ -60,23 +61,13 @@ public class Users extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setFocusable(true);
+        this.requestFocusInWindow(true);
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public void getSettings()
     {
@@ -225,9 +216,16 @@ public class Users extends javax.swing.JFrame {
         btnDelete = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTampilUsers = new javax.swing.JTable();
+        txtSearch = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Users Page");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -544,7 +542,7 @@ public class Users extends javax.swing.JFrame {
             .addComponent(labelLogo)
             .addGap(13, 13, 13)
             .addComponent(txtNamePageTop)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1066, Short.MAX_VALUE)
             .addComponent(btnSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, 0)
             .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -615,6 +613,22 @@ public class Users extends javax.swing.JFrame {
     });
     jScrollPane1.setViewportView(tblTampilUsers);
 
+    txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            txtSearchKeyPressed(evt);
+        }
+    });
+
+    btnSearch.setBackground(new java.awt.Color(123, 104, 238));
+    btnSearch.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+    btnSearch.setForeground(new java.awt.Color(255, 255, 255));
+    btnSearch.setText(">");
+    btnSearch.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnSearchActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -631,8 +645,14 @@ public class Users extends javax.swing.JFrame {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jLabel3)
+                            .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, 0)
+                            .addComponent(btnSearch))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addGap(0, 0, Short.MAX_VALUE))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1492, Short.MAX_VALUE))
                     .addGap(24, 24, 24))))
     );
@@ -644,10 +664,14 @@ public class Users extends javax.swing.JFrame {
             .addGap(43, 43, 43)
             .addComponent(jLabel3)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.Alignment.TRAILING)))
             .addGap(18, 18, 18)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, Short.MAX_VALUE))
@@ -831,6 +855,56 @@ public class Users extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnSuppliersActionPerformed
 
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnSearch.doClick();
+        }
+    }//GEN-LAST:event_txtSearchKeyPressed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+
+        String keyword = txtSearch.getText();
+
+            if (keyword.isEmpty()) {
+                Fetch();
+                return;
+            }
+
+            try {
+                String sql = "SELECT id, username, level FROM users WHERE username LIKE ? OR level LIKE ?";
+                pst = conn.prepareStatement(sql);
+                pst.setString(1, "%" + keyword + "%");
+                pst.setString(2, "%" + keyword + "%");
+                rslt = pst.executeQuery();
+
+                DefaultTableModel df = (DefaultTableModel) tblTampilUsers.getModel();
+                df.setRowCount(0);
+
+                while (rslt.next()) {
+                    Vector v2 = new Vector();
+                    v2.add(rslt.getInt("id"));
+                    v2.add(rslt.getString("username"));
+                    v2.add(rslt.getString("level"));
+                    df.addRow(v2);
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) {
+            txtSearch.requestFocus();
+        }
+    }//GEN-LAST:event_formKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -879,6 +953,7 @@ public class Users extends javax.swing.JFrame {
     private javax.swing.JButton btnProducts;
     private javax.swing.JButton btnReports;
     private javax.swing.JButton btnSalesTransactions;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSettings;
     private javax.swing.JButton btnSuppliers;
     private javax.swing.JButton btnTransactions;
@@ -895,6 +970,7 @@ public class Users extends javax.swing.JFrame {
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;
     private javax.swing.JLabel txtRoleForUsername;
+    private javax.swing.JTextField txtSearch;
     private javax.swing.JLabel txtUsernameForPage;
     // End of variables declaration//GEN-END:variables
 }

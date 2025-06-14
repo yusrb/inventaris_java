@@ -28,7 +28,7 @@ public class Transactions extends javax.swing.JFrame {
     
     public Transactions(String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         getSettings();
         getCountBarangMasuk();
         getCountBarangKeluar();
@@ -47,19 +47,7 @@ public class Transactions extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+
     public void getSettings()
     {
         try {
@@ -183,14 +171,18 @@ public class Transactions extends javax.swing.JFrame {
         txtNamePageTop = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         btnBarangMasuk = new javax.swing.JButton();
         btnBarangKeluar = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        txtCountBarangMasuk = new javax.swing.JLabel();
-        txtCountBarangKeluar = new javax.swing.JLabel();
         btnRecordTransactions = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        txtCountBarangMasuk = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jPanel10 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        txtCountBarangKeluar = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Transactions Page");
@@ -550,12 +542,9 @@ public class Transactions extends javax.swing.JFrame {
             .addGap(26, 26, 26))
     );
 
-    jLabel4.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
-    jLabel4.setText("Total Barang Masuk");
-
     btnBarangMasuk.setBackground(new java.awt.Color(123, 104, 238));
     btnBarangMasuk.setForeground(new java.awt.Color(255, 255, 255));
-    btnBarangMasuk.setText("Stock In");
+    btnBarangMasuk.setText("Barang Masuk List");
     btnBarangMasuk.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             btnBarangMasukActionPerformed(evt);
@@ -564,7 +553,7 @@ public class Transactions extends javax.swing.JFrame {
 
     btnBarangKeluar.setBackground(new java.awt.Color(123, 104, 238));
     btnBarangKeluar.setForeground(new java.awt.Color(255, 255, 255));
-    btnBarangKeluar.setText("Stock Out");
+    btnBarangKeluar.setText("Barang Keluar");
     btnBarangKeluar.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             btnBarangKeluarActionPerformed(evt);
@@ -584,23 +573,110 @@ public class Transactions extends javax.swing.JFrame {
         .addGap(0, 0, Short.MAX_VALUE)
     );
 
-    jLabel5.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
-    jLabel5.setText("Total Barang Keluar");
-
-    txtCountBarangMasuk.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-    txtCountBarangMasuk.setText("total_barang_masuk");
-
-    txtCountBarangKeluar.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-    txtCountBarangKeluar.setText("total_barang_keluar");
-
     btnRecordTransactions.setBackground(new java.awt.Color(123, 104, 238));
     btnRecordTransactions.setForeground(new java.awt.Color(255, 255, 255));
-    btnRecordTransactions.setText("Records Transactions");
+    btnRecordTransactions.setText("Records Transaksi");
     btnRecordTransactions.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             btnRecordTransactionsActionPerformed(evt);
         }
     });
+
+    jPanel6.setBackground(new java.awt.Color(204, 204, 204));
+
+    jPanel8.setBackground(new java.awt.Color(123, 104, 238));
+
+    jLabel4.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
+    jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+    jLabel4.setText("Total Barang Masuk");
+
+    javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+    jPanel8.setLayout(jPanel8Layout);
+    jPanel8Layout.setHorizontalGroup(
+        jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+            .addContainerGap(36, Short.MAX_VALUE)
+            .addComponent(jLabel4)
+            .addGap(31, 31, 31))
+    );
+    jPanel8Layout.setVerticalGroup(
+        jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel8Layout.createSequentialGroup()
+            .addGap(8, 8, 8)
+            .addComponent(jLabel4)
+            .addGap(8, 8, 8))
+    );
+
+    txtCountBarangMasuk.setBackground(new java.awt.Color(0, 0, 0));
+    txtCountBarangMasuk.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+    txtCountBarangMasuk.setText("0");
+
+    javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+    jPanel6.setLayout(jPanel6Layout);
+    jPanel6Layout.setHorizontalGroup(
+        jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(jPanel6Layout.createSequentialGroup()
+            .addGap(176, 176, 176)
+            .addComponent(txtCountBarangMasuk)
+            .addContainerGap(177, Short.MAX_VALUE))
+    );
+    jPanel6Layout.setVerticalGroup(
+        jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel6Layout.createSequentialGroup()
+            .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(txtCountBarangMasuk)
+            .addGap(0, 20, Short.MAX_VALUE))
+    );
+
+    jPanel9.setBackground(new java.awt.Color(204, 204, 204));
+
+    jPanel10.setBackground(new java.awt.Color(123, 104, 238));
+
+    jLabel6.setFont(new java.awt.Font("Tahoma", 1, 32)); // NOI18N
+    jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+    jLabel6.setText("Total Barang Keluar");
+
+    javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+    jPanel10.setLayout(jPanel10Layout);
+    jPanel10Layout.setHorizontalGroup(
+        jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
+            .addContainerGap(35, Short.MAX_VALUE)
+            .addComponent(jLabel6)
+            .addGap(31, 31, 31))
+    );
+    jPanel10Layout.setVerticalGroup(
+        jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel10Layout.createSequentialGroup()
+            .addGap(8, 8, 8)
+            .addComponent(jLabel6)
+            .addGap(8, 8, 8))
+    );
+
+    txtCountBarangKeluar.setBackground(new java.awt.Color(0, 0, 0));
+    txtCountBarangKeluar.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+    txtCountBarangKeluar.setText("0");
+
+    javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+    jPanel9.setLayout(jPanel9Layout);
+    jPanel9Layout.setHorizontalGroup(
+        jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(jPanel9Layout.createSequentialGroup()
+            .addGap(176, 176, 176)
+            .addComponent(txtCountBarangKeluar)
+            .addContainerGap(177, Short.MAX_VALUE))
+    );
+    jPanel9Layout.setVerticalGroup(
+        jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel9Layout.createSequentialGroup()
+            .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(txtCountBarangKeluar)
+            .addGap(0, 20, Short.MAX_VALUE))
+    );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -619,23 +695,15 @@ public class Transactions extends javax.swing.JFrame {
                             .addGap(77, 77, 77)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(btnBarangMasuk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
-                                .addComponent(btnRecordTransactions, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                                .addComponent(btnBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                                .addComponent(btnRecordTransactions, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE))
                             .addGap(47, 47, 47)
                             .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(30, 30, 30)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel4)
-                                        .addComponent(jLabel5)))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(109, 109, 109)
-                                    .addComponent(txtCountBarangKeluar))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(105, 105, 105)
-                                    .addComponent(txtCountBarangMasuk)))
-                            .addGap(145, 145, 145)))
+                            .addGap(41, 41, 41)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGap(69, 69, 69)))
                     .addGap(32, 32, 32))))
     );
     layout.setVerticalGroup(
@@ -645,26 +713,22 @@ public class Transactions extends javax.swing.JFrame {
             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(18, 18, 18)
             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                     .addGap(41, 41, 41)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btnBarangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(26, 26, 26)
-                            .addComponent(btnBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addGap(18, 18, 18)
-                            .addComponent(txtCountBarangMasuk)
-                            .addGap(34, 34, 34)
-                            .addComponent(jLabel5)
-                            .addGap(18, 18, 18)
-                            .addComponent(txtCountBarangKeluar)))
+                    .addComponent(btnBarangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(26, 26, 26)
+                    .addComponent(btnBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(26, 26, 26)
                     .addComponent(btnRecordTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addGap(18, 18, 18)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap())))
     );
 
     pack();
@@ -860,12 +924,16 @@ public class Transactions extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel labelLogo;
     private javax.swing.JLabel txtCountBarangKeluar;
     private javax.swing.JLabel txtCountBarangMasuk;

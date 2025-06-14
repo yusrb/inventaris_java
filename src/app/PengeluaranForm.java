@@ -33,11 +33,12 @@ public class PengeluaranForm extends javax.swing.JFrame {
 
     public PengeluaranForm(Pengeluaran pengeluaran, String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
 
         usernameForPage = username;
         levelForPage = level;
         pengeluaran_page = pengeluaran;
+        txtDeskripsi.requestFocus();
 
         this.mode = "create";
         btnAction.setText("Create");
@@ -52,6 +53,7 @@ public class PengeluaranForm extends javax.swing.JFrame {
 
         txtDeskripsi.setText(deskripsiLama);
         txtNominal.setText(nominalLama);
+        txtDeskripsi.requestFocus();
 
         this.mode = "update";
         btnAction.setText("Update");
@@ -61,15 +63,6 @@ public class PengeluaranForm extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-
-    public void Connection() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(PengeluaranForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -147,6 +140,18 @@ public class PengeluaranForm extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel3.setText("Nominal");
+
+        txtNominal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNominalKeyPressed(evt);
+            }
+        });
+
+        txtDeskripsi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtDeskripsiKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -254,10 +259,26 @@ public class PengeluaranForm extends javax.swing.JFrame {
     private void btnBackToBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToBrandsActionPerformed
         // TODO add your handling code here:
 
-        Pengeluaran pengeluaran_page = new Pengeluaran(usernameForPage, levelForPage);
-        pengeluaran_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToBrandsActionPerformed
+
+    private void txtDeskripsiKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDeskripsiKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtNominal.requestFocus();
+        }
+    }//GEN-LAST:event_txtDeskripsiKeyPressed
+
+    private void txtNominalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNominalKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnAction.doClick();
+        }
+    }//GEN-LAST:event_txtNominalKeyPressed
 
     /**
      * @param args the command line arguments

@@ -5,6 +5,7 @@
  */
 package app;
 
+import com.sun.glass.events.KeyEvent;
 import java.awt.Image;
 import java.sql.*;
 import java.util.Vector;
@@ -13,13 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.SwingConstants;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -53,7 +48,7 @@ public class Cashier extends javax.swing.JFrame {
             }
         });
         
-        Connection();
+        conn = DBConnection.getConnection();
         setupQtyEditingValidation();
         getSettings();
         
@@ -64,26 +59,18 @@ public class Cashier extends javax.swing.JFrame {
         txtUsernameForPage.setText(usernameForPage);
         txtLevelForPage.setText(levelForPage);
         
+        txtAbjadTotal.setText("");
+        
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setFocusable(true);
+        this.requestFocusInWindow(true);
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+
     public void getSettings() {
         try {
             pst = conn.prepareStatement("SELECT logo, name_application FROM settings LIMIT 1");
@@ -358,17 +345,17 @@ public class Cashier extends javax.swing.JFrame {
             html.append("<tr>");
             html.append("<td>").append(nama).append("</td>");
             html.append("<td align='center'>").append(qty).append("</td>");
-            html.append("<td align='right'>").append(harga).append("</td>");
-            html.append("<td align='right'>").append(subtotal).append("</td>");
+            html.append("<td align='right'>Rp ").append(harga).append("</td>");
+            html.append("<td align='right'>Rp ").append(subtotal).append("</td>");
             html.append("</tr>");
         }
 
         html.append("</table>");
         html.append("<hr>");
 
-        html.append("<p><b>Total:</b> ").append(txtTotalHarga.getText()).append("</p>");
-        html.append("<p><b>Dibayar:</b> ").append(txtTotalDibayar.getText()).append("</p>");
-        html.append("<p><b>Kembalian:</b> ").append(txtTotalKembalian.getText()).append("</p>");
+        html.append("<p><b>Total:</b> Rp ").append(txtTotalHarga.getText()).append("</p>");
+        html.append("<p><b>Dibayar:</b> Rp ").append(txtTotalDibayar.getText()).append("</p>");
+        html.append("<p><b>Kembalian:</b> Rp ").append(txtTotalKembalian.getText()).append("</p>");
         html.append("<hr>");
         html.append("<p style='text-align:center;'>Terima kasih telah berbelanja!</p>");
         html.append("</body></html>");
@@ -445,6 +432,11 @@ public class Cashier extends javax.swing.JFrame {
         setTitle("Cashier Page");
         setBackground(new java.awt.Color(204, 204, 204));
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -841,9 +833,18 @@ public class Cashier extends javax.swing.JFrame {
     jLabel4.setForeground(new java.awt.Color(255, 255, 255));
     jLabel4.setText("Total Harga");
 
+    txtTotalHarga.setEditable(false);
+    txtTotalHarga.setToolTipText("Total harga diisi otomatis dari seluruh total harga barang di keranjang");
+
     txtTotalDibayar.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            txtTotalDibayarKeyPressed(evt);
+        }
         public void keyReleased(java.awt.event.KeyEvent evt) {
             txtTotalDibayarKeyReleased(evt);
+        }
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            txtTotalDibayarKeyTyped(evt);
         }
     });
 
@@ -854,6 +855,8 @@ public class Cashier extends javax.swing.JFrame {
     jLabel6.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
     jLabel6.setForeground(new java.awt.Color(255, 255, 255));
     jLabel6.setText("Kembalian");
+
+    txtTotalKembalian.setEditable(false);
 
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
@@ -931,7 +934,7 @@ public class Cashier extends javax.swing.JFrame {
         .addGroup(jPanel6Layout.createSequentialGroup()
             .addContainerGap()
             .addComponent(txtAbjadTotal)
-            .addContainerGap(870, Short.MAX_VALUE))
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     jPanel6Layout.setVerticalGroup(
         jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -978,7 +981,7 @@ public class Cashier extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(scrollTblKeranjang, javax.swing.GroupLayout.PREFERRED_SIZE, 1048, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(scrollTblKeranjang, javax.swing.GroupLayout.DEFAULT_SIZE, 1057, Short.MAX_VALUE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -987,12 +990,12 @@ public class Cashier extends javax.swing.JFrame {
                             .addGap(24, 24, 24))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                    .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGap(461, 461, 461))))))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1111,7 +1114,7 @@ public class Cashier extends javax.swing.JFrame {
             int transaksiId = rslt.next() ? rslt.getInt(1) : -1;
             if (transaksiId == -1) throw new SQLException("Gagal mendapatkan ID transaksi.");
 
-            pst = conn.prepareStatement("INSERT INTO transaksi_detail (transaksi_id, kode_barang, nama, jumlah, subtotal) VALUES (?, ?, ?, ?, ?)");
+            pst = conn.prepareStatement("INSERT INTO detail_transaksi (transaksi_id, kode_barang, nama, jumlah, subtotal) VALUES (?, ?, ?, ?, ?)");
             PreparedStatement pstUpdateStok = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE kode_barang = ?");
 
             for (int i = 0; i < model.getRowCount(); i++) {
@@ -1272,6 +1275,33 @@ public class Cashier extends javax.swing.JFrame {
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) {
+            txtScanCodeProduct.requestFocus();
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void txtTotalDibayarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTotalDibayarKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnBayar.doClick();
+        }
+    }//GEN-LAST:event_txtTotalDibayarKeyPressed
+
+    private void txtTotalDibayarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTotalDibayarKeyTyped
+        // TODO add your handling code here:
+        
+        char c = evt.getKeyChar();
+        
+        if (!Character.isDigit(c)) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtTotalDibayarKeyTyped
 
     /**
      * @param args the command line arguments

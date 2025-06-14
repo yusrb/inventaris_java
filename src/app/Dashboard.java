@@ -5,15 +5,38 @@
  */
 package app;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.io.File;
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -30,8 +53,11 @@ public class Dashboard extends javax.swing.JFrame {
     
     public Dashboard(String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         getSettings();
+        
+        setProductTerlaris();
+        loadStokMinimum();
         setTotalProducts();
         setTotalUsers();
         setTotalSuppliers();
@@ -55,18 +81,6 @@ public class Dashboard extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public void getSettings()
     {
@@ -99,13 +113,13 @@ public class Dashboard extends javax.swing.JFrame {
     public void setImageToDashboard() {
         setImageToLabel("images/product.png", labelProductImage);
         setImageToLabel("images/users.png", labelUsersImage);
-                setImageToLabel("images/suppliers.png", labelSuppliersImage);
-                setImageToLabel("images/barang_masuk.png", labelBarangMasuk);
-                setImageToLabel("images/barang_keluar.png", labelBarangKeluar);
-                setImageToLabel("images/transaksi_barang_masuk.png", labelTransaksiMasukImage);
-                setImageToLabel("images/transaksi_barang_keluar.png", labelTransaksiKeluarImage);
+        setImageToLabel("images/suppliers.png", labelSuppliersImage);
+        setImageToLabel("images/barang_masuk.png", labelBarangMasuk);
+        setImageToLabel("images/barang_keluar.png", labelBarangKeluar);
+        setImageToLabel("images/transaksi_barang_masuk.png", labelTransaksiMasukImage);
+        setImageToLabel("images/transaksi_barang_keluar.png", labelTransaksiKeluarImage);
 
-         setupDynamicScaling();
+        setupDynamicScaling();
     }
     
     public void setupDynamicScaling() {
@@ -155,16 +169,184 @@ public class Dashboard extends javax.swing.JFrame {
         label.setIcon(new ImageIcon(scaledImage));
     }
     
-    private void setImageToLabel(String imagePath, JLabel label) {
-            File file = new File(imagePath);
+    private void setImageToLabel(String resourcePath, JLabel label) {
+        java.net.URL imageUrl = getClass().getClassLoader().getResource(resourcePath);
 
-            ImageIcon icon = new ImageIcon(imagePath);
-            Image img = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
-
-            label.setText("");
-            label.setIcon(new ImageIcon(img));
+        if (imageUrl == null) {
+            label.setText("Gambar tidak ditemukan: " + resourcePath);
+            return;
         }
+
+        ImageIcon icon = new ImageIcon(imageUrl);
+        Image img = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+
+        label.setText("");
+        label.setIcon(new ImageIcon(img));
+    }
     
+    public void setProductTerlaris() {
+        try {
+            String query = "SELECT nama, SUM(jumlah) AS total_terjual " +
+                           "FROM detail_transaksi " +
+                           "GROUP BY nama " +
+                           "ORDER BY total_terjual DESC " +
+                           "LIMIT 10";
+
+            pst = conn.prepareStatement(query);
+            rslt = pst.executeQuery();
+
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+            while (rslt.next()) {
+                String namaProduk = rslt.getString("nama");
+                int jumlahTerjual = rslt.getInt("total_terjual");
+                dataset.addValue(jumlahTerjual, "Jumlah Terjual", namaProduk);
+            }
+
+            JFreeChart chart = ChartFactory.createBarChart(
+                "10 Produk Terlaris",
+                "Produk",
+                "Jumlah Terjual",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false, true, false
+            );
+
+            chart.setBackgroundPaint(new Color(245, 245, 245));
+            TextTitle title = chart.getTitle();
+            title.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+            title.setPadding(10, 0, 0, 0);
+
+            CategoryPlot plot = chart.getCategoryPlot();
+            plot.setBackgroundPaint(Color.WHITE);
+            plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+            plot.setOutlineVisible(false);
+
+            CategoryAxis domainAxis = plot.getDomainAxis();
+            domainAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 14));
+            domainAxis.setTickLabelFont(new Font("Tahoma", Font.PLAIN, 9));
+            domainAxis.setLowerMargin(0.05);
+            domainAxis.setUpperMargin(0.05);
+
+            plot.getRangeAxis().setLabelFont(new Font("Tahoma", Font.BOLD, 14));
+            plot.getRangeAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 12));
+
+            BarRenderer renderer = (BarRenderer) plot.getRenderer();
+            Color barColor = new Color(123, 104, 238);
+            renderer.setSeriesPaint(0, barColor);
+
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator() {
+                @Override
+                public String generateToolTip(CategoryDataset dataset, int row, int column) {
+                    String produk = (String) dataset.getColumnKey(column);
+                    Number value = dataset.getValue(row, column);
+                    return produk + " : Stok " + value.intValue();
+                }
+            });
+
+            renderer.setBarPainter(new StandardBarPainter());
+            renderer.setShadowVisible(false);
+
+            ChartPanel chartPanel = new ChartPanel(chart);
+            chartPanel.setPreferredSize(new Dimension(1135, 350));
+            chartPanel.setBackground(new Color(245, 245, 245));
+
+            pnlTampilGrafik.removeAll();
+            pnlTampilGrafik.setLayout(new BorderLayout());
+            pnlTampilGrafik.add(chartPanel, BorderLayout.CENTER);
+            pnlTampilGrafik.validate();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Gagal menampilkan grafik produk terlaris: " + ex.getMessage());
+        }
+    }
+
+    public void loadStokMinimum() {
+        pnlTampilStokAlert.removeAll();
+        pnlTampilStokAlert.setLayout(new BoxLayout(pnlTampilStokAlert, BoxLayout.Y_AXIS));
+        pnlTampilStokAlert.setBackground(Color.WHITE);
+
+        Color bgAlert = new Color(123, 104, 238);
+        Color fgAlert = Color.WHITE;
+
+        try {
+            String sql = "SELECT kode_barang, nama, stok, stok_alert FROM products WHERE stok < stok_alert";
+            pst = conn.prepareStatement(sql);
+            rslt = pst.executeQuery();
+
+            boolean adaData = false;
+
+            while (rslt.next()) {
+                adaData = true;
+                String nama = rslt.getString("nama");
+                int stok = rslt.getInt("stok");
+                int stokAlert = rslt.getInt("stok_alert");
+
+                JPanel card = new JPanel(new BorderLayout());
+                card.setBackground(bgAlert);
+                card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+                card.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+                JLabel lbl = new JLabel("\uD83D\uDD3B " + nama + " - " + stok + " pcs (Min: " + stokAlert + ")");
+                lbl.setForeground(fgAlert);
+
+                Font emojiFont = new Font("Segoe UI Emoji", Font.BOLD, 12);
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                List<String> fonts = Arrays.asList(ge.getAvailableFontFamilyNames());
+
+                if (!fonts.contains("Segoe UI Emoji")) {
+                    emojiFont = lbl.getFont().deriveFont(Font.BOLD, 12f);
+                }
+
+                lbl.setFont(emojiFont);
+
+                card.add(lbl, BorderLayout.CENTER);
+                pnlTampilStokAlert.add(card);
+                pnlTampilStokAlert.add(Box.createVerticalStrut(5));
+            }
+
+            if (!adaData) {
+                JPanel card = new JPanel(new BorderLayout());
+                card.setBackground(new Color(46, 204, 113));
+                card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+                card.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+                JLabel lblKosong = new JLabel("\u2705 Semua stok aman.");
+                lblKosong.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
+
+                lblKosong.setForeground(Color.WHITE);
+                lblKosong.setFont(lblKosong.getFont().deriveFont(Font.BOLD, 12f));
+
+                card.add(lblKosong, BorderLayout.CENTER);
+                pnlTampilStokAlert.add(card);
+            }
+
+        } catch (SQLException e) {
+            JPanel card = new JPanel(new BorderLayout());
+            card.setBackground(Color.RED);
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            card.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+            JLabel lblError = new JLabel("❌ Gagal memuat data stok.");
+            lblError.setForeground(Color.WHITE);
+            lblError.setFont(lblError.getFont().deriveFont(Font.BOLD, 12f));
+
+            card.add(lblError, BorderLayout.CENTER);
+            pnlTampilStokAlert.add(card);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rslt != null) rslt.close();
+                if (pst != null) pst.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        pnlTampilStokAlert.revalidate();
+        pnlTampilStokAlert.repaint();
+    }
+
     private void batasiAkses() {
         switch (levelForPage.toLowerCase()) {
             case "administrator":
@@ -371,6 +553,9 @@ public class Dashboard extends javax.swing.JFrame {
         txtTotalTransactionsBK = new javax.swing.JLabel();
         btnToTransaksiBK = new javax.swing.JButton();
         labelTransaksiKeluarImage = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        pnlTampilGrafik = new javax.swing.JPanel();
+        pnlTampilStokAlert = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Dashboard Page");
@@ -732,7 +917,6 @@ public class Dashboard extends javax.swing.JFrame {
     jLabel11.setForeground(new java.awt.Color(255, 255, 255));
     jLabel11.setText("Model Barang");
 
-    labelProductImage.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\product.png")); // NOI18N
     labelProductImage.setText("product");
 
     javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -743,7 +927,7 @@ public class Dashboard extends javax.swing.JFrame {
         .addGroup(jPanel4Layout.createSequentialGroup()
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel4Layout.createSequentialGroup()
-                    .addContainerGap(110, Short.MAX_VALUE)
+                    .addContainerGap(107, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(234, 234, 234))
                 .addGroup(jPanel4Layout.createSequentialGroup()
@@ -765,10 +949,8 @@ public class Dashboard extends javax.swing.JFrame {
                     .addComponent(txtTotalProducts)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(jLabel11)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE))
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                    .addComponent(labelProductImage, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(33, 33, 33)))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(labelProductImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(btnToProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
@@ -799,7 +981,6 @@ public class Dashboard extends javax.swing.JFrame {
         }
     });
 
-    labelUsersImage.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\users.png")); // NOI18N
     labelUsersImage.setText("product");
 
     javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -819,14 +1000,17 @@ public class Dashboard extends javax.swing.JFrame {
     jPanel7Layout.setVerticalGroup(
         jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel7Layout.createSequentialGroup()
-            .addGap(22, 22, 22)
-            .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel7Layout.createSequentialGroup()
+                    .addGap(22, 22, 22)
                     .addComponent(txtTotalUsers)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel8))
-                .addComponent(labelUsersImage, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelUsersImage, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(17, 17, 17)))
             .addComponent(btnToUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
@@ -850,7 +1034,6 @@ public class Dashboard extends javax.swing.JFrame {
         }
     });
 
-    labelSuppliersImage.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\suppliers.png")); // NOI18N
     labelSuppliersImage.setText("product");
 
     javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
@@ -879,7 +1062,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGroup(jPanel8Layout.createSequentialGroup()
                     .addGap(32, 32, 32)
                     .addComponent(labelSuppliersImage, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
             .addComponent(btnToSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
@@ -903,7 +1086,6 @@ public class Dashboard extends javax.swing.JFrame {
         }
     });
 
-    labelBarangMasuk.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\barang_masuk.png")); // NOI18N
     labelBarangMasuk.setText("product");
 
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -923,15 +1105,18 @@ public class Dashboard extends javax.swing.JFrame {
     jPanel5Layout.setVerticalGroup(
         jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel5Layout.createSequentialGroup()
-            .addGap(22, 22, 22)
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addGap(22, 22, 22)
                     .addComponent(txtTotalBarangMasuk)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel6))
-                .addComponent(labelBarangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
-            .addComponent(btnToTotalBM, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelBarangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)))
+            .addComponent(btnToTotalBM, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
     jPanel10.setBackground(new java.awt.Color(204, 0, 255));
@@ -954,7 +1139,6 @@ public class Dashboard extends javax.swing.JFrame {
         }
     });
 
-    labelBarangKeluar.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\barang_keluar.png")); // NOI18N
     labelBarangKeluar.setText("product");
 
     javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
@@ -967,7 +1151,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jLabel7)
                 .addComponent(txtTotalBarangKeluar))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
             .addComponent(labelBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addContainerGap())
     );
@@ -983,7 +1167,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGroup(jPanel10Layout.createSequentialGroup()
                     .addGap(37, 37, 37)
                     .addComponent(labelBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
             .addComponent(btnToTotalBK, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
@@ -1007,7 +1191,6 @@ public class Dashboard extends javax.swing.JFrame {
         }
     });
 
-    labelTransaksiMasukImage.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\transaksi_barang_masuk.png")); // NOI18N
     labelTransaksiMasukImage.setText("product");
 
     javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
@@ -1060,7 +1243,6 @@ public class Dashboard extends javax.swing.JFrame {
         }
     });
 
-    labelTransaksiKeluarImage.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\inventaris_java\\images\\transaksi_barang_keluar.png")); // NOI18N
     labelTransaksiKeluarImage.setText("product");
 
     javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
@@ -1089,8 +1271,35 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGroup(jPanel12Layout.createSequentialGroup()
                     .addGap(37, 37, 37)
                     .addComponent(labelTransaksiKeluarImage, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
             .addComponent(btnToTransaksiBK, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+    );
+
+    pnlTampilGrafik.setBackground(new java.awt.Color(123, 104, 238));
+
+    javax.swing.GroupLayout pnlTampilGrafikLayout = new javax.swing.GroupLayout(pnlTampilGrafik);
+    pnlTampilGrafik.setLayout(pnlTampilGrafikLayout);
+    pnlTampilGrafikLayout.setHorizontalGroup(
+        pnlTampilGrafikLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGap(0, 1370, Short.MAX_VALUE)
+    );
+    pnlTampilGrafikLayout.setVerticalGroup(
+        pnlTampilGrafikLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGap(0, 349, Short.MAX_VALUE)
+    );
+
+    pnlTampilStokAlert.setBackground(new java.awt.Color(123, 104, 238));
+    pnlTampilStokAlert.setPreferredSize(new java.awt.Dimension(100, 349));
+
+    javax.swing.GroupLayout pnlTampilStokAlertLayout = new javax.swing.GroupLayout(pnlTampilStokAlert);
+    pnlTampilStokAlert.setLayout(pnlTampilStokAlertLayout);
+    pnlTampilStokAlertLayout.setHorizontalGroup(
+        pnlTampilStokAlertLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGap(0, 0, Short.MAX_VALUE)
+    );
+    pnlTampilStokAlertLayout.setVerticalGroup(
+        pnlTampilStokAlertLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGap(0, 349, Short.MAX_VALUE)
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1105,52 +1314,63 @@ public class Dashboard extends javax.swing.JFrame {
                     .addGap(24, 24, 24)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
-                            .addGap(14, 14, 14)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
-                                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
-                            .addGap(14, 14, 14)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-                                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(24, 24, 24))
-                        .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel3)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(jLabel4)
-                            .addGap(92, 92, 92))))))
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
+                                    .addGap(14, 14, 14)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                                        .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE))
+                                    .addGap(14, 14, 14)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                                        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
+                                    .addGap(14, 14, 14)
+                                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(pnlTampilGrafik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(pnlTampilStokAlert, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)))
+                            .addGap(24, 24, 24))))
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(18, 18, 18)
+                    .addComponent(jSeparator1))))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addGroup(layout.createSequentialGroup()
+            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(50, 50, 50)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel3)
+                .addComponent(jLabel4))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(50, 50, 50)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel4))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(24, 24, 24)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(0, 0, Short.MAX_VALUE)))
-            .addGap(0, 0, 0))
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(18, 18, 18)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(10, 10, 10)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(pnlTampilGrafik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlTampilStokAlert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(53, 53, 53))
     );
 
     pack();
@@ -1400,6 +1620,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelBarangKeluar;
     private javax.swing.JLabel labelBarangMasuk;
     private javax.swing.JLabel labelLogo;
@@ -1408,6 +1629,8 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel labelTransaksiKeluarImage;
     private javax.swing.JLabel labelTransaksiMasukImage;
     private javax.swing.JLabel labelUsersImage;
+    private javax.swing.JPanel pnlTampilGrafik;
+    private javax.swing.JPanel pnlTampilStokAlert;
     private javax.swing.JLabel txtNamePageBottom;
     private javax.swing.JLabel txtNamePageTop;
     private javax.swing.JLabel txtRoleForPage;

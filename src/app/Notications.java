@@ -25,7 +25,7 @@ public class Notications extends javax.swing.JFrame {
     
     public Notications(String usernameForPage) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         setAlertStock();
         
         this.usernameForPage = usernameForPage;
@@ -39,18 +39,6 @@ public class Notications extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public void setAlertStock() {
         try {
@@ -84,7 +72,7 @@ public class Notications extends javax.swing.JFrame {
             lblStokAlert.setLocation(10, lblStokAlert.getY());
 
         } catch (SQLException ex) {
-            lblStokAlert.setText("❌ Gagal memeriksa stok");
+            lblStokAlert.setText("Gagal memeriksa stok");
             lblStokAlert.setForeground(Color.GRAY);
         }
     }

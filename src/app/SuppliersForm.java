@@ -31,11 +31,13 @@ public class SuppliersForm extends javax.swing.JFrame {
     
     public SuppliersForm(Suppliers suppliers, String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         
         this.mode = "create";
         btnAction.setText("Create");
         btnAction.setBackground(Color.GREEN);
+        
+        txtNamaSupplier.requestFocus();
         
         usernameForPage = username;
         levelForPage = level;
@@ -57,6 +59,8 @@ public class SuppliersForm extends javax.swing.JFrame {
         txtEmail.setText(emailLama);
         txtAlamat.setText(alamatLama);
         
+        txtNamaSupplier.requestFocus();
+        
         txtNamaSupplier.setText(namaSupplierLama);
         
         this.suppliersId = suppliersId;
@@ -65,18 +69,6 @@ public class SuppliersForm extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SuppliersForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(SuppliersForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,6 +100,12 @@ public class SuppliersForm extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Supplier");
+
+        txtNamaSupplier.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNamaSupplierKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -167,9 +165,26 @@ public class SuppliersForm extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel5.setText("Email");
 
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEmailKeyPressed(evt);
+            }
+        });
+
         txtAlamat.setColumns(20);
         txtAlamat.setRows(5);
+        txtAlamat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAlamatKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtAlamat);
+
+        txtKontak.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtKontakKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -241,9 +256,7 @@ public class SuppliersForm extends javax.swing.JFrame {
 
     private void btnBackToSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToSuppliersActionPerformed
         // TODO add your handling code here:
-        
-        Suppliers suppliers_page = new Suppliers(usernameForPage, levelForPage);
-        suppliers_page.setVisible(true);
+
         this.dispose();
     }//GEN-LAST:event_btnBackToSuppliersActionPerformed
 
@@ -331,6 +344,42 @@ public class SuppliersForm extends javax.swing.JFrame {
                 }
         }
     }//GEN-LAST:event_btnActionActionPerformed
+
+    private void txtNamaSupplierKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNamaSupplierKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtEmail.requestFocus();
+        }
+    }//GEN-LAST:event_txtNamaSupplierKeyPressed
+
+    private void txtEmailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEmailKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtKontak.requestFocus();
+        }
+    }//GEN-LAST:event_txtEmailKeyPressed
+
+    private void txtKontakKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtKontakKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtAlamat.requestFocus();
+        }
+    }//GEN-LAST:event_txtKontakKeyPressed
+
+    private void txtAlamatKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAlamatKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnAction.doClick();
+        }
+    }//GEN-LAST:event_txtAlamatKeyPressed
 
     /**
      * @param args the command line arguments

@@ -6,12 +6,13 @@
 package app;
 
 import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -37,9 +38,14 @@ public class BarangKeluarForm extends javax.swing.JFrame {
     
     public BarangKeluarForm(BarangKeluar barangKeluar, String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         loadProducts();
         
+        if (SwingUtilities.isEventDispatchThread()) {
+            if (cmbProduk.isShowing()) {
+                cmbProduk.showPopup();
+            }
+        }
         this.usernameForPage = username;
         this.levelForPage = level;
         this.barang_keluar_page = barangKeluar;
@@ -49,6 +55,13 @@ public class BarangKeluarForm extends javax.swing.JFrame {
         btnAction.setBackground(Color.GREEN);
         
         setLocationRelativeTo(null);
+        
+        dtanggal.getDateEditor().addPropertyChangeListener("date", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                txtJumlah.requestFocus();
+            }
+        });
     }
     
     public BarangKeluarForm(BarangKeluar barangKeluar, String username, String level, int id, String produkLama, int jumlahLama, java.util.Date tanggalKeluarDate, String keteranganLama, String adminLama) {
@@ -73,19 +86,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(BarangKeluarForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(BarangKeluarForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+
     public void loadProducts()
     {
         try {
@@ -168,7 +169,7 @@ public class BarangKeluarForm extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addGap(294, 294, 294))
+                .addGap(205, 205, 205))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,15 +210,31 @@ public class BarangKeluarForm extends javax.swing.JFrame {
 
         txtDeskripsi.setColumns(20);
         txtDeskripsi.setRows(5);
+        txtDeskripsi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtDeskripsiKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtDeskripsi);
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel6.setText("Tanggal Keluar");
 
         cmbProduk.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbProduk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbProdukActionPerformed(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel8.setText("Jumlah");
+
+        txtJumlah.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtJumlahKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -237,15 +254,12 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                                         .addComponent(jLabel1)
                                         .addGap(230, 230, 230))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cmbProduk, 0, 303, Short.MAX_VALUE)
+                                        .addComponent(cmbProduk, 0, 302, Short.MAX_VALUE)
                                         .addGap(50, 50, 50)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(dtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE))))
+                                    .addComponent(jLabel6)
+                                    .addComponent(dtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -254,11 +268,12 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                                     .addComponent(jLabel8)
                                     .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnClear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                            .addComponent(btnAction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                             .addComponent(btnBackToProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -299,8 +314,6 @@ public class BarangKeluarForm extends javax.swing.JFrame {
     private void btnBackToProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToProductsActionPerformed
         // TODO add your handling code here:
         
-        BarangKeluar barang_keluar_form = new BarangKeluar(usernameForPage, levelForPage);
-        barang_keluar_form.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToProductsActionPerformed
 
@@ -373,7 +386,6 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                 int hasil = pst.executeUpdate();
 
                 if (hasil == 1) {
-                    // Kurangi stok
                     PreparedStatement updateStok = conn.prepareStatement("UPDATE products SET stok = stok - ? WHERE id = ?");
                     updateStok.setInt(1, jumlah);
                     updateStok.setInt(2, idProduk);
@@ -393,6 +405,34 @@ public class BarangKeluarForm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
     }//GEN-LAST:event_btnActionActionPerformed
+
+    private void cmbProdukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProdukActionPerformed
+        // TODO add your handling code here:
+        
+        SwingUtilities.invokeLater(() -> {
+                if (dtanggal.isShowing()) {
+                    dtanggal.getJCalendar().setVisible(true);
+                }
+            });
+    }//GEN-LAST:event_cmbProdukActionPerformed
+
+    private void txtJumlahKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJumlahKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            txtDeskripsi.requestFocus();
+        }
+    }//GEN-LAST:event_txtJumlahKeyPressed
+
+    private void txtDeskripsiKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDeskripsiKeyPressed
+        // TODO add your handling code here:
+        
+         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnAction.doClick();
+        }
+    }//GEN-LAST:event_txtDeskripsiKeyPressed
 
     /**
      * @param args the command line arguments

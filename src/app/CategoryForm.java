@@ -32,11 +32,12 @@ public class CategoryForm extends javax.swing.JFrame {
     
     public CategoryForm(Categories categories, String username, String level) {
         initComponents();
-        Connection();
+        conn = DBConnection.getConnection();
         
         this.mode = "create";
         btnAction.setText("Create");
         btnAction.setBackground(Color.GREEN);
+        txtNamaCategory.requestFocus();
         
         this.usernameForPage = username;
         this.levelForPage = level;
@@ -56,23 +57,12 @@ public class CategoryForm extends javax.swing.JFrame {
         
         btnAction.setText("Update");
         btnAction.setBackground(Color.BLUE);
+        txtNamaCategory.requestFocus();
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-
-    public void Connection()
-    {
-         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CategoryForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(CategoryForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -123,6 +113,12 @@ public class CategoryForm extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel1.setText("Nama Category");
+
+        txtNamaCategory.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNamaCategoryKeyPressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -267,10 +263,17 @@ public class CategoryForm extends javax.swing.JFrame {
     private void btnBackToBrandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToBrandsActionPerformed
         // TODO add your handling code here:
 
-        Categories categories_page = new Categories(usernameForPage, levelForPage);
-        categories_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackToBrandsActionPerformed
+
+    private void txtNamaCategoryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNamaCategoryKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnAction.doClick();
+        }
+    }//GEN-LAST:event_txtNamaCategoryKeyPressed
 
     /**
      * @param args the command line arguments

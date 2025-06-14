@@ -6,10 +6,8 @@
 package app;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -18,7 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.JButton;
+import javax.swing.UIManager;
 
 /**
  *
@@ -33,8 +31,10 @@ public class Login extends javax.swing.JFrame {
         setUndecorated(true);
         initComponents();
 
-        Connection();
+        conn = DBConnection.getConnection();
         getSettings();
+        
+        txtUsername.requestFocus();
         
         setLocationRelativeTo(null);
         setOpacity(0f);
@@ -45,19 +45,6 @@ public class Login extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public void getSettings() {
         try {
@@ -102,13 +89,13 @@ public class Login extends javax.swing.JFrame {
             }
         }, 0, 50);
     }
-    
-        private void typingEffect(javax.swing.JLabel label, String text, int delay) {
-            final javax.swing.Timer timer = new javax.swing.Timer(delay, null);
-            timer.addActionListener(new java.awt.event.ActionListener() {
-                int index = 0;
 
-                @Override
+    private void typingEffect(javax.swing.JLabel label, String text, int delay) {
+        final javax.swing.Timer timer = new javax.swing.Timer(delay, null);
+        timer.addActionListener(new java.awt.event.ActionListener() {
+            int index = 0;
+            
+            @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     if (index <= text.length()) {
                         label.setText(text.substring(0, index));
@@ -139,6 +126,8 @@ public class Login extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         txtNamaAplikasi = new javax.swing.JLabel();
+        iconViewAesthe = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         labelLogo = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
@@ -152,6 +141,18 @@ public class Login extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Palatino Linotype", 0, 18)); // NOI18N
         jLabel3.setText("Password");
+
+        txtUsername.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtUsernameKeyPressed(evt);
+            }
+        });
+
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPasswordKeyPressed(evt);
+            }
+        });
 
         btnClear.setText("Clear");
         btnClear.setBorder(null);
@@ -192,6 +193,21 @@ public class Login extends javax.swing.JFrame {
         txtNamaAplikasi.setForeground(new java.awt.Color(255, 255, 255));
         txtNamaAplikasi.setText("namaAplikasi");
 
+        iconViewAesthe.setIcon(new javax.swing.ImageIcon("C:\\Users\\yusrb\\OneDrive\\Dokumen\\NetBeansProjects\\pos_java\\images\\duce.png")); // NOI18N
+
+        jPanel1.setBackground(new java.awt.Color(123, 100, 250));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 52, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -199,14 +215,21 @@ public class Login extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(txtNamaAplikasi)
-                .addContainerGap(261, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(iconViewAesthe, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 30, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(txtNamaAplikasi)
-                .addContainerGap(438, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(iconViewAesthe, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel4.setFont(new java.awt.Font("Reem Kufi", 1, 18)); // NOI18N
@@ -218,6 +241,7 @@ public class Login extends javax.swing.JFrame {
         btnClose.setBackground(new java.awt.Color(255, 0, 0));
         btnClose.setForeground(new java.awt.Color(255, 255, 255));
         btnClose.setText("X");
+        btnClose.setBorderPainted(false);
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCloseActionPerformed(evt);
@@ -278,66 +302,15 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 149, Short.MAX_VALUE))
+                .addGap(27, 166, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        // TODO add your handling code here:
-        
-        txtUsername.setText("");
-        txtPassword.setText("");
-        
-        txtUsername.requestFocus();
-    }//GEN-LAST:event_btnClearActionPerformed
-
-    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        try {
-            // TODO add your handling code here:
-            
-            String username = txtUsername.getText();
-            
-            char[] passwordStr = txtPassword.getPassword();
-            String password = new String(passwordStr);
-            Arrays.fill(passwordStr, ' ');
-            
-            if (username.isEmpty() || password.isEmpty())
-            {
-                JOptionPane.showMessageDialog(this, "Seluruh Input Harus Diisi!!!", "Input Empty", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            else
-            {
-                pst = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
-                pst.setString(1, username);
-                pst.setString(2, password);
-
-                rslt = pst.executeQuery();
-                
-                if (rslt.next())
-                {
-                    String level = rslt.getString("level");
-                    JOptionPane.showMessageDialog(this, "Login Berhasil, Diarahkan ke Dashboard", "Login Success", JOptionPane.INFORMATION_MESSAGE);
-                    Dashboard dashboard_page = new Dashboard(username, level);
-                    dashboard_page.setVisible(true);
-                    this.dispose();
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(this, "Data Tidak Ditemukan \nSilahkan cek kembali data anda!!!", "Login Failed", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_btnLoginActionPerformed
-
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         // TODO add your handling code here:
-        
+
         final java.util.Timer timer = new java.util.Timer();
         timer.scheduleAtFixedRate(new java.util.TimerTask() {
             float opacity = 1f;
@@ -357,60 +330,152 @@ public class Login extends javax.swing.JFrame {
         }, 0, 50);
     }//GEN-LAST:event_btnCloseActionPerformed
 
-    private void btnLoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseEntered
-        // TODO add your handling code here:
-        
-        btnLogin.setBackground(new Color(147,112,219));
-        btnLogin.setForeground(Color.WHITE);
-    }//GEN-LAST:event_btnLoginMouseEntered
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        try {
+            // TODO add your handling code here:
+
+            String username = txtUsername.getText();
+
+            char[] passwordStr = txtPassword.getPassword();
+            String password = new String(passwordStr);
+            Arrays.fill(passwordStr, ' ');
+
+            if (username.isEmpty() || password.isEmpty())
+            {
+                JOptionPane.showMessageDialog(this, "Seluruh Input Harus Diisi!!!", "Input Empty", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            else
+            {
+                pst = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+                pst.setString(1, username);
+                pst.setString(2, password);
+
+                rslt = pst.executeQuery();
+
+                if (rslt.next())
+                {
+                    String level = rslt.getString("level");
+                    JOptionPane.showMessageDialog(this, "Login Berhasil, Diarahkan ke Dashboard", "Login Success", JOptionPane.INFORMATION_MESSAGE);
+                    Dashboard dashboard_page = new Dashboard(username, level);
+                    dashboard_page.setVisible(true);
+                    this.dispose();
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "Data Tidak Ditemukan \nSilahkan cek kembali data anda!!!", "Login Failed", JOptionPane.WARNING_MESSAGE);
+                    txtUsername.requestFocus();
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnLoginMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseExited
         // TODO add your handling code here:
-        
+
         btnLogin.setBackground(new Color(240,240,240));
         btnLogin.setForeground(Color.BLACK);
     }//GEN-LAST:event_btnLoginMouseExited
 
+    private void btnLoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseEntered
+        // TODO add your handling code here:
+
+        btnLogin.setBackground(new Color(147,112,219));
+        btnLogin.setForeground(Color.WHITE);
+    }//GEN-LAST:event_btnLoginMouseEntered
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+
+        txtUsername.setText("");
+        txtPassword.setText("");
+
+        txtUsername.requestFocus();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnClearMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseExited
+        // TODO add your handling code here:
+
+        btnClear.setBackground(new Color(240,240,240));
+        btnClear.setForeground(Color.BLACK);
+    }//GEN-LAST:event_btnClearMouseExited
+
     private void btnClearMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseEntered
         // TODO add your handling code here:
-        
+
         btnClear.setBackground(new Color(147,112,219));
         btnClear.setForeground(Color.WHITE);
     }//GEN-LAST:event_btnClearMouseEntered
 
-    private void btnClearMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseExited
+    private void txtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyPressed
         // TODO add your handling code here:
-        
-        btnClear.setBackground(new Color(240,240,240));
-        btnClear.setForeground(Color.BLACK);
-    }//GEN-LAST:event_btnClearMouseExited
+
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnLogin.doClick();
+        }
+    }//GEN-LAST:event_txtPasswordKeyPressed
+
+    private void txtUsernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKeyPressed
+        // TODO add your handling code here:
+
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            txtPassword.requestFocus();
+        }
+    }//GEN-LAST:event_txtUsernameKeyPressed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if (!DBConnection.isDatabaseOnline()) {
+                    JOptionPane.showMessageDialog(null, 
+                        "MySQL belum aktif.\nSilakan hidupkan XAMPP atau Laragon terlebih dahulu.", 
+                        "Database Tidak Tersambung", 
+                        JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
+            } catch (SQLException e) {
+                if (e.getErrorCode() == 1049) {
+                    int opsi = JOptionPane.showConfirmDialog(null, 
+                        "Database 'pos_java' tidak ditemukan.\nMau unduh file SQL untuk import?", 
+                        "Database Tidak Ditemukan",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+
+                    if (opsi == JOptionPane.YES_OPTION) {
+                        try {
+                            java.awt.Desktop.getDesktop().browse(new java.net.URI(
+                                "https://drive.google.com/drive/u/0/folders/1PGvk6vS3pdiZUMKKOCYvGJx5zW-Hu7rN"));
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null, "Gagal membuka browser: " + ex.getMessage());
+                        }
+                    }
+                    System.exit(0);
+                } else {
+                    JOptionPane.showMessageDialog(null, 
+                        "Gagal koneksi ke database:\n" + e.getMessage(), 
+                        "Kesalahan Koneksi", 
+                        JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
+            }
+        
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -424,9 +489,11 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnLogin;
+    private javax.swing.JLabel iconViewAesthe;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel labelLogo;
     private javax.swing.JLabel txtNamaAplikasi;

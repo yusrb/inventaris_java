@@ -7,6 +7,7 @@ package app;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -17,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -48,8 +48,9 @@ public class Products extends javax.swing.JFrame {
                 return comp;
             }
         });
-
-        Connection();
+        
+        
+        conn = DBConnection.getConnection();
         Fetch();
         setAlertStock();
         getSettings();
@@ -63,23 +64,13 @@ public class Products extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setFocusable(true);
+        this.requestFocusInWindow();
     }
     
     Connection conn;
     PreparedStatement pst;
     ResultSet rslt;
-    
-    public void Connection()
-    {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/inventaris_java", "root", "");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     public void getSettings()
     {
@@ -125,7 +116,8 @@ public class Products extends javax.swing.JFrame {
                 "b.nama_brand " +
                 "FROM products p " +
                 "JOIN categories c ON p.category_id = c.id " +
-                "JOIN brands b ON p.brand_id = b.id"
+                "JOIN brands b ON p.brand_id = b.id " +
+                "ORDER BY p.id ASC"
             );
 
             rslt = pst.executeQuery();
@@ -275,6 +267,11 @@ public class Products extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Products Page");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jPanel26.setBackground(new java.awt.Color(123, 104, 238));
 
@@ -663,6 +660,12 @@ public class Products extends javax.swing.JFrame {
     tblTampilProducts.setGridColor(new java.awt.Color(123, 104, 238));
     jScrollPane1.setViewportView(tblTampilProducts);
 
+    txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyPressed(java.awt.event.KeyEvent evt) {
+            txtSearchKeyPressed(evt);
+        }
+    });
+
     btnSearch.setBackground(new java.awt.Color(123, 104, 238));
     btnSearch.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
     btnSearch.setForeground(new java.awt.Color(255, 255, 255));
@@ -966,6 +969,23 @@ public class Products extends javax.swing.JFrame {
         users_page.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsersActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) {
+            txtSearch.requestFocus();
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+        
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+        {
+            btnSearch.doClick();
+        }
+    }//GEN-LAST:event_txtSearchKeyPressed
 
     /**
      * @param args the command line arguments
